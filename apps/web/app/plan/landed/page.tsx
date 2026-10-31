@@ -43,6 +43,7 @@ export default async function LandedPage({ searchParams }: { searchParams: Promi
             {analyst ? "Client view" : "jouleWise view"}
           </Link>
           <Link className="eg-btn eg-btn--ghost eg-btn--sm" href={`/plan/today?c=${c}`}>Today&apos;s cost</Link>
+          {analyst && <Link className="eg-btn eg-btn--ghost eg-btn--sm" href={`/settlement?c=${c}`}>Settlement explorer</Link>}
         </div>
       </div>
       <CompareBars d={d} />

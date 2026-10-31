@@ -26,7 +26,9 @@ What is not yet right, and the stage that fixes it.
 | Maharashtra captive CSS exemption (EA 2003 s. 42(2) proviso; MERC DOA Regulations) not in the rulebook: a captive MSEDCL consumer is shown paying CSS | When the MERC DOA Regulations are added |
 | UP Solar Energy Policy 2022 wheeling and transmission exemptions (50% captive and third-party, 100% sale to DISCOM; CRE Regs p. 14) not applied: the policy's validity period is not in the corpus | When the policy is added |
 | Normative PPA prices, LCOE and LCOS inputs are assumptions (editable) | Client quotes |
-| A year of real OA settlement statements (anonymised) needed in `data/settlements/` | Stage 5 |
+| A year of real OA settlement statements (anonymised) needed in `data/settlements/` to check the simulator within 0.5% (Stage 5 DoD); the simulator is checked against hand-worked cases and properties until then | When supplied |
+| One bank per consumer (the first matching settlement rule); mixed rules across sources share it or net without banking | Stage 6 |
+| Generation for settlement comes from normative CUF curves unless a 15-minute injection is supplied | Developer profiles |
 
 ## Named rule gaps used by the bill replay (Stage 3)
 

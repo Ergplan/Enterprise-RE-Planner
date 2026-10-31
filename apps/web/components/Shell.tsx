@@ -19,6 +19,7 @@ const ANALYST: { label: string; href: string; icon: string }[] = [
   { label: "Rulebooks", href: "/rulebooks", icon: "layers" },
   { label: "Documents", href: "/documents", icon: "file" },
   { label: "Market prices", href: "/prices", icon: "trend" },
+  { label: "Settlement", href: "/settlement", icon: "battery" },
 ];
 
 function toggleTheme() {

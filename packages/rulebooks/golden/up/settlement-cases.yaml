@@ -1,0 +1,34 @@
+# Hand-worked settlement cases for the approved UP rule (UPERC CRE Regulations 2024, Reg. 12; packages/rulebooks/states/up/settlement):
+# 15-minute accounting, captive solar banking with 8% in kind, carry-over capped at the higher of 25% of injection and
+# 30% of DISCOM consumption, FIFO, off-peak deposits drawn only off-peak, peak deposits drawn in peak or off-peak,
+# everything left lapses at the end of the financial year. Energy in kWh at the meter.
+# Mirrored in packages/rulebooks/golden/up/settlement-cases.yaml (a test keeps them equal).
+rule: {file: up/settlement/UP-v1.yaml, row: 0}
+sources: [{id: solar, category: captive_generation}]
+cases:
+  - name: surplus banked after 8%, not drawable in peak, drawn off-peak
+    blocks:
+      - {month: 2026-04, slot: day, classes: [off_peak], load: 100, supply: {solar: 150}}
+      - {month: 2026-04, slot: evening, classes: [peak], load: 80, supply: {}}
+      - {month: 2026-04, slot: night, classes: [off_peak], load: 60, supply: {}}
+      - {month: 2026-05, slot: night, classes: [off_peak], load: 1, supply: {}}
+    expect: {grid: 95, withdrawn: 46, banked: 46, charge: 4, lapsed: 0, setoff: {solar: 100}}
+  - name: carry-over capped at the higher ceiling, the rest lapses
+    # April: injected surplus 200 (charge 16, banked 184); DISCOM draw 100. Ceiling = max(25% × 200, 30% × 100) = 50:
+    # 134 lapse at April's end, 50 carry into May and are drawn there.
+    blocks:
+      - {month: 2026-04, slot: day, classes: [off_peak], load: 10, supply: {solar: 210}}
+      - {month: 2026-04, slot: evening, classes: [peak], load: 100, supply: {}}
+      - {month: 2026-05, slot: night, classes: [off_peak], load: 70, supply: {}}
+    expect: {grid: 120, withdrawn: 50, banked: 184, charge: 16, lapsed: 134}
+  - name: peak deposits are drawable off-peak and in peak; the rest lapses at the end
+    blocks:
+      - {month: 2027-03, slot: evening, classes: [peak], load: 0, supply: {solar: 100}}
+      - {month: 2027-03, slot: night, classes: [off_peak], load: 50, supply: {}}
+      - {month: 2027-03, slot: evening, classes: [peak], load: 30, supply: {}}
+    expect: {grid: 0, withdrawn: 80, banked: 92, charge: 8, lapsed: 12}
+  - name: financial year end lapses everything even under the ceiling
+    blocks:
+      - {month: 2027-03, slot: day, classes: [off_peak], load: 0, supply: {solar: 50}}
+      - {month: 2027-04, slot: day, classes: [off_peak], load: 40, supply: {}}
+    expect: {grid: 40, withdrawn: 0, banked: 46, charge: 4, lapsed: 46}

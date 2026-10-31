@@ -80,3 +80,14 @@ Dated entries. Every deviation from `docs/MASTER-PROMPT.md` is one.
 - **OA rule scopes corrected**: the UP ISTS loss (1.56%) applied to intra-state transactions in its approved scope; NPCL and UPPCL wheeling, distribution loss, CSS and additional surcharge were scoped to intra-state only although the orders apply them to all OA consumers using the distribution network. New versions approved through the gate with review notes.
 - **The six-consumer spreadsheets are drafted by the build agent** from the approved pages, computed by hand independently of the engine, and await jouleWise's approval (the master prompt asks the person to supply or approve them). Writing them caught one mis-read band in my own draft (132 kV is "above 66 up to 132 kV": CSS 0.33, not 0.14).
 - **CUF profiles (packages/profiles/cuf) are not created in Stage 4**: no capacity-based OA charge is approved in UP or Maharashtra yet, so scheduled energy enters only through the scenario's capacity and CUF; Stage 5 adds the curves it needs for settlement.
+
+## 1 Nov 2026 — Stage 5
+
+- **One settlement rule governs a consumer's bank**: the rule matching the first source; other sources whose scope it covers bank into it, the rest are netted without banking (their surplus is reported as sold or curtailed). Separate banks per scope come with the optimizer if a client mixes intra-state captive and ISTS third-party power under different rules.
+- **Aggregated netting (tod_slot_monthly, monthly, annual) is spread back to blocks**: consumption-side quantities (set-off credit, withdrawals, grid) by each block's load, supply-side quantities (set-off at source, deposits, charge, unbanked) by each block's injection. Both identities hold in every block; set-off is reported both ways (`setoff_kwh`, `setoff_at_source_kwh`).
+- **In aggregated netting, all of a month's deposits are made before any withdrawal** (the month is one settlement); in block and hourly netting the bank works in time order.
+- **The banking charge in kind is taken on deposit**; an INR/kWh charge does not reduce energy (it is a cost line for the optimizer).
+- **Carry-over ceiling** (UP CRE Reg. 12) is applied at each banking period's end from that period's injection and DISCOM drawal; FIFO lots; everything left lapses at the financial year's end.
+- **Slot classes**: blocks carry the DISCOM's slot name and the class a rule may use (`peak` = a slot with a ToD surcharge, `off_peak` otherwise), per the Stage 1 binding decision.
+- **Normative generation curves** (`packages/profiles/cuf`, UP and MH solar and wind) are assumptions scaled to an annual CUF, used until a developer's profile is supplied; the settle endpoint says so in its notes.
+- **Real OA settlement statements were not supplied** (`data/settlements/` is empty), so the "reproduce a year within 0.5%" check cannot run; recorded as a known gap.

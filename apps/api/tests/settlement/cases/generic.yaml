@@ -1,0 +1,51 @@
+# Granularities and banking fields on synthetic rules (inline bodies), hand-worked.
+cases:
+  - name: monthly aggregate nets the whole month, pooled bank, INR charge does not reduce energy
+    rule: {body: {granularity: monthly_aggregate, banking: {allowed: true, buckets: pooled, period: monthly, carry_over: true, charge: {kind: inr_per_kwh, value: "0.5"}}}}
+    sources: [{id: wind, category: bilateral}]
+    blocks:
+      - {month: 2026-04, slot: a, load: 100, supply: {wind: 30}}
+      - {month: 2026-04, slot: b, load: 0, supply: {wind: 120}}
+      - {month: 2026-05, slot: a, load: 50, supply: {}}
+      - {month: 2026-05, slot: b, load: 10, supply: {}}
+    expect: {grid: 10, withdrawn: 50, banked: 50, charge: 0, lapsed: 0}
+  - name: hourly netting adds the hour's four blocks
+    rule: {body: {granularity: hourly, banking: {allowed: false}}}
+    sources: [{id: s, category: captive_generation, surplus: curtail}]
+    blocks:
+      - {month: 2026-04, slot: a, load: 10, supply: {s: 0}, hour: 0}
+      - {month: 2026-04, slot: a, load: 10, supply: {s: 30}, hour: 0}
+      - {month: 2026-04, slot: a, load: 10, supply: {s: 0}, hour: 0}
+      - {month: 2026-04, slot: a, load: 10, supply: {s: 0}, hour: 0}
+      - {month: 2026-04, slot: a, load: 10, supply: {s: 0}, hour: 1}
+    expect: {grid: 20, withdrawn: 0, banked: 0, charge: 0, lapsed: 0, unbanked: 0, setoff: {s: 30}}
+  - name: annual netting carries across months
+    rule: {body: {granularity: annual, banking: {allowed: false}}}
+    sources: [{id: s, category: captive_generation}]
+    blocks:
+      - {month: 2026-04, slot: a, load: 10, supply: {s: 100}}
+      - {month: 2027-01, slot: a, load: 80, supply: {}}
+    expect: {grid: 0, withdrawn: 0, banked: 0, charge: 0, lapsed: 0, unbanked: 10, setoff: {s: 90}}
+  - name: set-off order puts captive before bilateral and exchange
+    rule: {body: {granularity: block_15min, banking: {allowed: false}, set_off_order: [captive_generation, banked_energy, bilateral, discom]}}
+    sources: [{id: iex, category: exchange}, {id: tp, category: bilateral}, {id: cap, category: captive_generation}]
+    blocks:
+      - {month: 2026-04, slot: a, load: 100, supply: {cap: 60, tp: 30, iex: 30}}
+    expect: {grid: 0, withdrawn: 0, banked: 0, charge: 0, lapsed: 0, unbanked: 20, setoff: {cap: 60, tp: 30, iex: 10}}
+  - name: quarterly period, carry-over capped at the higher of 10% of injection and 50% of DISCOM consumption
+    rule: {body: {granularity: block_15min, banking: {allowed: true, buckets: pooled, period: quarterly, carry_over: true, cap: {pct_of_injection: "10", pct_of_consumption: "50", combine: higher}}}}
+    sources: [{id: s, category: captive_generation}]
+    blocks:
+      - {month: 2026-04, slot: a, load: 0, supply: {s: 100}}
+      - {month: 2026-05, slot: a, load: 20, supply: {}}
+      - {month: 2026-06, slot: a, load: 0, supply: {s: 0}}
+      - {month: 2026-07, slot: a, load: 50, supply: {}}
+    expect: {grid: 40, withdrawn: 30, banked: 100, charge: 0, lapsed: 70}
+  - name: drawal window limited to some months
+    rule: {body: {granularity: block_15min, banking: {allowed: true, buckets: pooled, period: financial_year, carry_over: true, drawal_windows: [{allowed_slots: [a], months: [4, 5]}]}}}
+    sources: [{id: s, category: captive_generation}]
+    blocks:
+      - {month: 2026-04, slot: a, load: 0, supply: {s: 30}}
+      - {month: 2026-06, slot: a, load: 10, supply: {}}
+      - {month: 2026-05, slot: a, load: 10, supply: {}}
+    expect: {grid: 10, withdrawn: 10, banked: 30, charge: 0, lapsed: 20}

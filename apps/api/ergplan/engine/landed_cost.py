@@ -115,6 +115,7 @@ class Waterfall:
     gaps: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
     rules_used: list[str] = field(default_factory=list)
+    delivered: SourcedValue | None = None  # share of injected energy that reaches the meter (after losses)
 
     def coefficient(self) -> tuple[Decimal, Decimal]:
         """total = a × P + b: the price multiplier and the price-independent rest (for block series)."""
@@ -272,6 +273,9 @@ def evaluate(
         keep *= 1 - loss.value / HUNDRED
         loss_inputs.append(loss)
         used.append(r.id)
+    delivered = (
+        derive(keep, Unit.RATIO, loss_inputs, label="Delivered share after losses") if loss_inputs else None
+    )
     if loss_inputs:
         base = sum((x.value for x in [sc.price, *injection]), Decimal(0))
         gross = 1 / keep - 1
@@ -379,6 +383,7 @@ def evaluate(
         spec.id, spec.label, lines, total, list(dict.fromkeys(gaps)), notes, list(dict.fromkeys(used))
     )
     wf._a = a
+    wf.delivered = delivered
     return wf
 
 

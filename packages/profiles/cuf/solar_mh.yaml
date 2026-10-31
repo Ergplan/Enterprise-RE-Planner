@@ -1,0 +1,7 @@
+id: solar_mh
+source: solar
+state: MH
+note: Fixed-tilt utility solar in Maharashtra (Marathwada, Vidarbha); monsoon dip June–September.
+annual_cuf_pct: "21"
+monthly: {1: 1.05, 2: 1.10, 3: 1.15, 4: 1.15, 5: 1.10, 6: 0.90, 7: 0.75, 8: 0.75, 9: 0.85, 10: 1.05, 11: 1.05, 12: 1.05}
+hourly: {6: 0.04, 7: 0.22, 8: 0.48, 9: 0.74, 10: 0.92, 11: 1.0, 12: 1.0, 13: 0.97, 14: 0.88, 15: 0.70, 16: 0.45, 17: 0.18, 18: 0.04}

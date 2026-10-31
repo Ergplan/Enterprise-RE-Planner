@@ -111,3 +111,10 @@ a.eg-btn { text-decoration: none; }
 .ep-compare__grid { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
 .ep-seglink { display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: var(--radius-pill); color: var(--ink-muted); text-decoration: none; font-size: 12px; }
 .ep-seglink[aria-current="true"] { background: var(--glass-strong); color: var(--ink); }
+
+/* Stage 5: settlement explorer */
+.ep-stack { display: flex; height: 12px; width: 260px; background: var(--surface-2); border-radius: var(--radius-pill); overflow: hidden; }
+.ep-stack__a { background: var(--accent); }
+.ep-stack__b { background: var(--warning); }
+.ep-stack__c { background: var(--ink-faint); }
+.ep-key { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin: 0 4px 0 10px; vertical-align: middle; }

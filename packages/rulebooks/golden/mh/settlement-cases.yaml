@@ -1,0 +1,30 @@
+# Hand-worked settlement cases for the approved MSEDCL rule (MERC Case 75/2025 pp. 77-79, Regulation 20.3 of the DOA
+# Regulations; packages/rulebooks/states/mh/settlement): net within each ToD slot across the month; surplus banked per
+# slot without carry-over; normal deposits drawable in normal and solar, solar only in solar, peak in all slots.
+# Mirrored in packages/rulebooks/golden/mh/settlement-cases.yaml.
+rule: {file: mh/settlement/msedcl-v2.yaml, row: 0}
+sources: [{id: re, category: captive_generation}]
+cases:
+  - name: solar surplus cannot serve normal or peak and lapses at month end
+    blocks:
+      - {month: 2026-05, slot: solar, load: 50, supply: {re: 200}}
+      - {month: 2026-05, slot: solar, load: 50, supply: {re: 100}}
+      - {month: 2026-05, slot: normal, load: 120, supply: {}}
+      - {month: 2026-05, slot: peak, load: 80, supply: {}}
+    expect: {grid: 200, withdrawn: 0, banked: 200, charge: 0, lapsed: 200, setoff: {re: 100}}
+  - name: normal surplus serves the solar slot's deficit
+    blocks:
+      - {month: 2026-05, slot: normal, load: 0, supply: {re: 100}}
+      - {month: 2026-05, slot: solar, load: 150, supply: {re: 50}}
+    expect: {grid: 0, withdrawn: 100, banked: 100, charge: 0, lapsed: 0}
+  - name: peak surplus serves every slot
+    blocks:
+      - {month: 2026-05, slot: peak, load: 10, supply: {re: 70}}
+      - {month: 2026-05, slot: normal, load: 25, supply: {}}
+      - {month: 2026-05, slot: solar, load: 25, supply: {}}
+    expect: {grid: 0, withdrawn: 50, banked: 60, charge: 0, lapsed: 10}
+  - name: no carry-over into the next month
+    blocks:
+      - {month: 2026-05, slot: peak, load: 0, supply: {re: 40}}
+      - {month: 2026-06, slot: peak, load: 40, supply: {}}
+    expect: {grid: 40, withdrawn: 0, banked: 40, charge: 0, lapsed: 40}
