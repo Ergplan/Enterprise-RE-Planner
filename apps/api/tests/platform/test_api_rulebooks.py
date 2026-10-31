@@ -204,3 +204,27 @@ def test_families_and_locate_errors() -> None:
     ).json()
     hits = client.get(f"/regreader/locate/{d['id']}?topic=banking").json()["pages"]
     assert [h["page"] for h in hits] == [2, 3]
+
+
+def test_regreader_direct_error_branches(monkeypatch: pytest.MonkeyPatch) -> None:
+    from ergplan.providers.openai_client import NoModelConfigured, ProviderError
+
+    pdf = make_pdf([["Energy Charges Rs. 7.10 / kVAh"]])
+    d = client.post(
+        "/documents", files={"file": ("e.pdf", pdf, "application/pdf")}, data={"title": "E"}
+    ).json()
+    body = {"document_id": d["id"], "family": "tariff_schedule", "jurisdiction_id": "npcl", "pages": [1]}
+
+    def no_key(**kw: Any) -> CallResult:
+        raise NoModelConfigured("OPENAI_API_KEY is not set")
+
+    def failed(**kw: Any) -> CallResult:
+        raise ProviderError("model call failed: RateLimitError")
+
+    monkeypatch.setattr(direct, "call_json", no_key)
+    assert client.post("/regreader/direct", headers=AN, json=body).status_code == 503
+    monkeypatch.setattr(direct, "call_json", failed)
+    assert client.post("/regreader/direct", headers=AN, json=body).status_code == 502
+    assert (
+        client.post("/regreader/direct", headers=AN, json={**body, "document_id": "nope"}).status_code == 404
+    )
