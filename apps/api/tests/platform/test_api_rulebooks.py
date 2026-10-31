@@ -196,3 +196,11 @@ def test_families_and_locate_errors() -> None:
     assert set(fams) >= {"tariff_schedule", "tod_slots", "oa_charge", "settlement"}
     assert "energy_charge" in fams["tariff_schedule"]["properties"]["body"]["properties"]
     assert client.get("/regreader/locate/nope?topic=banking").status_code == 404
+    pdf = make_pdf(
+        [["intro"], ["Banking of energy shall be allowed. Banking charges 8%"], ["Banked energy lapses"]]
+    )
+    d = client.post(
+        "/documents", files={"file": ("b.pdf", pdf, "application/pdf")}, data={"title": "Banking"}
+    ).json()
+    hits = client.get(f"/regreader/locate/{d['id']}?topic=banking").json()["pages"]
+    assert [h["page"] for h in hits] == [2, 3]

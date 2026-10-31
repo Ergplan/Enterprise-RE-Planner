@@ -95,7 +95,7 @@ def numbers_in(value: Any) -> list[str]:
 
 def _forms(n: str) -> set[str]:
     """'300' is printed as '300', '300.00' or '300.0'; '1,23,456' as itself or '123456'."""
-    plain = n.replace(",", "")
+    plain = n.replace(",", "").lstrip("-+")  # signs are printed as words or brackets: compare magnitudes
     forms = {n, plain}
     if "." in plain:
         whole, frac = plain.split(".", 1)

@@ -46,3 +46,11 @@ def test_ocr_interleaved_columns() -> None:
     assert quote_on_page("Banking of energy subject to a maximum ceiling of 25% of", page, ocr=True)
     assert not quote_on_page("Banking of energy subject to a maximum ceiling of 25% of", page, ocr=False)
     assert not quote_on_page("Banking of energy subject to a maximum ceiling of 35% of", page, ocr=True)
+
+
+def test_negative_values_are_checked_by_magnitude() -> None:
+    assert ungrounded_numbers({"rate_delta": "-15"}, ["07:00 hrs - 16:00 hrs (-) 15%"]) == []
+    assert (
+        ungrounded_numbers({"rate_delta": "-16"}, ["07:00 hrs - 16:00 hrs (-) 15%"]) == []
+    )  # 16 is on the page
+    assert ungrounded_numbers({"rate_delta": "-17"}, ["07:00 hrs - 16:00 hrs (-) 15%"]) == ["-17"]

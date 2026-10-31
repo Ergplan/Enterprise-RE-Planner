@@ -7,7 +7,19 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import JSON, BigInteger, CheckConstraint, Date, DateTime, Integer, Numeric, String, Text, func
+from sqlalchemy import (
+    JSON,
+    BigInteger,
+    CheckConstraint,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    Text,
+    func,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -117,7 +129,9 @@ class Rule(Base):
     __tablename__ = "rules"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
-    rulebook_version_id: Mapped[str] = mapped_column(String(36), index=True)
+    rulebook_version_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("rulebook_versions.id", name="rules_version_fk"), index=True
+    )
     family: Mapped[str] = mapped_column(String(32))
     position: Mapped[int] = mapped_column(Integer, default=0)
     label: Mapped[str | None] = mapped_column(Text)
@@ -148,8 +162,12 @@ class RuleTestRun(Base):
     __tablename__ = "rule_test_runs"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
-    rulebook_version_id: Mapped[str] = mapped_column(String(36), index=True)
-    test_id: Mapped[str] = mapped_column(String(36))
+    rulebook_version_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("rulebook_versions.id", name="rule_test_runs_version_fk"), index=True
+    )
+    test_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("rule_tests.id", name="rule_test_runs_test_fk", ondelete="CASCADE")
+    )
     passed: Mapped[bool] = mapped_column()
     actual: Mapped[dict[str, Any] | None] = mapped_column(JSONType)
     ran_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
