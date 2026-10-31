@@ -943,7 +943,7 @@ def execute(run_id: str) -> str:
                 for mo, row in rs.by_month.items()
             },
             "solver_objective_inr": str(Decimal(f"{sol.objective:.2f}")),
-            "resettled_cost_inr": summary["annual"]["after"]["value"],
+            "resettled_cost_inr": str(Decimal(summary["annual"]["after"]["value"]).quantize(INR)),
         }
         with session_scope(actor=WORKER) as s:
             run = s.get(Run, run_id)

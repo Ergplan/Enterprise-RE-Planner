@@ -241,7 +241,8 @@ def read(m: Any, p: Problem) -> Solution:
 
 
 def read_settlement(m: Any, p: Problem) -> dict[date, dict[str, float]]:
-    """The solver's settlement per month, from a settlement-pass model."""
+    """The solver's settlement per month, from a settlement-pass model. Used only to compare with the
+    judge (optimizer.resettle); every cost anyone sees comes from settlement.simulate()."""
     net: Netting = m.netting
     # the solver's settlement per month
     settled: dict[date, dict[str, float]] = defaultdict(

@@ -129,6 +129,19 @@ def test_run_replay_dispatch_and_audit(mh_site: tuple[str, str]) -> None:
         "oa_hybrid_intra price +10% (sizes held)",
     ]
     assert s["provenance"]["load_profile"].endswith("(synthesised)")
+
+    # every SourcedValue anywhere in the summary carries at least one ref (invariant 1)
+    def walk(x: Any) -> int:
+        if isinstance(x, dict):
+            if "value" in x and "unit" in x and "source_refs" in x:
+                assert x["source_refs"], x
+                return 1
+            return sum(walk(v) for v in x.values())
+        if isinstance(x, list):
+            return sum(walk(v) for v in x)
+        return 0
+
+    assert walk(s) > 20
     # client view: same summary, no analyst block
     c = client.get(f"/runs/{run['id']}", headers=CL).json()
     assert c["analyst"] is None and c["summary"]["annual"] == s["annual"]
@@ -211,3 +224,24 @@ def test_up_site_runs_with_banking(up_site: tuple[str, str]) -> None:
     s = run["summary"]
     assert "Renewable captive" in (s["settlement"]["rule"] or "")
     assert run["analyst"]["resettle"]["max_diff_kwh"] == "0.000"
+
+
+def test_pinned_rules_never_return_a_draft(mh_site: tuple[str, str]) -> None:
+    """Replay reads pinned versions only if they are approved or superseded, never a draft."""
+    from datetime import date
+
+    from ergplan.rulebook import repository
+
+    with session_scope(actor="analyst@joulewise.in", role="analyst") as s:
+        v = s.scalars(
+            select(RulebookVersion).where(
+                RulebookVersion.family == "tariff_schedule", RulebookVersion.jurisdiction_id == "msedcl"
+            )
+        ).first()
+        assert v is not None
+        draft = service.duplicate(s, v.id, actor="analyst@joulewise.in")
+        on = date(2026, 6, 1)
+        got = repository.pinned_rules(s, "tariff_schedule", ["msedcl"], on, [draft.id, v.id])
+        assert got and {r.version_id for r in got} == {v.id}
+        reader = repository.Reader()
+        assert all(r.version_id != draft.id for r in reader(s, "tariff_schedule", ["msedcl"], on))
