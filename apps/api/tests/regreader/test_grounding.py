@@ -1,4 +1,4 @@
-from ergplan.regreader.grounding import numbers_in, quote_on_page, ungrounded_numbers
+from ergplan.regreader.grounding import numbers_in, quote_on_page, semantic_numbers, ungrounded_numbers
 
 PAGE = """BASE RATE
 Demand Charges Rs. 300.00 / kVA /
@@ -28,3 +28,14 @@ def test_numbers_must_be_printed() -> None:
     assert ungrounded_numbers(body, [PAGE]) == []
     assert ungrounded_numbers({"energy_charge": {"base": "7.15"}}, [PAGE]) == ["7.15"]
     assert numbers_in({"a": ["1", {"b": "2.5 kV"}], "c": 3, "category": "HV-2"}) == ["1", "3"]
+
+
+def test_semantic_zero_and_waiver() -> None:
+    page = "the Commission hereby approves the additional surcharge as zero. Wheeling shall not be payable if ..."
+    assert ungrounded_numbers(semantic_numbers({"value": "0"}, [page]), [page]) == []
+    assert ungrounded_numbers(
+        semantic_numbers({"value": "0"}, ["approved as 1.20"]), ["approved as 1.20"]
+    ) == ["0"]
+    body = {"value": "1.03", "exemptions": [{"condition": "other", "waived_pct": "100"}]}
+    assert ungrounded_numbers(semantic_numbers(body, [page + " 1.03"]), [page + " 1.03"]) == []
+    assert ungrounded_numbers(semantic_numbers({"value": "0.00"}, ["value 5"]), ["value 5"]) == ["0.00"]

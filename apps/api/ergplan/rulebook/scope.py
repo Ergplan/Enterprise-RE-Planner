@@ -23,6 +23,15 @@ def norm_code(text: str) -> str:
     return re.sub(r"[^A-Z0-9]", "", text.upper())
 
 
+_FILLER = {"a", "b", "c", "schedule", "the", "for", "of", "months", "month"}
+
+
+def _words(text: str) -> set[str]:
+    """'(A) Urban Schedule:' → {'urban'}; 'Summer Months (April to September)' →
+    {'summer', 'april', 'to', 'september'}."""
+    return {w for w in re.findall(r"[a-z0-9]+", text.lower()) if w not in _FILLER}
+
+
 def _in_band(value: Any, band: Mapping[str, Any]) -> bool:
     v = Decimal(str(value))
     if "min" in band:
@@ -75,7 +84,8 @@ def matches(scope: Mapping[str, Any], ctx: Mapping[str, Any]) -> bool:
             if norm_code(str(v)) not in {norm_code(str(a)) for a in allowed}:
                 return False
         elif key in ("season", "rate_block"):
-            if str(v).strip().lower() != str(allowed).strip().lower():
+            a, b = _words(str(allowed)), _words(str(v))
+            if not (a and b and (a <= b or b <= a)):
                 return False
         else:
             return False  # an unknown scope key never matches silently

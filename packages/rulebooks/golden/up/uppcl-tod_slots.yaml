@@ -1,0 +1,10 @@
+# UPERC State DISCOMs Tariff Order FY 2026-27, HV-2 TOD Structure and Rates, PDF page 446 (read from the text layer).
+jurisdiction: uppcl
+family: tod_slots
+tests:
+  - {name: "one summer row in June", given: {context: {category: HV-2, month: 6}}, expect: {count: 1}}
+  - {name: "summer 05:00-10:00 rebate 15%", given: {context: {category: HV-2, month: 6}, field: /slots/0/rebate_pct}, expect: {value: "15"}}
+  - {name: "summer 19:00-03:00 starts 19:00", given: {context: {category: HV-2, month: 6}, field: /slots/2/start}, expect: {value: "19:00"}}
+  - {name: "summer 19:00-03:00 +15%", given: {context: {category: HV-2, month: 8}, field: /slots/2/surcharge_pct}, expect: {value: "15"}}
+  - {name: "winter 17:00-23:00 +15%", given: {context: {category: HV-2, month: 11}, field: /slots/2/surcharge_pct}, expect: {value: "15"}}
+  - {name: "winter 23:00-05:00 rebate 15%", given: {context: {category: HV-2, month: 11}, field: /slots/3/rebate_pct}, expect: {value: "15"}}

@@ -14,7 +14,7 @@ from ..db.models import SourceDocument
 from ..documents import service as documents
 from ..providers.openai_client import CallResult, call_json
 from ..rulebook.schemas import family_schema, validate_row
-from .grounding import quote_on_page, ungrounded_numbers
+from .grounding import quote_on_page, semantic_numbers, ungrounded_numbers
 
 PAGES_PER_CALL = 4
 PROMPT_VERSION = 2
@@ -83,7 +83,7 @@ def check_row(
         cited_texts.append(pages[fp])
         field_refs[pointer] = {"kind": "order", "document_id": doc.id, "page": fp, "quote": fqt[:400]}
     body = cand.get("body") or {}
-    missing = ungrounded_numbers(body, cited_texts)
+    missing = ungrounded_numbers(semantic_numbers(body, cited_texts), cited_texts)
     if missing:
         reasons.append(f"numbers not printed on the cited pages: {', '.join(missing)}")
     ref: dict[str, Any] = {"kind": "order", "document_id": doc.id, "page": page, "quote": quote[:400]}

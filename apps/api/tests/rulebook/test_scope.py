@@ -35,3 +35,10 @@ def test_sources_lists_months_and_dates() -> None:
 
 def test_unknown_scope_key_never_matches() -> None:
     assert not matches({"planet": ["mars"]}, {"planet": "mars"})
+
+
+def test_rate_block_and_season_match_on_words() -> None:
+    assert matches({"rate_block": "(A) Urban Schedule:"}, {"rate_block": "urban"})
+    assert matches({"rate_block": "Urban Schedule"}, {"rate_block": "Urban"})
+    assert not matches({"rate_block": "(B) Rural Schedule"}, {"rate_block": "urban"})
+    assert matches({"season": "Summer Months (April to September)"}, {"season": "summer"})

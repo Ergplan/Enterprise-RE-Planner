@@ -10,6 +10,7 @@ Files: packages/rulebooks/golden/<state>/<jurisdiction>-<family>.yaml
         expect: {value: "8.32"}
         source_ref: {kind: order, document: <sha256 prefix or id>, page: 384, quote: "..."}
 
+`given.where` optionally filters rows on body fields ({/component: cross_subsidy_surcharge}).
 `expect` is one of {value: "..."} (one row applies and its field equals it, compared as decimals
 when both are numbers), {absent: true} (no row applies), {count: n} (n rows apply).
 """
@@ -117,7 +118,11 @@ def evaluate(
     rows: list[RuleView], given: dict[str, Any], expect: dict[str, Any]
 ) -> tuple[bool, dict[str, Any]]:
     ctx = given.get("context", {})
-    hits = sorted((r for r in rows if matches(r.scope, ctx)), key=lambda r: -specificity(r.scope))
+    where = given.get("where", {})
+    hits = sorted(
+        (r for r in rows if matches(r.scope, ctx) and all(_equal(r.get(k), v) for k, v in where.items())),
+        key=lambda r: -specificity(r.scope),
+    )
     if "absent" in expect:
         return (not hits) == bool(expect["absent"]), {"count": len(hits)}
     if "count" in expect:

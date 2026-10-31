@@ -1,0 +1,100 @@
+family: tod_slots
+jurisdiction: npcl
+version: 1
+status: approved
+title: NPCL Tariff Order FY 2026-27 (Petition 2330/2025) · pages 388–388
+effective_from: '2026-07-02'
+effective_to: null
+origin: regreader_direct
+approved_by: build-agent@ergplan
+rows:
+- label: HV-2 · Summer ToD slots
+  scope:
+    months:
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    category:
+    - HV-2
+  body:
+    slots:
+    - end: 02:00
+      name: 19:00 hrs – 02:00 hrs
+      start: '19:00'
+      surcharge_pct: '15'
+    - end: 07:00
+      name: 02:00 hrs – 07:00 hrs
+      start: 02:00
+    - end: '16:00'
+      name: 07:00 hrs – 16:00 hrs
+      start: 07:00
+      rebate_pct: '15'
+    - end: '19:00'
+      name: 16:00 hrs – 19:00 hrs
+      start: '16:00'
+    season_note: Summer Months (April to September)
+  source_ref:
+    kind: order
+    page: 388
+    quote: |-
+      TOD Structure and Rates:
+      Summer Months (April to September)
+      Hours % of Energy Charges
+      19:00 hrs – 02:00 hrs (+) 15%
+      02:00 hrs – 07:00 hrs 0
+      07:00 hrs – 16:00 hrs (-) 15%
+      16:00 hrs – 19:00 hrs 0
+    document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    effective_from: '2026-07-02'
+- label: HV-2 · Winter ToD slots
+  scope:
+    months:
+    - 1
+    - 2
+    - 3
+    - 10
+    - 11
+    - 12
+    category:
+    - HV-2
+  body:
+    slots:
+    - end: 04:00
+      name: 22:00 hrs – 04:00 hrs
+      start: '22:00'
+      rebate_pct: '15'
+    - end: 06:00
+      name: 04:00 hrs – 06:00 hrs
+      start: 04:00
+    - end: '10:00'
+      name: 06:00 hrs – 10:00 hrs
+      start: 06:00
+      surcharge_pct: '15'
+    - end: '17:00'
+      name: 10:00 hrs – 17:00 hrs
+      start: '10:00'
+    - end: '19:00'
+      name: 17:00 hrs – 19:00 hrs
+      start: '17:00'
+      surcharge_pct: '15'
+    - end: '22:00'
+      name: 19:00 hrs – 22:00 hrs
+      start: '19:00'
+    season_note: Winter Months (October to March)
+  source_ref:
+    kind: order
+    page: 388
+    quote: |-
+      Winter Months (October to March)
+      Hours % of Energy Charges
+      22:00 hrs – 04:00 hrs (-)15%
+      04:00 hrs – 06:00 hrs 0
+      06:00 hrs – 10:00 hrs (+) 15%
+      10:00 hrs – 17:00 hrs 0
+      17:00 hrs – 19:00 hrs (+)15%
+      19:00 hrs – 22:00 hrs 0
+    document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    effective_from: '2026-07-02'

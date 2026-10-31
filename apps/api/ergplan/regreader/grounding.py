@@ -98,3 +98,32 @@ def ungrounded_numbers(body: dict[str, Any], page_texts: Iterable[str]) -> list[
         if not (_forms(n) & printed):
             missing.append(n)
     return sorted(set(missing))
+
+
+_ZERO_WORDS = re.compile(r"\b(zero|nil)\b", re.I)
+_WAIVED_WORDS = re.compile(
+    r"not\s+be\s+payable|shall\s+not\s+be\s+(levied|payable|applicable)|not\s+required\s+to\s+pay|exempt|waive",
+    re.I,
+)
+
+
+def semantic_numbers(body: dict[str, Any], page_texts: Iterable[str]) -> dict[str, Any]:
+    """A copy of the body without the numbers that stand for printed words: a value of 0 where the
+    page says 'zero' or 'nil', and an exemption's waived_pct of 100 where the page says the charge
+    is not payable, exempt or waived. Everything else must still be printed as a number."""
+    text = " ".join(page_texts)
+    out = dict(body)
+    if "value" in out and str(out["value"]).strip() in {"0", "0.0", "0.00"} and _ZERO_WORDS.search(text):
+        out.pop("value")
+    if isinstance(out.get("exemptions"), list) and _WAIVED_WORDS.search(text):
+        out["exemptions"] = [
+            {
+                k: v
+                for k, v in e.items()
+                if not (k == "waived_pct" and str(v).strip() in {"100", "100.0", "100.00"})
+            }
+            if isinstance(e, dict)
+            else e
+            for e in out["exemptions"]
+        ]
+    return out

@@ -1,0 +1,11 @@
+# UPERC NPCL Tariff Order FY 2026-27, HV-2 TOD Structure and Rates, PDF page 388 (read from the text layer).
+jurisdiction: npcl
+family: tod_slots
+tests:
+  - {name: "one summer row in May", given: {context: {category: HV-2, month: 5}}, expect: {count: 1}}
+  - {name: "summer 19:00 starts the peak", given: {context: {category: HV-2, month: 5}, field: /slots/0/start}, expect: {value: "19:00"}}
+  - {name: "summer peak +15%", given: {context: {category: HV-2, month: 5}, field: /slots/0/surcharge_pct}, expect: {value: "15"}}
+  - {name: "summer 07:00-16:00 rebate 15%", given: {context: {category: HV-2, month: 7}, field: /slots/2/rebate_pct}, expect: {value: "15"}}
+  - {name: "winter 22:00-04:00 rebate 15%", given: {context: {category: HV-2, month: 12}, field: /slots/0/rebate_pct}, expect: {value: "15"}}
+  - {name: "winter 06:00-10:00 +15%", given: {context: {category: HV-2, month: 1}, field: /slots/2/surcharge_pct}, expect: {value: "15"}}
+  - {name: "winter 17:00-19:00 +15%", given: {context: {category: HV-2, month: 2}, field: /slots/4/start}, expect: {value: "17:00"}}

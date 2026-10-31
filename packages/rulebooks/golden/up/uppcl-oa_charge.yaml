@@ -1,0 +1,14 @@
+# UPERC State DISCOMs Tariff Order FY 2026-27: wheeling Table 10-3 (p. 379), OA distribution losses Table 10-11
+# and para 10.4.11 (p. 384), CSS Table 10-14 column D 'Approved' (p. 386). Read from the text layer.
+jurisdiction: uppcl
+family: oa_charge
+tests:
+  - {name: "average wheeling 0.9318", given: {context: {connection: intra_state}, where: {/component: wheeling}, field: /value}, expect: {value: "0.9318"}}
+  - {name: "distribution loss below 11 kV 13.07%", given: {context: {connection: intra_state, voltage_kv: 0.4}, where: {/component: wheeling_losses}, field: /value}, expect: {value: "13.07"}}
+  - {name: "distribution loss at 11 kV 8%", given: {context: {connection: intra_state, voltage_kv: 11}, where: {/component: wheeling_losses}, field: /value}, expect: {value: "8.00"}}
+  - {name: "distribution loss at 33 kV 3%", given: {context: {connection: intra_state, voltage_kv: 33}, where: {/component: wheeling_losses}, field: /value}, expect: {value: "3.00"}}
+  - {name: "distribution loss at 132 kV 1%", given: {context: {connection: intra_state, voltage_kv: 132}, where: {/component: wheeling_losses}, field: /value}, expect: {value: "1.00"}}
+  - {name: "CSS HV-2 at 11 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 11}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.38"}}
+  - {name: "CSS HV-2 at 33 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 33}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.49"}}
+  - {name: "CSS HV-2 at 132 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 132}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.33"}}
+  - {name: "CSS HV-2 at 220 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 220}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.14"}}

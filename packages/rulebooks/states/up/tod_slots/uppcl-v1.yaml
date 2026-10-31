@@ -1,0 +1,91 @@
+family: tod_slots
+jurisdiction: uppcl
+version: 1
+status: approved
+title: State DISCOMs Tariff Order FY 2026-27 (PVVNL, MVVNL, PuVVNL, DVVNL, KESCO) · pages 446–446
+effective_from: '2026-07-02'
+effective_to: null
+origin: regreader_direct
+approved_by: build-agent@ergplan
+rows:
+- label: HV-2 · Summer ToD (April to September)
+  scope:
+    months:
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    category:
+    - HV-2
+  body:
+    slots:
+    - end: '10:00'
+      name: 05:00 hrs – 10:00 hrs
+      start: 05:00
+      rebate_pct: '15'
+    - end: '19:00'
+      name: 10:00 hrs – 19:00 hrs
+      start: '10:00'
+    - end: 03:00
+      name: 19:00 hrs – 03:00 hrs
+      start: '19:00'
+      surcharge_pct: '15'
+    - end: 05:00
+      name: 03:00 hrs – 05:00 hrs
+      start: 03:00
+    season_note: Summer Months (April to September)
+  source_ref:
+    kind: order
+    page: 446
+    quote: |-
+      TOD Structure and Rates:
+      Summer Months (April to September)
+      Hours % of Energy Charges
+      05:00 hrs – 10:00 hrs (-) 15%
+      10:00 hrs – 19:00 hrs 0%
+      19:00 hrs – 03:00 hrs (+) 15%
+      03:00 hrs – 05:00 hrs 0%
+    document_id: e071ac95-048e-58dc-a9da-b2e59365f106
+    effective_from: '2026-07-02'
+- label: HV-2 · Winter ToD (October to March)
+  scope:
+    months:
+    - 1
+    - 2
+    - 3
+    - 10
+    - 11
+    - 12
+    category:
+    - HV-2
+  body:
+    slots:
+    - end: '11:00'
+      name: 05:00 hrs – 11:00 hrs
+      start: 05:00
+    - end: '17:00'
+      name: 11:00 hrs – 17:00 hrs
+      start: '11:00'
+    - end: '23:00'
+      name: 17:00 hrs – 23:00 hrs
+      start: '17:00'
+      surcharge_pct: '15'
+    - end: 05:00
+      name: 23:00 hrs – 05:00 hrs
+      start: '23:00'
+      rebate_pct: '15'
+    season_note: Winter Months (October to March)
+  source_ref:
+    kind: order
+    page: 446
+    quote: |-
+      Winter Months (October to March)
+      Hours % of Energy Charges
+      05:00 hrs – 11:00 hrs 0%
+      11:00 hrs – 17:00 hrs 0%
+      17:00 hrs – 23:00 hrs (+) 15%
+      23:00 hrs – 05:00 hrs (-) 15%
+    document_id: e071ac95-048e-58dc-a9da-b2e59365f106
+    effective_from: '2026-07-02'

@@ -1,0 +1,131 @@
+family: oa_charge
+jurisdiction: npcl
+version: 2
+status: approved
+title: NPCL Tariff Order FY 2026-27 (Petition 2330/2025) · pages 315–323
+effective_from: '2026-07-02'
+effective_to: null
+origin: regreader_direct
+approved_by: build-agent@ergplan
+rows:
+- label: Average wheeling charge · all open access consumers
+  scope:
+    connection:
+    - intra_state
+  body:
+    basis: inr_per_kwh
+    value: '1.03'
+    component: wheeling
+    exemptions:
+    - note: Embedded Open Access customers who are already liable for payment of Demand Charges will not be required to pay
+        any wheeling charges to the Distribution Licensee.
+      sunset: null
+      condition: other
+      waived_pct: '100'
+    - note: Open Access consumers directly connected to the transmission network are exempt from wheeling charges as wheeling
+        charges are applicable only when the distribution system is used.
+      sunset: null
+      condition: other
+      waived_pct: '100'
+  source_ref:
+    kind: order
+    page: 315
+    quote: TABLE 9-5 WHEELING CHARGES AS APPROVED BY THE COMMISSION FOR FY 2026-27 ... Average Wheeling Charges Rs./kWh 1.03
+      ... open access consumers who are already paying demand charge need not to pay any wheeling charges ... If an Open Access
+      consumer is directly connected to the transmission network, levying wheeling charges is unjustified.
+    document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    effective_from: '2026-07-02'
+- label: CSS · HV-2 · supply at 11 kV
+  scope:
+    category:
+    - HV-2
+    connection:
+    - intra_state
+    voltage_kv:
+      max: 11
+      min: 11
+  body:
+    basis: inr_per_kwh
+    value: '0.57'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 321
+    quote: TABLE 9-14 CSS AS APPROVED BY THE COMMISSION FOR FY 2026-27 (RS. /KWH) ... HV-2 Supply at 11 kV 0.57 0.03 0.66
+      0.57
+    document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    effective_from: '2026-07-02'
+- label: CSS · HV-2 · supply above 11 kV up to 66 kV
+  scope:
+    category:
+    - HV-2
+    connection:
+    - intra_state
+    voltage_kv:
+      max: 66
+      min: 11
+      min_exclusive: true
+  body:
+    basis: inr_per_kwh
+    value: '0.51'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 321
+    quote: HV-2 Supply at 11 kV up to 66 kV 0.59 - 0.51 0.51
+    document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    effective_from: '2026-07-02'
+- label: CSS · HV-2 · supply above 66 kV and below 132 kV
+  scope:
+    category:
+    - HV-2
+    connection:
+    - intra_state
+    voltage_kv:
+      max: 132
+      min: 66
+      max_exclusive: true
+      min_exclusive: true
+  body:
+    basis: inr_per_kwh
+    value: '0.36'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 321
+    quote: HV-2 Supply at 66 kV up to 132 kV 0.36 - 0.81 0.36
+    document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    effective_from: '2026-07-02'
+- label: CSS · HV-2 · supply at 132 kV and above
+  scope:
+    category:
+    - HV-2
+    connection:
+    - intra_state
+    voltage_kv:
+      min: 132
+  body:
+    basis: inr_per_kwh
+    value: '0.36'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 321
+    quote: HV-2 Supply at 132 kV# 0.36 0.53 0.81 0.36
+    document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    effective_from: '2026-07-02'
+- label: Additional surcharge · all open access consumers
+  scope:
+    connection:
+    - intra_state
+  body:
+    basis: inr_per_kwh
+    value: '0'
+    component: additional_surcharge
+  source_ref:
+    kind: order
+    page: 323
+    quote: 9.4.7. The Commission observes that the Petitioner has not claimed any additional surcharge ... Therefore, the
+      Commission hereby approves the additional surcharge as zero.
+    document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    effective_from: '2026-07-02'

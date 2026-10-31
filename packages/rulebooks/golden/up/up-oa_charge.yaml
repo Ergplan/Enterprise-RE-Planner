@@ -1,0 +1,9 @@
+# State-wide open-access charges for Uttar Pradesh as stated in the UPERC State DISCOMs Tariff Order FY 2026-27:
+# intra-state transmission charge Rs 0.3075/kWh (para 10.2.1, p. 377, from the UPPTCL order of 15 Apr 2026);
+# inter-state transmission loss 1.56% and intra-state transmission loss 3.18% (para 10.4.11, p. 384).
+jurisdiction: UP
+family: oa_charge
+tests:
+  - {name: "intra-state transmission 0.3075", given: {context: {connection: intra_state}, where: {/component: stu_transmission}, field: /value}, expect: {value: "0.3075"}}
+  - {name: "ISTS loss 1.56%", given: {context: {connection: ists}, where: {/component: ists_losses}, field: /value}, expect: {value: "1.56"}}
+  - {name: "STU loss 3.18%", given: {context: {connection: intra_state}, where: {/component: stu_losses}, field: /value}, expect: {value: "3.18"}}

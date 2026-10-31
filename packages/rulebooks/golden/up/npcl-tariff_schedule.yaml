@@ -1,0 +1,14 @@
+# Written by reading the order's text layer, independently of the reader's output.
+# UPERC NPCL Tariff Order FY 2026-27 (sha256 ff36813e…), Rate Schedule HV-2, (A) Urban Schedule, PDF page 387.
+jurisdiction: npcl
+family: tariff_schedule
+tests:
+  - {name: "HV-2 urban up to 11 kV · demand", given: {context: {category: HV-2, voltage_kv: 11, rate_block: urban}, field: /demand_charge/value}, expect: {value: "300.00"}}
+  - {name: "HV-2 urban up to 11 kV · energy", given: {context: {category: HV-2, voltage_kv: 11, rate_block: urban}, field: /energy_charge/base}, expect: {value: "7.10"}}
+  - {name: "HV-2 urban 33 kV · demand", given: {context: {category: HV-2, voltage_kv: 33, rate_block: urban}, field: /demand_charge/value}, expect: {value: "290.00"}}
+  - {name: "HV-2 urban 33 kV · energy", given: {context: {category: HV-2, voltage_kv: 33, rate_block: urban}, field: /energy_charge/base}, expect: {value: "6.80"}}
+  - {name: "HV-2 urban 132 kV · energy", given: {context: {category: HV-2, voltage_kv: 132, rate_block: urban}, field: /energy_charge/base}, expect: {value: "6.40"}}
+  - {name: "HV-2 urban 220 kV · energy", given: {context: {category: HV-2, voltage_kv: 220, rate_block: urban}, field: /energy_charge/base}, expect: {value: "6.10"}}
+  - {name: "HV-2 urban 220 kV · demand", given: {context: {category: HV-2, voltage_kv: 220, rate_block: urban}, field: /demand_charge/value}, expect: {value: "270.00"}}
+  - {name: "HV-2 billed in kVAh", given: {context: {category: HV-2, voltage_kv: 11, rate_block: urban}, field: /billing_basis}, expect: {value: kvah}}
+  - {name: "no rural row", given: {context: {category: HV-2, voltage_kv: 11, rate_block: rural}}, expect: {absent: true}}

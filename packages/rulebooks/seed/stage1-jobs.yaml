@@ -1,0 +1,39 @@
+# Stage 1 reading plan: which pages of which stored order feed which draft rulebook.
+# Run: apps/api/.venv/bin/python tools/dev/seed_stage1.py   (writes drafts; approval is separate)
+# Documents are named by SHA-256 prefix so the plan is valid on any machine.
+jobs:
+  - jurisdiction: npcl
+    family: tariff_schedule
+    document: ff36813e2671          # UPERC NPCL Tariff Order FY 2026-27
+    pages: [387, 388]
+    focus: "Rate schedule HV-2 Large and Heavy Power, (A) Urban Schedule only: one row per supply-voltage band with demand and energy charges. Skip the rural schedule (it is printed only as a rebate) and seasonal industries."
+  - jurisdiction: npcl
+    family: tod_slots
+    document: ff36813e2671
+    pages: [388]
+    focus: "HV-2 ToD structure: one row per season (summer, winter) with every printed time band."
+  - jurisdiction: npcl
+    family: oa_charge
+    document: ff36813e2671
+    pages: [315, 316, 321, 323]
+    focus: "Approved open-access charges only: the average wheeling charge approved by the Commission (Table 9-5) with the exemptions in paras 9.2.11 and 9.2.13; the cross-subsidy surcharge APPROVED for HV-2 (Table 9-14, column D 'Approved'), one row per HV-2 supply-voltage band with scope.voltage_kv, scope.category ['HV-2'] and body.value; the additional surcharge approved (para 9.4.7). Ignore every petitioner submission table."
+  - jurisdiction: uppcl
+    family: tariff_schedule
+    document: 3a046bfa2e2f          # UPERC State DISCOMs (PVVNL, MVVNL, PuVVNL, DVVNL, KESCO) FY 2026-27
+    pages: [445, 446]
+    focus: "Rate schedule HV-2 Large and Heavy Power, (A) Urban Schedule only: one row per supply-voltage band with demand and energy charges. Skip the rural schedule and seasonal industries."
+  - jurisdiction: uppcl
+    family: tod_slots
+    document: 3a046bfa2e2f
+    pages: [446]
+    focus: "HV-2 ToD structure: one row per season (summer, winter) with every printed time band."
+  - jurisdiction: uppcl
+    family: oa_charge
+    document: 3a046bfa2e2f
+    pages: [379, 384, 386]
+    focus: "Approved open-access charges only: the average wheeling charge approved (Table 10-3) with the exemption in para 10.3.6; the distribution losses approved for OA consumers by voltage level (Table 10-11, para 10.4.11) as component wheeling_losses, basis percent_in_kind, one row per voltage band with scope.voltage_kv; the cross-subsidy surcharge APPROVED for HV-2 (Table 10-14, column D), one row per HV-2 supply-voltage band with scope.voltage_kv, scope.category ['HV-2'] and body.value. Ignore petitioner and 'computed' columns."
+  - jurisdiction: UP
+    family: oa_charge
+    document: 3a046bfa2e2f
+    pages: [377, 384]
+    focus: "State-wide charges for open access in Uttar Pradesh: the intra-state transmission charge payable by open access customers for FY 2026-27 (para 10.2.1, component stu_transmission, basis inr_per_kwh, scope.connection ['intra_state','ists']); the inter-state transmission loss and the intra-state transmission loss applicable to all open access consumers (para 10.4.11), as components ists_losses and stu_losses with basis percent_in_kind."

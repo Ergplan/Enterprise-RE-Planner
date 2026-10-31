@@ -1,0 +1,15 @@
+# UPERC NPCL Tariff Order FY 2026-27: wheeling Table 9-5 (p. 315), CSS Table 9-14 column D 'Approved' (p. 321),
+# additional surcharge approved as zero (para 9.4.7, p. 323). Read from the text layer.
+jurisdiction: npcl
+family: oa_charge
+tests:
+  - {name: "average wheeling 1.03", given: {context: {connection: intra_state}, where: {/component: wheeling}, field: /value}, expect: {value: "1.03"}}
+  - {name: "wheeling is per kWh", given: {context: {connection: intra_state}, where: {/component: wheeling}, field: /basis}, expect: {value: inr_per_kwh}}
+  - {name: "additional surcharge zero", given: {context: {connection: intra_state}, where: {/component: additional_surcharge}, field: /value}, expect: {value: "0"}}
+  - {name: "CSS HV-2 at 11 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 11}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.57"}}
+  - {name: "CSS HV-2 at 33 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 33}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.51"}}
+  - {name: "CSS HV-2 at 66 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 66}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.51"}}
+  - {name: "CSS HV-2 at 110 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 110}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.36"}}
+  - {name: "CSS HV-2 at 132 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 132}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.36"}}
+  - {name: "CSS HV-2 at 220 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 220}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.36"}}
+  - {name: "no CSS below 11 kV for HV-2", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 0.4}, where: {/component: cross_subsidy_surcharge}}, expect: {absent: true}}

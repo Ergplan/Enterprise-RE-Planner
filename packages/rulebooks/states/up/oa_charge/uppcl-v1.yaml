@@ -1,0 +1,183 @@
+family: oa_charge
+jurisdiction: uppcl
+version: 1
+status: approved
+title: State DISCOMs Tariff Order FY 2026-27 (PVVNL, MVVNL, PuVVNL, DVVNL, KESCO) · pages 379–386
+effective_from: '2026-07-02'
+effective_to: null
+origin: regreader_direct
+approved_by: build-agent@ergplan
+rows:
+- label: Average wheeling charge · all OA consumers using distribution network
+  scope:
+    connection:
+    - intra_state
+  body:
+    basis: inr_per_kwh
+    value: '0.9318'
+    component: wheeling
+    exemptions:
+    - note: Wheeling charges not payable if OA customer is availing supply directly through the State Transmission Network.
+      param: ''
+      sunset: null
+      condition: other
+      waived_pct: '100'
+  source_ref:
+    kind: order
+    page: 379
+    quote: 'TABLE 10-3: WHEELING CHARGE APPROVED BY THE COMMISSION FOR FY 2026-27 ... Average Wheeling charge Rs. /kWh 0.9318
+      ... 10.3.6. The Wheeling charges determined above shall not be payable if the Open Access customer is availing supply
+      directly through the State Transmission Network.'
+    document_id: e071ac95-048e-58dc-a9da-b2e59365f106
+    effective_from: '2026-07-02'
+- label: Distribution loss for OA consumers · above 33 kV (132 kV, 66 kV)
+  scope:
+    connection:
+    - intra_state
+    voltage_kv:
+      min: 33
+      min_exclusive: true
+  body:
+    basis: percent_in_kind
+    value: '1.00'
+    component: wheeling_losses
+  source_ref:
+    kind: order
+    page: 384
+    quote: 'TABLE 10-11: DISTRIBUTION LOSSES APPROVED BY THE COMMISSION FOR COMPUTATION OF CSS FOR FY 2026-27 FOR OA CONSUMERS
+      CONNECTED AT DIFFERENT VOLTAGE LEVELS ... Distribution Loss above 33 kV (132 kV, 66 kV) 1.00%'
+    document_id: e071ac95-048e-58dc-a9da-b2e59365f106
+    effective_from: '2026-07-02'
+- label: Distribution loss for OA consumers · at 33 kV
+  scope:
+    connection:
+    - intra_state
+    voltage_kv:
+      max: 33
+      min: 33
+  body:
+    basis: percent_in_kind
+    value: '3.00'
+    component: wheeling_losses
+  source_ref:
+    kind: order
+    page: 384
+    quote: 'TABLE 10-11: DISTRIBUTION LOSSES APPROVED BY THE COMMISSION ... Distribution Loss at 33 kV 3.00%'
+    document_id: e071ac95-048e-58dc-a9da-b2e59365f106
+    effective_from: '2026-07-02'
+- label: Distribution loss for OA consumers · at 11 kV
+  scope:
+    connection:
+    - intra_state
+    voltage_kv:
+      max: 11
+      min: 11
+  body:
+    basis: percent_in_kind
+    value: '8.00'
+    component: wheeling_losses
+  source_ref:
+    kind: order
+    page: 384
+    quote: 'TABLE 10-11: DISTRIBUTION LOSSES APPROVED BY THE COMMISSION ... Distribution Loss at 11 kV 8.00%'
+    document_id: e071ac95-048e-58dc-a9da-b2e59365f106
+    effective_from: '2026-07-02'
+- label: Distribution loss for OA consumers · below 11 kV
+  scope:
+    connection:
+    - intra_state
+    voltage_kv:
+      max: 11
+      max_exclusive: true
+  body:
+    basis: percent_in_kind
+    value: '13.07'
+    component: wheeling_losses
+  source_ref:
+    kind: order
+    page: 384
+    quote: 'TABLE 10-11: DISTRIBUTION LOSSES APPROVED BY THE COMMISSION ... Distribution Loss below 11 kV 13.07%'
+    document_id: e071ac95-048e-58dc-a9da-b2e59365f106
+    effective_from: '2026-07-02'
+- label: CSS for HV-2 · supply at 11 kV
+  scope:
+    category:
+    - HV-2
+    connection:
+    - intra_state
+    voltage_kv:
+      max: 11
+      min: 11
+  body:
+    basis: inr_per_kwh
+    value: '0.38'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 386
+    quote: 'TABLE 10-14: CSS APPROVED BY THE COMMISSION FOR FY 2026-27 (Rs. /kWh) ... HV-2 (Supply at 11 kV) 0.38 0.96 0.61
+      0.38'
+    document_id: e071ac95-048e-58dc-a9da-b2e59365f106
+    effective_from: '2026-07-02'
+- label: CSS for HV-2 · supply above 11 kV and up to 66 kV
+  scope:
+    category:
+    - HV-2
+    connection:
+    - intra_state
+    voltage_kv:
+      max: 66
+      min: 11
+      min_exclusive: true
+  body:
+    basis: inr_per_kwh
+    value: '0.49'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 386
+    quote: 'TABLE 10-14: CSS APPROVED BY THE COMMISSION FOR FY 2026-27 (Rs. /kWh) ... HV-2 (Supply above 11 kV and up to 66kV)
+      0.49 0.76 0.95 0.49'
+    document_id: e071ac95-048e-58dc-a9da-b2e59365f106
+    effective_from: '2026-07-02'
+- label: CSS for HV-2 · supply above 66 kV and up to 132 kV
+  scope:
+    category:
+    - HV-2
+    connection:
+    - intra_state
+    voltage_kv:
+      max: 132
+      min: 66
+      min_exclusive: true
+  body:
+    basis: inr_per_kwh
+    value: '0.33'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 386
+    quote: 'TABLE 10-14: CSS APPROVED BY THE COMMISSION FOR FY 2026-27 (Rs. /kWh) ... HV-2 (Supply above 66 kV and up to 132kV)
+      0.33 0.43 1.16 0.33'
+    document_id: e071ac95-048e-58dc-a9da-b2e59365f106
+    effective_from: '2026-07-02'
+- label: CSS for HV-2 · supply above 132 kV
+  scope:
+    category:
+    - HV-2
+    connection:
+    - intra_state
+    voltage_kv:
+      min: 132
+      min_exclusive: true
+  body:
+    basis: inr_per_kwh
+    value: '0.14'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 386
+    quote: 'TABLE 10-14: CSS APPROVED BY THE COMMISSION FOR FY 2026-27 (Rs. /kWh) ... HV-2 (Supply above 132 kV) 0.14 - 0.26
+      0.14'
+    document_id: e071ac95-048e-58dc-a9da-b2e59365f106
+    effective_from: '2026-07-02'
