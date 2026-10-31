@@ -30,7 +30,7 @@
     },
     "quote": {
       "type": "string",
-      "maxLength": 300,
+      "maxLength": 400,
       "description": "Verbatim text from that page"
     },
     "effective_from": {
@@ -51,6 +51,10 @@
     "note": {
       "type": "string",
       "maxLength": 500
+    },
+    "printed_page": {
+      "type": "string",
+      "description": "The page number printed on the page, when it differs from the PDF index"
     }
   },
   "allOf": [

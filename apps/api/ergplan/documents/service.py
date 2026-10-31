@@ -14,6 +14,7 @@ import pypdfium2 as pdfium
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from ..core.ids import document_id
 from ..core.settings import get_settings
 from ..db.models import SourceDocument
 
@@ -84,6 +85,7 @@ def register(
         tmp.write_bytes(data)
         tmp.replace(target)
     doc = SourceDocument(
+        id=document_id(sha),
         title=meta.title,
         regulator=meta.regulator,
         jurisdiction=meta.jurisdiction,

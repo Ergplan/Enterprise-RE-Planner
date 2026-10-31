@@ -10,7 +10,7 @@ from sqlalchemy import text
 
 from ..core.settings import get_settings
 from ..db.base import session_scope
-from .routers import documents
+from .routers import documents, regreader, rulebooks
 
 
 def create_app() -> FastAPI:
@@ -30,6 +30,8 @@ def create_app() -> FastAPI:
         return {"status": "ok", "database": str(db).split(" on ")[0], "migration": rev}
 
     app.include_router(documents.router)
+    app.include_router(rulebooks.router)
+    app.include_router(regreader.router)
     return app
 
 

@@ -17,6 +17,8 @@ def main() -> int:
     bad = 0
     for f in glob.glob(os.path.join(ROOT, "packages", "rulebooks", "**", "*.yaml"), recursive=True):
         d = yaml.safe_load(open(f))
+        if not isinstance(d, dict) or "family" not in d or "rows" not in d:
+            continue  # golden test files and the jurisdiction list are checked by the API tests
         v = Draft202012Validator(schemas[f"{d['family']}.schema.json"], registry=reg)
         for i, row in enumerate(d.get("rows", [])):
             for e in v.iter_errors(row):

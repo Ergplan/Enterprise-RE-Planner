@@ -135,6 +135,17 @@
     "position": {
       "type": "integer",
       "minimum": 0
+    },
+    "field_refs": {
+      "type": "object",
+      "description": "Citation per body field (JSON pointer such as /energy_charge/base) when it differs from the row's source_ref",
+      "additionalProperties": {
+        "$ref": "source_ref.schema.json"
+      }
+    },
+    "label": {
+      "type": "string",
+      "description": "Short human label, e.g. 'HV-2 · supply at 11 kV'"
     }
   }
 }

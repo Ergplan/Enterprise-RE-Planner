@@ -16,7 +16,16 @@ from sqlalchemy import text
 
 from ergplan.db.base import get_engine
 
-APP_TABLES = ["model_calls", "source_documents"]
+APP_TABLES = [
+    "model_calls",
+    "source_documents",
+    "rule_test_runs",
+    "rule_tests",
+    "rules",
+    "rulebook_versions",
+    "audit_log",
+    "jurisdictions",
+]
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -45,3 +54,12 @@ def clean_db() -> Iterator[None]:
         tables = [t for t in APP_TABLES if t in existing]
         if tables:
             c.execute(text("truncate " + ", ".join(tables) + " cascade"))
+
+
+@pytest.fixture
+def jurisdictions() -> None:
+    from ergplan.db.base import session_scope
+    from ergplan.rulebook import service
+
+    with session_scope(actor="test") as s:
+        service.sync_jurisdictions(s)

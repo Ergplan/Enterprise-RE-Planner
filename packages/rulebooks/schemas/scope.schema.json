@@ -66,6 +66,14 @@
         },
         "max": {
           "type": "number"
+        },
+        "min_exclusive": {
+          "type": "boolean",
+          "description": "true: strictly above min (\"above 11 kV\")"
+        },
+        "max_exclusive": {
+          "type": "boolean",
+          "description": "true: strictly below max"
         }
       },
       "description": "Inclusive band of the consumer's supply voltage"
@@ -86,6 +94,14 @@
         },
         "max": {
           "type": "number"
+        },
+        "min_exclusive": {
+          "type": "boolean",
+          "description": "true: strictly above min (\"above 11 kV\")"
+        },
+        "max_exclusive": {
+          "type": "boolean",
+          "description": "true: strictly below max"
         }
       }
     },
@@ -98,6 +114,14 @@
         },
         "max": {
           "type": "number"
+        },
+        "min_exclusive": {
+          "type": "boolean",
+          "description": "true: strictly above min (\"above 11 kV\")"
+        },
+        "max_exclusive": {
+          "type": "boolean",
+          "description": "true: strictly below max"
         }
       }
     },
@@ -139,6 +163,35 @@
       },
       "uniqueItems": true,
       "description": "Calendar months the item applies to; omit for all"
+    },
+    "load_kw": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "min_exclusive": {
+          "type": "boolean",
+          "description": "true: strictly above min (\"above 11 kV\")"
+        },
+        "max_exclusive": {
+          "type": "boolean",
+          "description": "true: strictly below max"
+        }
+      },
+      "description": "Contracted or sanctioned load band in kW (or kVA where the order says so)"
+    },
+    "season": {
+      "type": "string",
+      "description": "Season name as the order prints it (summer, winter, monsoon)"
+    },
+    "rate_block": {
+      "type": "string",
+      "description": "The order's lettered sub-category text, when one category has several rate blocks"
     }
   }
 }
