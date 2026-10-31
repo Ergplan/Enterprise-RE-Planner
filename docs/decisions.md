@@ -25,3 +25,4 @@ Dated entries. Every deviation from `docs/MASTER-PROMPT.md` is one.
 - **The document viewer renders pages as images** (`/documents/{id}/pages/{n}.png`) with an "Open the PDF at this page" link, because embedded PDF viewers are blank in headless browsers and inconsistent across browsers. The citation link `/documents/{id}#page=N` still opens the real PDF.
 - **`SourcedValue.source_refs` is a list** (at least one), where invariant 1's prose says `source_ref`: a derived value carries every input's ref.
 - **Web reaches the API through `/api/*` rewrites**, so the PDF link is same-origin.
+- **Stage tags are recorded in `docs/stage-tags.md`**: the build workspace's git proxy does not accept tag pushes. `tools/dev/stage-tags.sh apply` recreates them on the Mac mini.
