@@ -14,6 +14,8 @@ const STATUS_TONE: Record<string, string> = {
 export default async function RulebooksPage() {
   const versions = (await apiOrNull<Version[]>("/rulebooks/versions")) ?? [];
   const byJur = new Map<string, Version[]>();
+  const order = { approved: 0, draft: 1, rejected: 2, superseded: 3 } as Record<string, number>;
+  versions.sort((a, b) => a.jurisdiction_id.localeCompare(b.jurisdiction_id) || a.family.localeCompare(b.family) || order[a.status] - order[b.status]);
   for (const v of versions) byJur.set(v.jurisdiction_id, [...(byJur.get(v.jurisdiction_id) ?? []), v]);
   const live = versions.filter((v) => v.status === "approved").length;
   return (
@@ -52,7 +54,7 @@ export default async function RulebooksPage() {
             </thead>
             <tbody>
               {vs.map((v) => (
-                <tr key={v.id}>
+                <tr key={v.id} style={v.status === "superseded" || v.status === "rejected" ? { opacity: 0.5 } : undefined}>
                   <td>
                     <Link href={`/rulebooks/${v.id}`}>{FAMILY_LABEL[v.family] ?? v.family}</Link>
                   </td>

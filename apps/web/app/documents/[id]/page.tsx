@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ReadPanel } from "@/components/rulebook/ReadPanel";
 import { apiOrNull, type DocumentOut } from "@/lib/api";
 import { pdfPageUrl } from "@/lib/format";
 
@@ -14,10 +15,18 @@ export default async function DocumentPage({
 }) {
   const { id } = await params;
   const { page } = await searchParams;
-  const doc = await apiOrNull<DocumentOut>(`/documents/${id}/meta`);
+  const [doc, jurs] = await Promise.all([
+    apiOrNull<DocumentOut>(`/documents/${id}/meta`),
+    apiOrNull<{ id: string; state_code: string | null; kind: string }[]>("/rulebooks/jurisdictions"),
+  ]);
   if (!doc) notFound();
   const p = Math.min(Math.max(Number(page) || 1, 1), doc.pages);
   const hints = Object.entries(doc.page_hints ?? {});
+  const own = new Set(doc.utilities.map((u) => u.toLowerCase()));
+  const jurIds = (jurs ?? [])
+    .filter((j) => j.state_code === doc.jurisdiction && j.kind !== "regulator")
+    .map((j) => j.id)
+    .sort((a, b) => Number(own.has(b)) - Number(own.has(a)) || (own.size > 1 ? Number(b === "uppcl") - Number(a === "uppcl") : 0));
   return (
     <>
       <div className="eg-crumbs">
@@ -25,6 +34,7 @@ export default async function DocumentPage({
         <span data-icon="chevron-right" data-size="14"></span> <b>{doc.title}</b>
       </div>
       <div className="ep-viewer">
+        <div style={{ display: "grid", gap: "var(--space-6)" }}>
         <section className="eg-card">
           <dl className="ep-kv">
             <dt>Regulator</dt>
@@ -66,6 +76,8 @@ export default async function DocumentPage({
             </>
           )}
         </section>
+        <ReadPanel documentId={doc.id} defaultPages={String(p)} jurisdictions={jurIds} />
+        </div>
         <section className="eg-card ep-page">
           <div className="ep-page__bar">
             <Link className="eg-btn eg-btn--ghost eg-btn--sm" href={`/documents/${doc.id}?page=${Math.max(p - 1, 1)}`} aria-disabled={p <= 1}>
