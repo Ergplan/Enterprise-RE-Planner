@@ -1,0 +1,44 @@
+# Stage 8 reading plan (breadth): HT industrial retail tariff and ToD for the states whose orders were supplied.
+# Run: apps/api/.venv/bin/python tools/dev/seed_stage1.py packages/rulebooks/seed/stage8-jobs.yaml [jurisdiction/family …]
+# Drafts only; golden tests in packages/rulebooks/golden/<state>/ are written from the pages by hand, then approval.
+jobs:
+  - jurisdiction: ka_escoms
+    family: tariff_schedule
+    document: d84997a4f719          # KERC Combined Tariff Order 2025 (ESCOMs), Annexure-9
+    pages: [566]
+    effective_from: "2026-04-01"
+    effective_to: "2027-03-31"
+    title: "KERC Combined Tariff Order 2025 (ESCOMs) · Annexure-9 · FY 2026-27 column"
+    focus: "TARIFF SCHEDULE HT-2(a) for Industries — only the FIRST HT-2(a) table on the page (not BMRCL, not Railway Traction, not Effluent Treatment Plants). Take the FY2026-27 column only. One row: scope.category ['HT-2(a)'] (all HT supply voltages); demand_charge.value = rupees per kVA per month of billing demand with basis inr_per_kva_month_billing_demand; energy_charge.base in rupees per kWh (the order prints paise: 660 paise = 6.60); billing_basis kwh."
+  - jurisdiction: ka_escoms
+    family: tod_slots
+    document: d84997a4f719
+    pages: [568]
+    effective_from: "2026-04-01"
+    effective_to: "2027-03-31"
+    title: "KERC Combined Tariff Order 2025 (ESCOMs) · Annexure-9 · ToD HT-2"
+    focus: "ToD Tariff for HT-2(a), HT-2(b), HT-2c: one row with scope.category ['HT-2(a)']. Slots for December to June (months 12,1,2,3,4,5,6): 06:00-09:00 rate_delta_inr_per_kwh '1.00' (+100 paise), 09:00-18:00 '0', 18:00-22:00 '1.00', 22:00-06:00 '-1.00'. Slots for July to November (months 7,8,9,10,11): the same four time bands with rate_delta '0'. Convert paise per unit to rupees."
+  - jurisdiction: tg_discoms
+    family: tariff_schedule
+    document: 1d76cba9d979          # TGERC Retail Supply Tariff Order FY 2026-27
+    pages: [281]
+    effective_from: "2026-04-01"
+    effective_to: "2027-03-31"
+    title: "TGERC Retail Supply Tariff Order FY 2026-27 · HT-I(A) Industry - General"
+    focus: "HT-I(A): Industry - General (not the optional up-to-150 kVA category, not poultry farms): one row per supply voltage band with scope.category ['HT-I(A)'] and scope.voltage_kv (11 kV; 33 kV; 132 kV and above); demand_charge.value '500' with basis inr_per_kva_month_billing_demand; energy_charge.base = the normal energy charge in Rs/kVAh for that voltage; billing_basis kvah."
+  - jurisdiction: tg_discoms
+    family: tod_slots
+    document: 1d76cba9d979
+    pages: [281]
+    effective_from: "2026-04-01"
+    effective_to: "2027-03-31"
+    title: "TGERC Retail Supply Tariff Order FY 2026-27 · HT-I time of day (para 4.16.3)"
+    focus: "Para 4.16.3 time-of-day tariff for HT-I(A) Industry - General: one row with scope.category ['HT-I(A)'], all months: 06:00-10:00 rate_delta_inr_per_kwh '1.50'; 10:00-18:00 rate_delta '-0.50'; 18:00-22:00 rate_delta '1.50'; 22:00-06:00 rate_delta '0' (normal)."
+  - jurisdiction: pspcl
+    family: tariff_schedule
+    document: 85fcad544f21          # PSERC Tariff Order FY 2026-27 (PSPCL)
+    pages: [225, 226]
+    effective_from: "2026-04-01"
+    effective_to: "2027-03-31"
+    title: "PSERC Tariff Order FY 2026-27 (PSPCL) · Large Supply General Industry"
+    focus: "Category 3(c) Large Supply, General Industry only (not PIU industry, not night-hours supply), the NEW tariff w.e.f. 01.04.2026 to 31.03.2027 (right-hand columns): one row per contract-demand slab with scope.category ['LS General Industry'] and scope.contract_demand_kva (above 100 kVA up to 1000 kVA; above 1000 kVA); demand_charge.value = the fixed charge per kVA per month with basis inr_per_kva_month and billing_demand_rule.min_pct_of_contract_demand '80' (page 226 footnote: fixed charge on 80% of the contract demand or the actual demand recorded if higher); energy_charge.base in Rs/kVAh; billing_basis kvah."

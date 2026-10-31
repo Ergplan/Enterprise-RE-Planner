@@ -27,10 +27,35 @@ DISCOM_STATE = {
     "aeml": "MH",
     "tpcd": "MH",
     "best": "MH",
+    "bescom": "KA",
+    "mescom": "KA",
+    "cesc": "KA",
+    "hescom": "KA",
+    "gescom": "KA",
+    "tgspdcl": "TS",
+    "tgnpdcl": "TS",
+    "apspdcl": "AP",
+    "apcpdcl": "AP",
+    "apepdcl": "AP",
+    "tnpdcl": "TN",
+    "pspcl": "PB",
+    "mgvcl": "GJ",
+    "uhbvn": "HR",
+    "dhbvn": "HR",
+    "jvvnl": "RJ",
+    "avvnl": "RJ",
+    "jdvvnl": "RJ",
 }
 
 # billx profile ids that are not ergPLAN jurisdiction ids.
-BILLX_PROFILE_ALIASES = {"uppcl": "pvvnl", "mahadiscom": "msedcl", "mseb": "msedcl"}
+BILLX_PROFILE_ALIASES = {
+    "uppcl": "pvvnl",
+    "mahadiscom": "msedcl",
+    "mseb": "msedcl",
+    "tsspdcl": "tgspdcl",
+    "tsnpdcl": "tgnpdcl",
+    "tangedco": "tnpdcl",
+}
 
 # Printed tariff codes → the order's category code, per state. Patterns run on the upper-cased text.
 CATEGORY_PATTERNS: dict[str, list[tuple[str, str]]] = {
@@ -46,6 +71,9 @@ CATEGORY_PATTERNS: dict[str, list[tuple[str, str]]] = {
         (r"\bHT\s*[-–]?\s*(I|1)\s*[-–]?\s*\(?\s*B\s*\)?", "HT I(B)"),
         (r"\bLT\s*[-–]?\s*V\b", "LT V"),
     ],
+    "KA": [(r"\bHT\s*[-–]?\s*2\s*\(?\s*A\s*\)?", "HT-2(a)")],
+    "TS": [(r"\bHT\s*[-–]?\s*(I|1)\s*\(?\s*A\s*\)?", "HT-I(A)")],
+    "PB": [(r"\bLARGE\s+SUPPLY|\bLS\b", "LS General Industry")],
 }
 
 # The usual supply voltage of a category, offered as the default chip (most bills do not print it).
@@ -57,6 +85,9 @@ USUAL_VOLTAGE_KV = {
     "HT II": Decimal("22"),
     "LMV-6": Decimal("0.415"),
     "LT V": Decimal("0.415"),
+    "HT-2(a)": Decimal("11"),
+    "HT-I(A)": Decimal("11"),
+    "LS General Industry": Decimal("11"),
 }
 
 

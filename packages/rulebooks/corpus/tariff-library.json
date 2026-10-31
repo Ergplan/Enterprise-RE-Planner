@@ -2,21 +2,63 @@
   "version": 1,
   "about": "Index of this folder for the Tariff Order Intelligence Start page. One entry per PDF: state, licensees (first = the utility the order is registered under), commission, reading profile, order type. kind: order = can be read; supporting = listed for reference; hold = listed, not read until a decision is made. Written 2026-09-28 from the orders themselves; notes cite PDF page numbers (1-based index).",
   "states": [
-    {"code": "UP", "name": "Uttar Pradesh"},
-    {"code": "MH", "name": "Maharashtra"},
-    {"code": "KA", "name": "Karnataka"},
-    {"code": "AP", "name": "Andhra Pradesh"},
-    {"code": "OD", "name": "Odisha"},
-    {"code": "TN", "name": "Tamil Nadu"},
-    {"code": "BR", "name": "Bihar"},
-    {"code": "MZ", "name": "Mizoram"}
+    {
+      "code": "UP",
+      "name": "Uttar Pradesh"
+    },
+    {
+      "code": "MH",
+      "name": "Maharashtra"
+    },
+    {
+      "code": "KA",
+      "name": "Karnataka"
+    },
+    {
+      "code": "AP",
+      "name": "Andhra Pradesh"
+    },
+    {
+      "code": "OD",
+      "name": "Odisha"
+    },
+    {
+      "code": "TN",
+      "name": "Tamil Nadu"
+    },
+    {
+      "code": "BR",
+      "name": "Bihar"
+    },
+    {
+      "code": "MZ",
+      "name": "Mizoram"
+    },
+    {
+      "code": "TS",
+      "name": "Telangana"
+    },
+    {
+      "code": "PB",
+      "name": "Punjab"
+    },
+    {
+      "code": "GJ",
+      "name": "Gujarat"
+    }
   ],
   "entries": [
     {
       "path": "09_Uttar_Pradesh/Uttar_Pradesh_NPCL_FY2026-27_Tariff_Order_02-Jul-2026.pdf",
-      "state": "UP", "kind": "order",
+      "state": "UP",
+      "kind": "order",
       "title": "NPCL Tariff Order FY 2026-27 (Petition 2330/2025)",
-      "utilities": ["NPCL"], "commission": "UPERC", "profile": "uperc-npcl", "order_type": "tariff_order",
+      "utilities": [
+        "NPCL"
+      ],
+      "commission": "UPERC",
+      "profile": "uperc-npcl",
+      "order_type": "tariff_order",
       "order_date": "2026-07-02",
       "provenance_url": "https://www.uperc.org/App_File/NPCL_TariffOrder-pdf72202631759PM.pdf",
       "notes": [
@@ -28,10 +70,20 @@
     },
     {
       "path": "09_Uttar_Pradesh/Uttar_Pradesh_PVVNL_MVVNL_PuVVNL_DVVNL_KESCO_FY2026-27_Tariff_Order_02-Jul-2026.pdf",
-      "state": "UP", "kind": "order",
+      "state": "UP",
+      "kind": "order",
       "title": "State DISCOMs Tariff Order FY 2026-27 (PVVNL, MVVNL, PuVVNL, DVVNL, KESCO)",
-      "utilities": ["PVVNL", "MVVNL", "PUVVNL", "DVVNL", "KESCO"], "commission": "UPERC", "profile": "uperc-discoms",
-      "order_type": "tariff_order", "order_date": "2026-07-02",
+      "utilities": [
+        "PVVNL",
+        "MVVNL",
+        "PUVVNL",
+        "DVVNL",
+        "KESCO"
+      ],
+      "commission": "UPERC",
+      "profile": "uperc-discoms",
+      "order_type": "tariff_order",
+      "order_date": "2026-07-02",
       "provenance_url": "https://www.uperc.org/App_File/UPPCLTariffOrder-pdf72202630151PM.pdf",
       "notes": [
         "One schedule shared by all five companies: Annexure-I, PDF pages 408-458.",
@@ -41,9 +93,15 @@
     },
     {
       "path": "27_Maharashtra/Maharashtra_AEML-D_FY2025-26_Tariff_Order_28-Mar-2025.pdf",
-      "state": "MH", "kind": "order",
+      "state": "MH",
+      "kind": "order",
       "title": "AEML-D MYT Tariff Order (Case 211/2024), FY 2025-26 to FY 2029-30",
-      "utilities": ["AEML"], "commission": "MERC", "profile": "merc-discoms", "order_type": "myt_order",
+      "utilities": [
+        "AEML"
+      ],
+      "commission": "MERC",
+      "profile": "merc-discoms",
+      "order_type": "myt_order",
       "order_date": "2025-03-28",
       "provenance_url": "https://merc.gov.in/wp-content/uploads/2025/04/AEML-D-Complete-Final-MYT-Order-28.03.2025-SD.pdf",
       "notes": [
@@ -52,9 +110,15 @@
     },
     {
       "path": "27_Maharashtra/Maharashtra_TPC-D_FY2025-26_Tariff_Order_28-Mar-2025.pdf",
-      "state": "MH", "kind": "order",
+      "state": "MH",
+      "kind": "order",
       "title": "TPC-D MYT Tariff Order (Case 210/2024), FY 2025-26 to FY 2029-30",
-      "utilities": ["TPC-D"], "commission": "MERC", "profile": "merc-discoms", "order_type": "myt_order",
+      "utilities": [
+        "TPC-D"
+      ],
+      "commission": "MERC",
+      "profile": "merc-discoms",
+      "order_type": "myt_order",
       "order_date": "2025-03-28",
       "provenance_url": "https://merc.gov.in/wp-content/uploads/2025/04/Final-MYT-Order-Case-No.-210-of-2024_TPC-D-280325.pdf",
       "notes": [
@@ -63,9 +127,15 @@
     },
     {
       "path": "27_Maharashtra/Maharashtra_BEST_FY2025-26_Tariff_Order_28-Mar-2025.pdf",
-      "state": "MH", "kind": "order",
+      "state": "MH",
+      "kind": "order",
       "title": "BEST MYT Tariff Order (Case 207/2024), FY 2025-26 to FY 2029-30",
-      "utilities": ["BEST"], "commission": "MERC", "profile": "merc-discoms", "order_type": "myt_order",
+      "utilities": [
+        "BEST"
+      ],
+      "commission": "MERC",
+      "profile": "merc-discoms",
+      "order_type": "myt_order",
       "order_date": "2025-03-28",
       "provenance_url": "https://merc.gov.in/wp-content/uploads/2025/04/Final-MYT-Order_BEST_207-of-2024_for-uploading-_1.pdf",
       "notes": [
@@ -74,9 +144,15 @@
     },
     {
       "path": "27_Maharashtra/Maharashtra_MSEDCL_FY2025-26_MYT_Tariff_Order_Case217-2024_28-Mar-2025.pdf",
-      "state": "MH", "kind": "hold",
+      "state": "MH",
+      "kind": "hold",
       "title": "MSEDCL MYT Tariff Order (Case 217/2024), 28 March 2025",
-      "utilities": ["MSEDCL"], "commission": "MERC", "profile": "merc-discoms", "order_type": "myt_order",
+      "utilities": [
+        "MSEDCL"
+      ],
+      "commission": "MERC",
+      "profile": "merc-discoms",
+      "order_type": "myt_order",
       "order_date": "2025-03-28",
       "provenance_url": "https://merc.gov.in/wp-content/uploads/2025/03/MSEDCL-MYT-Order_Case_no_217-of-2024.pdf",
       "hold_reason": "Which MSEDCL order governs FY 2026-27 must be decided first: MERC stayed this order on 2 April 2025 and revised the tariff in its 25 March 2026 post-remand order in Case 75/2025.",
@@ -84,36 +160,70 @@
     },
     {
       "path": "27_Maharashtra/Maharashtra_MSEDCL_Case75-2025_Order_25-Mar-2026.pdf",
-      "state": "MH", "kind": "hold",
+      "state": "MH",
+      "kind": "hold",
       "title": "MSEDCL Case 75/2025, post-remand order of 25 March 2026 (review of the MYT order and revision of tariff)",
-      "utilities": ["MSEDCL"], "commission": "MERC", "profile": "merc-discoms", "order_type": "mid_term_review",
+      "utilities": [
+        "MSEDCL"
+      ],
+      "commission": "MERC",
+      "profile": "merc-discoms",
+      "order_type": "mid_term_review",
       "order_date": "2026-03-25",
       "provenance_url": "https://merc.gov.in/wp-content/uploads/2026/03/MSEDCL-Order_75-of-2025_25032026.pdf",
       "hold_reason": "Awaiting your decision on which MSEDCL order governs; its layout has not been checked against the merc-discoms profile.",
-      "notes": ["Issued after the High Court order of 3 Nov 2025 and Supreme Court orders of 17 Nov 2025 and 9 Feb 2026 (p.1)."]
+      "notes": [
+        "Issued after the High Court order of 3 Nov 2025 and Supreme Court orders of 17 Nov 2025 and 9 Feb 2026 (p.1)."
+      ]
     },
     {
       "path": "27_Maharashtra/Maharashtra_MSEDCL_Case75-2025_Order_2025-06.pdf",
-      "state": "MH", "kind": "supporting",
+      "state": "MH",
+      "kind": "supporting",
       "title": "MSEDCL Case 75/2025, order of 25 June 2025 (review petition)",
-      "utilities": ["MSEDCL"], "commission": "MERC", "profile": null, "order_type": "other",
-      "order_date": "2025-06-25", "provenance_url": "https://merc.gov.in/wp-content/uploads/2025/06/Order_Case-No.75-of-2025.pdf",
-      "notes": ["Earlier order in the review proceedings; superseded by the 25 March 2026 post-remand order."]
+      "utilities": [
+        "MSEDCL"
+      ],
+      "commission": "MERC",
+      "profile": null,
+      "order_type": "other",
+      "order_date": "2025-06-25",
+      "provenance_url": "https://merc.gov.in/wp-content/uploads/2025/06/Order_Case-No.75-of-2025.pdf",
+      "notes": [
+        "Earlier order in the review proceedings; superseded by the 25 March 2026 post-remand order."
+      ]
     },
     {
       "path": "27_Maharashtra/Maharashtra_MSEDCL_MYT-Orders_page_2026-04.pdf",
-      "state": "MH", "kind": "supporting",
+      "state": "MH",
+      "kind": "supporting",
       "title": "MERC link page listing the MSEDCL orders (not an order)",
-      "utilities": ["MSEDCL"], "commission": "MERC", "profile": null, "order_type": null,
-      "order_date": null, "provenance_url": "https://merc.gov.in/wp-content/uploads/2026/04/MSEDCL-MYT-Orders.pdf",
+      "utilities": [
+        "MSEDCL"
+      ],
+      "commission": "MERC",
+      "profile": null,
+      "order_type": null,
+      "order_date": null,
+      "provenance_url": "https://merc.gov.in/wp-content/uploads/2026/04/MSEDCL-MYT-Orders.pdf",
       "notes": []
     },
     {
       "path": "31_Karnataka/Karnataka_ESCOMs_FY2025-26_Combined_Tariff_Order_27-Mar-2025.pdf",
-      "state": "KA", "kind": "order",
+      "state": "KA",
+      "kind": "order",
       "title": "KERC Combined Tariff Order 2025 for ESCOMs (BESCOM, MESCOM, CESC, HESCOM, GESCOM)",
-      "utilities": ["BESCOM", "MESCOM", "CESC", "HESCOM", "GESCOM"], "commission": "KERC", "profile": "kerc-escoms",
-      "order_type": "tariff_order", "order_date": "2025-03-27",
+      "utilities": [
+        "BESCOM",
+        "MESCOM",
+        "CESC",
+        "HESCOM",
+        "GESCOM"
+      ],
+      "commission": "KERC",
+      "profile": "kerc-escoms",
+      "order_type": "tariff_order",
+      "order_date": "2025-03-27",
       "provenance_url": "https://kerc.karnataka.gov.in/uploads/96731743148968.pdf",
       "notes": [
         "Same file (SHA-256 d84997a4...) as the KERC order in the cloud setup's golden manifest.",
@@ -124,43 +234,87 @@
     },
     {
       "path": "31_Karnataka/Karnataka_HRECS_FY2025-26_Full_Tariff_Order_27-Mar-2025.pdf",
-      "state": "KA", "kind": "order",
+      "state": "KA",
+      "kind": "order",
       "title": "KERC Tariff Order 2025 for HRECS (full order)",
-      "utilities": ["HRECS"], "commission": "KERC", "profile": "kerc-hrecs", "order_type": "tariff_order",
+      "utilities": [
+        "HRECS"
+      ],
+      "commission": "KERC",
+      "profile": "kerc-hrecs",
+      "order_type": "tariff_order",
       "order_date": "2025-03-27",
       "provenance_url": "https://kerc.karnataka.gov.in/uploads/98461743154969.pdf",
-      "notes": ["Approves FY 2025-26 to FY 2027-28; schedule PDF pages 103-135."]
+      "notes": [
+        "Approves FY 2025-26 to FY 2027-28; schedule PDF pages 103-135."
+      ]
     },
     {
       "path": "31_Karnataka/Karnataka_HRECS_FY2026-27_Tariff_Order_27-Mar-2025.pdf",
-      "state": "KA", "kind": "supporting",
+      "state": "KA",
+      "kind": "supporting",
       "title": "HRECS tariff schedule extract (33 pages, Annexure-2 only)",
-      "utilities": ["HRECS"], "commission": "KERC", "profile": "kerc-hrecs", "order_type": "tariff_order",
-      "order_date": "2025-03-27", "provenance_url": null,
-      "notes": ["The same schedule as pages 103-135 of the full HRECS order; read the full order instead."]
+      "utilities": [
+        "HRECS"
+      ],
+      "commission": "KERC",
+      "profile": "kerc-hrecs",
+      "order_type": "tariff_order",
+      "order_date": "2025-03-27",
+      "provenance_url": null,
+      "notes": [
+        "The same schedule as pages 103-135 of the full HRECS order; read the full order instead."
+      ]
     },
     {
       "path": "31_Karnataka/Karnataka_ESCOMs_HRECS_Corrigendum_to_Tariff_Order_2025.pdf",
-      "state": "KA", "kind": "supporting",
+      "state": "KA",
+      "kind": "supporting",
       "title": "Corrigendum (26 May 2025) to the ESCOM and HRECS Tariff Orders 2025",
-      "utilities": ["BESCOM", "HRECS"], "commission": "KERC", "profile": null, "order_type": "other",
-      "order_date": "2025-05-26", "provenance_url": "https://kerc.karnataka.gov.in/uploads/media_to_upload1748322531.pdf",
-      "notes": ["Changes ESCOM Tables 4.33A/D/F (LT-4a subsidy split) and DERS eligibility text; no tariff schedule change."]
+      "utilities": [
+        "BESCOM",
+        "HRECS"
+      ],
+      "commission": "KERC",
+      "profile": null,
+      "order_type": "other",
+      "order_date": "2025-05-26",
+      "provenance_url": "https://kerc.karnataka.gov.in/uploads/media_to_upload1748322531.pdf",
+      "notes": [
+        "Changes ESCOM Tables 4.33A/D/F (LT-4a subsidy split) and DERS eligibility text; no tariff schedule change."
+      ]
     },
     {
       "path": "31_Karnataka/Karnataka_Green_Tariff_Amendment_to_Tariff_Order_2025.pdf",
-      "state": "KA", "kind": "supporting",
+      "state": "KA",
+      "kind": "supporting",
       "title": "Amendment to Tariff Order 2025: Green Tariff extended to LT (scanned, 1 page)",
-      "utilities": ["BESCOM"], "commission": "KERC", "profile": null, "order_type": "other",
-      "order_date": null, "provenance_url": "https://kerc.karnataka.gov.in/uploads/media_to_upload1753079665.pdf",
-      "notes": ["Scanned page with no text layer: read it by eye."]
+      "utilities": [
+        "BESCOM"
+      ],
+      "commission": "KERC",
+      "profile": null,
+      "order_type": "other",
+      "order_date": null,
+      "provenance_url": "https://kerc.karnataka.gov.in/uploads/media_to_upload1753079665.pdf",
+      "notes": [
+        "Scanned page with no text layer: read it by eye."
+      ]
     },
     {
       "path": "29_Andhra_Pradesh/Andhra_Pradesh_APSPDCL_APEPDCL_APCPDCL_FY2026-27_Tariff_Order_2026.pdf",
-      "state": "AP", "kind": "order",
+      "state": "AP",
+      "kind": "order",
       "title": "APERC Retail Supply Tariff Order FY 2026-27 (APSPDCL, APCPDCL, APEPDCL)",
-      "utilities": ["APSPDCL", "APCPDCL", "APEPDCL"], "commission": "APERC", "profile": "aperc-discoms",
-      "order_type": "tariff_order", "order_date": "2026-03-25",
+      "utilities": [
+        "APSPDCL",
+        "APCPDCL",
+        "APEPDCL"
+      ],
+      "commission": "APERC",
+      "profile": "aperc-discoms",
+      "order_type": "tariff_order",
+      "order_date": "2026-03-25",
       "provenance_url": "https://aperc.gov.in/upload/RSTO_FY2026-27.pdf",
       "notes": [
         "Schedule: Chapter XI, PDF pages 196-248; in force 01-04-2026 to 31-03-2027.",
@@ -170,10 +324,19 @@
     },
     {
       "path": "26_Odisha/Odisha_TPNODL_TPWODL_TPSODL_TPCODL_FY2026-27_Common_Tariff_Order_24-Mar-2026.pdf",
-      "state": "OD", "kind": "order",
+      "state": "OD",
+      "kind": "order",
       "title": "OERC Common Retail Supply Tariff Order FY 2026-27 (TPCODL, TPSODL, TPWODL, TPNODL)",
-      "utilities": ["TPCODL", "TPSODL", "TPWODL", "TPNODL"], "commission": "OERC", "profile": "oerc-discoms",
-      "order_type": "tariff_order", "order_date": "2026-03-24",
+      "utilities": [
+        "TPCODL",
+        "TPSODL",
+        "TPWODL",
+        "TPNODL"
+      ],
+      "commission": "OERC",
+      "profile": "oerc-discoms",
+      "order_type": "tariff_order",
+      "order_date": "2026-03-24",
       "provenance_url": "https://orierc.org/CuteSoft_Client/writereaddata/upload/DISCOM_TARIFF_ORDER_FY_2026-27.pdf",
       "notes": [
         "Schedule: Annexure-B, PDF pages 239-244. The app proposes 239-246: correct it to 239-244 at the checkpoint.",
@@ -182,9 +345,15 @@
     },
     {
       "path": "33_Tamil_Nadu/Tamil_Nadu_TNPDCL_FY2025-26_Tariff_Order_30-Jun-2025.pdf",
-      "state": "TN", "kind": "order",
+      "state": "TN",
+      "kind": "order",
       "title": "TNERC Order No. 6 of 2025, TNPDCL tariff FY 2025-26",
-      "utilities": ["TNPDCL"], "commission": "TNERC", "profile": "tnerc-tnpdcl", "order_type": "tariff_order",
+      "utilities": [
+        "TNPDCL"
+      ],
+      "commission": "TNERC",
+      "profile": "tnerc-tnpdcl",
+      "order_type": "tariff_order",
       "order_date": "2025-06-30",
       "provenance_url": "https://www.tnerc.tn.gov.in/Orders/files/TO-Order%20No6300620252131.pdf",
       "notes": [
@@ -193,21 +362,92 @@
     },
     {
       "path": "19_Bihar/Bihar_NBPDCL_SBPDCL_FY2026-27_Common_Tariff_Order_18-Mar-2026.pdf",
-      "state": "BR", "kind": "order",
+      "state": "BR",
+      "kind": "order",
       "title": "BERC Tariff Order FY 2026-27 (NBPDCL, SBPDCL)",
-      "utilities": ["NBPDCL", "SBPDCL"], "commission": "BERC", "profile": "berc-discoms", "order_type": "tariff_order",
+      "utilities": [
+        "NBPDCL",
+        "SBPDCL"
+      ],
+      "commission": "BERC",
+      "profile": "berc-discoms",
+      "order_type": "tariff_order",
       "order_date": "2026-03-18",
       "provenance_url": null,
-      "notes": ["Schedule: Appendix-1, PDF pages 542-574; uniform tariff for both companies, with effect from 1 April 2026."]
+      "notes": [
+        "Schedule: Appendix-1, PDF pages 542-574; uniform tariff for both companies, with effect from 1 April 2026."
+      ]
     },
     {
       "path": "16_Mizoram/Mizoram_PED_FY2026-27_Tariff_Order_25-Mar-2026.pdf",
-      "state": "MZ", "kind": "order",
+      "state": "MZ",
+      "kind": "order",
       "title": "MZERC Tariff Order FY 2026-27 for P&ED Mizoram",
-      "utilities": ["PED-MZ"], "commission": "MZERC", "profile": "mizoram-ped", "order_type": "tariff_order",
+      "utilities": [
+        "PED-MZ"
+      ],
+      "commission": "MZERC",
+      "profile": "mizoram-ped",
+      "order_type": "tariff_order",
       "order_date": "2026-03-25",
       "provenance_url": null,
-      "notes": ["Schedule: PDF pages 243-272. The app proposes up to 274: correct it to 243-272 at the checkpoint."]
+      "notes": [
+        "Schedule: PDF pages 243-272. The app proposes up to 274: correct it to 243-272 at the checkpoint."
+      ]
+    },
+    {
+      "commission": "TGERC",
+      "kind": "order",
+      "order_date": "2026-03-30",
+      "order_type": "tariff_order",
+      "path": "../Tariff Orders/Telangana Tariff Order.pdf",
+      "profile": "tgerc-discoms",
+      "provenance_url": null,
+      "state": "TS",
+      "title": "TGERC Retail Supply Tariff Order FY 2026-27 (TGSPDCL, TGNPDCL)",
+      "utilities": [
+        "TGSPDCL",
+        "TGNPDCL"
+      ],
+      "notes": [
+        "HT-I(A) Industry-General: PDF pages 281-283 (tariff), ToD in para 4.16.3 on page 281.",
+        "Supplied from the person's 'Tariff Orders' folder; regulator link not recorded."
+      ]
+    },
+    {
+      "commission": "PSERC",
+      "kind": "order",
+      "order_date": "2026-03-31",
+      "order_type": "tariff_order",
+      "path": "../Tariff Orders/Punjab Tariff order.pdf",
+      "profile": "pserc-pspcl",
+      "provenance_url": null,
+      "state": "PB",
+      "title": "PSERC Tariff Order FY 2026-27 for PSPCL",
+      "utilities": [
+        "PSPCL"
+      ],
+      "notes": [
+        "Tariff table for FY 2026-27 (w.e.f. 01.04.2026 to 31.03.2027): PDF page 225; schedule of tariff Annexure II.",
+        "Order date not printed on the cover read; 31 Mar 2026 recorded as the day before the tariff takes effect (to confirm)."
+      ]
+    },
+    {
+      "commission": "GERC",
+      "kind": "order",
+      "order_date": "2026-03-25",
+      "order_type": "tariff_order",
+      "path": "../Tariff Orders/MGVCL Tariff Order for FY 2026-27 - Gujarat Tariff Order.pdf",
+      "profile": "gerc-discoms",
+      "provenance_url": null,
+      "state": "GJ",
+      "title": "GERC Tariff Order FY 2026-27 for MGVCL (Case 2582 of 2025)",
+      "utilities": [
+        "MGVCL"
+      ],
+      "notes": [
+        "Rate HTP-I (PDF pages 173-175) has demand charges in slabs of billing demand, which ergPLAN's tariff_schedule cannot hold yet: not seeded."
+      ]
     }
   ]
 }

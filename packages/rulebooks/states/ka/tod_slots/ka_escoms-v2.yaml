@@ -1,0 +1,90 @@
+family: tod_slots
+jurisdiction: ka_escoms
+version: 2
+status: approved
+title: KERC Combined Tariff Order 2025 (ESCOMs) · Annexure-9 p. 568 · ToD HT-2
+effective_from: '2026-04-01'
+effective_to: '2027-03-31'
+origin: manual
+approved_by: build-agent@ergplan
+rows:
+- label: HT-2(a) · ToD · December to June
+  scope:
+    months:
+    - 12
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    category:
+    - HT-2(a)
+  body:
+    slots:
+    - end: 09:00
+      name: Dec-Jun 06:00-09:00
+      start: 06:00
+      rate_delta_inr_per_kwh: '1.00'
+    - end: '18:00'
+      name: Dec-Jun 09:00-18:00
+      start: 09:00
+      rate_delta_inr_per_kwh: '0'
+    - end: '22:00'
+      name: Dec-Jun 18:00-22:00
+      start: '18:00'
+      rate_delta_inr_per_kwh: '1.00'
+    - end: 06:00
+      name: Dec-Jun 22:00-06:00
+      start: '22:00'
+      rate_delta_inr_per_kwh: '-1.00'
+    season_note: 'From December to June (paise/unit printed: +100, 0, +100, -100)'
+  source_ref:
+    kind: order
+    page: 568
+    quote: |-
+      06.00 Hrs to 09.00 Hrs 0 (+)100
+      09.00 Hrs to 18.00 Hrs 0 0
+      18.00 Hrs to 22.00 hrs 0 (+)100
+      22.00 Hrs to 06.00 Hrs 0 (-)100
+    document_id: 8e00613e-3b46-50c8-b8c5-a475bb79196c
+    effective_from: '2026-04-01'
+- label: HT-2(a) · ToD · July to November (monsoon)
+  scope:
+    months:
+    - 7
+    - 8
+    - 9
+    - 10
+    - 11
+    category:
+    - HT-2(a)
+  body:
+    slots:
+    - end: 09:00
+      name: Jul-Nov 06:00-09:00
+      start: 06:00
+      rate_delta_inr_per_kwh: '0'
+    - end: '18:00'
+      name: Jul-Nov 09:00-18:00
+      start: 09:00
+      rate_delta_inr_per_kwh: '0'
+    - end: '22:00'
+      name: Jul-Nov 18:00-22:00
+      start: '18:00'
+      rate_delta_inr_per_kwh: '0'
+    - end: 06:00
+      name: Jul-Nov 22:00-06:00
+      start: '22:00'
+      rate_delta_inr_per_kwh: '0'
+    season_note: 'From July to November (monsoon period): no ToD adjustment'
+  source_ref:
+    kind: order
+    page: 568
+    quote: |-
+      06.00 Hrs to 09.00 Hrs 0 (+)100
+      09.00 Hrs to 18.00 Hrs 0 0
+      18.00 Hrs to 22.00 hrs 0 (+)100
+      22.00 Hrs to 06.00 Hrs 0 (-)100
+    document_id: 8e00613e-3b46-50c8-b8c5-a475bb79196c
+    effective_from: '2026-04-01'

@@ -75,6 +75,9 @@ export default async function LivePlan({ params, searchParams }: { params: Promi
               </tbody>
             </table>
             {s.notes.map((n) => <p key={n} className="eg-muted ep-small">{n}</p>)}
+            {s.sizes.some((z) => z.gaps.length > 0) && (
+              <p className="ep-small"><span className="eg-chip eg-chip--warning">not yet sourced</span> {[...new Set(s.sizes.flatMap((z) => z.gaps))].join(", ").replaceAll("_", " ")} — these charges are left out until the order or regulation is read, so the saving may be overstated.</p>
+            )}
           </section>
 
           <section className="eg-card ep-panel">

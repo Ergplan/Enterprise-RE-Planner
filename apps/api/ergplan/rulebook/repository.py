@@ -25,8 +25,11 @@ _SQL = text(
 )
 
 
+# The identity of the approved set: every approved version id with its window (a restore that reloads
+# the same YAML gets new ids, so the stamp changes even when counts and timestamps do not).
 _STAMP = text(
-    "select count(*), max(coalesce(approved_at, created_at)), max(effective_to) from rulebook_versions "
+    "select count(*), md5(coalesce(string_agg(id::text || ':' || effective_from::text || ':' "
+    "|| coalesce(effective_to::text, ''), ',' order by id), '')) from rulebook_versions "
     "where status = 'approved'"
 )
 _CACHE: dict[tuple[str, tuple[str, ...], date], list[RuleView]] = {}

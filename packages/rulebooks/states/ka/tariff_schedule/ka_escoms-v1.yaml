@@ -1,0 +1,33 @@
+family: tariff_schedule
+jurisdiction: ka_escoms
+version: 1
+status: approved
+title: KERC Combined Tariff Order 2025 (ESCOMs) · Annexure-9 p. 566 · HT-2(a) FY 2026-27
+effective_from: '2026-04-01'
+effective_to: '2027-03-31'
+origin: manual
+approved_by: build-agent@ergplan
+rows:
+- label: HT-2(a) · Industries · FY 2026-27
+  scope:
+    category:
+    - HT-2(a)
+  body:
+    notes: Energy charge printed as 660 paise per kWh (FY2026-27 column), held here in rupees.
+    category: HT-2(a)
+    billing_basis: kwh
+    demand_charge:
+      basis: inr_per_kva_month_billing_demand
+      value: '350'
+    energy_charge:
+      base: '6.60'
+  source_ref:
+    kind: order
+    page: 566
+    quote: |-
+      TARIFF SCHEDULE HT-2(a)
+      Particulars FY2025-26 FY2026-27 FY2027-28
+      Demand Charges (Per KVA / Month of billing Demand) Rs.345/- Rs.350/- Rs.355/-
+      Energy Charges (Per kWh) 660 paise 660 paise 650 paise
+    document_id: 8e00613e-3b46-50c8-b8c5-a475bb79196c
+    effective_from: '2026-04-01'

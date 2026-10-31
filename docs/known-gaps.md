@@ -6,7 +6,6 @@ What is not yet right, and the stage that fixes it.
 | --- | --- |
 | `docker/compose.yaml` has not been run (no Docker daemon in the build workspace); first run happens on the Mac mini | Before Stage 5 |
 | The independent reviewer is a tool script that imports `openai` directly (outside `ergplan/providers`); it is not app code and logs no `model_calls` row | By design |
-| Only 5 of the 19 indexed orders are in the build workspace (UP ×2, MSEDCL ×3); the rest are on the Mac mini and register with the same command | Stage 8 |
 | Seeded rulebooks are approved by `build-agent@ergplan`; a jouleWise analyst should review each in `/rulebooks` and re-approve under their own name (duplicate → approve) | Before client use |
 | HV-2 **rural** schedule (7.5% rebate on the 11 kV urban base rate, no ToD) is not representable: `tariff_schedule` has no "rebate on base" field | Stage 3 |
 | NPCL and UPPCL tariffs are "in force seven days after newspaper publication"; versions carry the order date (2 Jul 2026) because the publication date is not in the corpus | When the date is known |
@@ -71,3 +70,10 @@ A replayed bill line that differs from the approved tariff is "explained" only b
 | What-if is an hourly check with sizes held; re-sizing on a changed assumption needs a new run (analyst or "Build my plan" after the change) | By design for speed |
 | Explanations are in English only | When a client asks |
 | Voice sessions and text chat in intake mode can be opened by anyone who reaches the site (plan mode needs a valid share token); each session costs OpenAI audio usage. Login, roles per endpoint and rate limits are Stage 8 (rule 12) | Stage 8 |
+| Karnataka, Telangana and Punjab have tariff (and KA, TS ToD) rules only: no open-access charges, losses, CSS, additional surcharge or banking/settlement rules, so landed cost of open access and the optimizer's OA options are "not yet sourced" there | When the KERC, TGERC and PSERC OA orders and banking regulations are added |
+| Gujarat HTP-I demand charge is slabbed by billing demand; `tariff_schedule` has no slab table | Schema change (demand slabs) |
+| Rajasthan (the stored file is an HTML page), Haryana (a scanned 7-page notice), Andhra Pradesh (no usable text layer on the schedule pages) need the actual order PDFs | When supplied |
+| Tamil Nadu: FY 2026-27 rates are the FY 2025-26 rates indexed by CPI from 1 July 2026; the indexed schedule is not in the corpus | When TNERC publishes or jouleWise supplies it |
+| Punjab ToD (mid-month seasons, Rs 5.50/kVAh off-peak cap) cannot be expressed by `tod_slots`; PSPCL energy is priced flat | Schema change |
+| Production deployment not done: needs the Google Cloud VM, the hostname and SMTP settings from jouleWise (`docs/deploy.md`) | When supplied |
+| No rate limiting on sign-in requests beyond single-use 15-minute links | Before public launch |

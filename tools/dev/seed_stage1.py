@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Run the Stage 1 reading plan (packages/rulebooks/seed/stage1-jobs.yaml) through the direct reader
+"""Run a reading plan (default packages/rulebooks/seed/stage1-jobs.yaml; Stage 8: stage8-jobs.yaml) through the direct reader
 and write one draft version per job. Prints accepted and rejected rows. Never approves."""
 
 from __future__ import annotations
 
 import json
 import sys
+from datetime import date
 from pathlib import Path
 
 import yaml
@@ -24,8 +25,13 @@ ACTOR = "build-agent@ergplan"
 
 
 def main() -> int:
-    plan = yaml.safe_load((ROOT / "packages/rulebooks/seed/stage1-jobs.yaml").read_text())
-    only = sys.argv[1:]
+    args = sys.argv[1:]
+    jobs_file = ROOT / "packages/rulebooks/seed/stage1-jobs.yaml"
+    if args and args[0].endswith(".yaml"):
+        jobs_file = ROOT / args[0]
+        args = args[1:]
+    plan = yaml.safe_load(jobs_file.read_text())
+    only = args
     with session_scope(actor=ACTOR) as s:
         service.sync_jurisdictions(s)
     for job in plan["jobs"]:
@@ -40,7 +46,8 @@ def main() -> int:
             r = direct.read(s, document_id=doc.id, family=job["family"], jurisdiction_id=job["jurisdiction"],
                             pages=job["pages"], focus=job["focus"],
                             pages_per_call=job.get("pages_per_call", direct.PAGES_PER_CALL))
-            eff, title = doc.effective_from or doc.order_date, f"{doc.title} · pages {job['pages'][0]}–{job['pages'][-1]}"
+            eff = date.fromisoformat(job["effective_from"]) if job.get("effective_from") else doc.effective_from or doc.order_date
+            title = job.get("title") or f"{doc.title} · pages {job['pages'][0]}–{job['pages'][-1]}"
         print(f"== {tag}: {len(r.accepted)} accepted, {len(r.rejected)} rejected ({r.tokens_in}/{r.tokens_out} tokens)")
         for row in r.accepted:
             print("   +", row.get("label"), json.dumps(row["scope"]), json.dumps(row["body"])[:220], "p", row["source_ref"]["page"])
@@ -52,7 +59,8 @@ def main() -> int:
             with session_scope(actor=ACTOR) as s:
                 v = service.propose(s, family=job["family"], jurisdiction_id=job["jurisdiction"], rows=r.accepted,
                                     actor=ACTOR, effective_from=eff, title=title, origin="regreader_direct",
-                                    notes=f"focus: {job['focus']}")
+                                    notes=f"focus: {job['focus']}",
+                                    effective_to=date.fromisoformat(job["effective_to"]) if job.get("effective_to") else None)
                 print("   draft", v.id, "v", v.version)
     return 0
 

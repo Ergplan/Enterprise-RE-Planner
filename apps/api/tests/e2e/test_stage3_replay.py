@@ -39,7 +39,9 @@ def _cases() -> list[tuple[str, dict[str, Any]]]:
     for p in sorted(RESULTS.glob("*.json")) if RESULTS.exists() else []:
         d = json.loads(p.read_text())
         for b in d["result"].get("bills", []):
-            if defaults.discom_from_profile((b.get("profile") or {}).get("id")):
+            discom = defaults.discom_from_profile((b.get("profile") or {}).get("id"))
+            # Stage 3 replays UP and MH; bills of DISCOMs added later (Stage 8: PSPCL) are not in scope
+            if discom and defaults.state_of(discom) in VOLTAGE:
                 out.append((d["filename"], b))
     return out
 

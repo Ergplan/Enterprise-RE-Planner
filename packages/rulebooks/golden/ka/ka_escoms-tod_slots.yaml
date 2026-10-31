@@ -1,0 +1,12 @@
+# KERC Combined Tariff Order 2025, Annexure-9, "ToD Tariff : HT-2(a), HT-2(b), HT-2c(i) & HT-2c(ii)", PDF page 568:
+# December to June: 06-09 (+)100, 09-18 0, 18-22 (+)100, 22-06 (-)100 paise/unit; July to November all 0.
+jurisdiction: ka_escoms
+family: tod_slots
+tests:
+  - {name: "one row in January", given: {context: {category: HT-2(a), month: 1}}, expect: {count: 1}}
+  - {name: "one row in August", given: {context: {category: HT-2(a), month: 8}}, expect: {count: 1}}
+  - {name: "Dec-Jun morning +1.00", given: {context: {category: HT-2(a), month: 3}, field: /slots/0/rate_delta_inr_per_kwh}, expect: {value: "1.00"}}
+  - {name: "Dec-Jun evening +1.00", given: {context: {category: HT-2(a), month: 3}, field: /slots/2/rate_delta_inr_per_kwh}, expect: {value: "1.00"}}
+  - {name: "Dec-Jun night -1.00", given: {context: {category: HT-2(a), month: 12}, field: /slots/3/rate_delta_inr_per_kwh}, expect: {value: "-1.00"}}
+  - {name: "monsoon morning 0", given: {context: {category: HT-2(a), month: 9}, field: /slots/0/rate_delta_inr_per_kwh}, expect: {value: "0"}}
+  - {name: "night band starts 22:00", given: {context: {category: HT-2(a), month: 12}, field: /slots/3/start}, expect: {value: "22:00"}}

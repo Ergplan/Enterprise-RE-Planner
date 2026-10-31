@@ -1,0 +1,10 @@
+# TGERC Retail Supply Tariff Order FY 2026-27, para 4.16.3, PDF page 281: Rs. 1.50 per kVAh extra 06-10 and 18-22;
+# an incentive of Rs. 0.50 per kVAh 10-18; normal 22-06.
+jurisdiction: tg_discoms
+family: tod_slots
+tests:
+  - {name: "one row all year", given: {context: {category: HT-I(A), month: 7}}, expect: {count: 1}}
+  - {name: "06-10 +1.50", given: {context: {category: HT-I(A), month: 7}, field: /slots/0/rate_delta_inr_per_kwh}, expect: {value: "1.50"}}
+  - {name: "10-18 -0.50", given: {context: {category: HT-I(A), month: 1}, field: /slots/1/rate_delta_inr_per_kwh}, expect: {value: "-0.50"}}
+  - {name: "18-22 +1.50", given: {context: {category: HT-I(A), month: 1}, field: /slots/2/rate_delta_inr_per_kwh}, expect: {value: "1.50"}}
+  - {name: "22-06 starts at 22:00", given: {context: {category: HT-I(A), month: 1}, field: /slots/3/start}, expect: {value: "22:00"}}

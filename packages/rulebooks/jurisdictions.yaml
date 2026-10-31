@@ -28,6 +28,9 @@ states:
   - {id: BR, name: Bihar}
 groups:
   - {id: uppcl, name: "UPPCL state DISCOMs (one tariff order: PVVNL, MVVNL, PuVVNL, DVVNL, KESCO)", state: UP}
+  - {id: ka_escoms, name: "Karnataka ESCOMs (one combined KERC tariff order: BESCOM, MESCOM, CESC, HESCOM, GESCOM)", state: KA}
+  - {id: tg_discoms, name: "Telangana DISCOMs (one TGERC tariff order: TGSPDCL, TGNPDCL)", state: TS}
+  - {id: ap_discoms, name: "Andhra Pradesh DISCOMs (one APERC tariff order: APSPDCL, APCPDCL, APEPDCL)", state: AP}
 discoms:
   - {id: npcl, name: Noida Power Company Limited, state: UP}
   - {id: pvvnl, name: Paschimanchal Vidyut Vitran Nigam Limited, state: UP, parent: uppcl}
@@ -57,3 +60,21 @@ discoms:
   - {id: pspcl, name: Punjab State Power Corporation Limited, state: PB}
   - {id: dhbvn, name: Dakshin Haryana Bijli Vitran Nigam, state: HR}
   - {id: uhbvn, name: Uttar Haryana Bijli Vitran Nigam, state: HR}
+  - {id: bescom, name: Bangalore Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
+  - {id: mescom, name: Mangalore Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
+  - {id: cesc, name: Chamundeshwari Electricity Supply Corporation Ltd., state: KA, parent: ka_escoms}
+  - {id: hescom, name: Hubli Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
+  - {id: gescom, name: Gulbarga Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
+  - {id: tgspdcl, name: Southern Power Distribution Company of Telangana Ltd., state: TS, parent: tg_discoms}
+  - {id: tgnpdcl, name: Northern Power Distribution Company of Telangana Ltd., state: TS, parent: tg_discoms}
+  - {id: apspdcl, name: Southern Power Distribution Company of A.P. Ltd., state: AP, parent: ap_discoms}
+  - {id: apcpdcl, name: A.P. Central Power Distribution Corporation Ltd., state: AP, parent: ap_discoms}
+  - {id: apepdcl, name: Eastern Power Distribution Company of A.P. Ltd., state: AP, parent: ap_discoms}
+  - {id: tnpdcl, name: Tamil Nadu Power Distribution Corporation Ltd., state: TN}
+  - {id: pspcl, name: Punjab State Power Corporation Ltd., state: PB}
+  - {id: mgvcl, name: Madhya Gujarat Vij Company Ltd., state: GJ}
+  - {id: uhbvn, name: Uttar Haryana Bijli Vitran Nigam Ltd., state: HR}
+  - {id: dhbvn, name: Dakshin Haryana Bijli Vitran Nigam Ltd., state: HR}
+  - {id: jvvnl, name: Jaipur Vidyut Vitran Nigam Ltd., state: RJ}
+  - {id: avvnl, name: Ajmer Vidyut Vitran Nigam Ltd., state: RJ}
+  - {id: jdvvnl, name: Jodhpur Vidyut Vitran Nigam Ltd., state: RJ}

@@ -134,6 +134,9 @@ export function ScenarioBoard({ siteId, connectionId, initial, asOf }: { siteId:
                       <tr><td>Grid CO₂</td><td className="num">{Math.round(Number(s.emissions.before_t.value)).toLocaleString("en-IN")} → {Math.round(Number(s.emissions.after_t.value)).toLocaleString("en-IN")} t</td></tr>
                     </tbody>
                   </table>
+                  {s.sizes.some((z) => z.gaps.length) && (
+                    <p className="ep-small eg-muted">Not yet sourced: {[...new Set(s.sizes.flatMap((z) => z.gaps))].join(", ").replaceAll("_", " ")}</p>
+                  )}
                   {r && <button className="eg-btn eg-btn--ghost eg-btn--sm" onClick={() => { setSelected(r.id); setWeek(""); }}>{r.id === selected ? "Shown below" : "See the dispatch"}</button>}
                 </>
               ) : r?.status === "failed" || r?.status === "failed_resettle" ? (

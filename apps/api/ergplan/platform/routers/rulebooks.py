@@ -176,6 +176,46 @@ def jurisdictions() -> list[JurisdictionOut]:
         ]
 
 
+class CoverageOut(BaseModel):
+    state: str
+    name: str
+    families: dict[str, str]  # family → "approved" | "not yet sourced"
+    jurisdictions: dict[
+        str, list[str]
+    ]  # family → the jurisdictions (DISCOM, group or state) with approved rows
+
+
+@router.get("/coverage", response_model=list[CoverageOut])
+def coverage(on: date | None = None) -> list[CoverageOut]:
+    """Per state, which rule families are approved and in force (on a date, default today) and which
+    are not yet sourced — the honest map of where a plan's numbers can come from."""
+    when = on or date.today()
+    with session_scope() as s:
+        states = list(
+            s.scalars(select(Jurisdiction).where(Jurisdiction.kind == "state").order_by(Jurisdiction.id))
+        )
+        by_state: dict[str, dict[str, set[str]]] = {st.id: {} for st in states}
+        for v in s.scalars(select(RulebookVersion).where(RulebookVersion.status == "approved")):
+            if v.effective_from > when or (v.effective_to is not None and v.effective_to < when):
+                continue
+            j = s.get(Jurisdiction, v.jurisdiction_id)
+            code = j.state_code if j is not None else None
+            if code in by_state:
+                by_state[code].setdefault(v.family, set()).add(v.jurisdiction_id)
+        out = []
+        for st in states:
+            fam = by_state[st.id]
+            out.append(
+                CoverageOut(
+                    state=st.id,
+                    name=st.name,
+                    families={f: ("approved" if f in fam else "not yet sourced") for f in FAMILIES},
+                    jurisdictions={f: sorted(v) for f, v in fam.items()},
+                )
+            )
+        return out
+
+
 @router.get("/families")
 def families() -> dict[str, Any]:
     return {f: family_schema(f) for f in FAMILIES}

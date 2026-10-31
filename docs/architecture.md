@@ -125,6 +125,7 @@ bill → `intake.bills.ingest()` → `intake.site_intake.build()` → `engine.ta
 | POST | `/voice/tool`, GET `/voice/tools?mode=` | Run one tool on the browser-held state (the Realtime model's function calls are relayed here); the tool schemas |
 | POST | `/chat` | Text chat with the same tools (the model asks, the API runs, the model reads back) |
 | POST | `/auth/request`, `/auth/verify`, `/auth/logout`; GET `/auth/me` | Sign-in by email link; session cookie; who is signed in and whether sign-in is required |
+| GET | `/rulebooks/coverage?on=` | Per state: which rule families are approved on the date, else "not yet sourced" |
 | GET | `/connections/{id}/avoided-cost?as_of=&version=` | Avoided cost of a grid kWh: 12 × 96 matrix (INR/kWh), rate cards with cited components and the kVAh/kWh factor, annual energy and demand lines; `as_of` picks the tariff (default today) |
 
 ## Web (apps/web)
@@ -138,7 +139,7 @@ Stage 8: `docker/compose.prod.yaml` over `docker/compose.yaml` on the VM (only C
 
 `docker/compose.yaml`: postgres, api (migrates then serves), web (Next standalone), billx (built from `BILLX_REPO`, default a sibling `billx` checkout), caddy (`:8080`, `/api/*` → api). Mac mini first; Google Cloud VM later. The build workspace has no Docker daemon, so Stage 0 ran the same services natively (Postgres 16, uvicorn, next dev).
 
-## Rulebooks seeded (Stage 1)
+## Rulebooks seeded (Stages 1 and 8)
 
 | Jurisdiction | Families | Source | Golden tests |
 | --- | --- | --- | --- |
@@ -146,10 +147,15 @@ Stage 8: `docker/compose.prod.yaml` over `docker/compose.yaml` on the VM (only C
 | `uppcl` (PVVNL, MVVNL, PuVVNL, DVVNL, KESCO) | tariff_schedule, tod_slots, oa_charge (wheeling 0.9318, OA distribution losses, CSS) | UPERC State DISCOMs FY 2026-27 order pp. 379–446 | 24 |
 | `UP` | oa_charge (intra-state transmission 0.3075/kWh, ISTS loss 1.56%, STU loss 3.18%), settlement (captive banking, CRE Regulations 2024) | UPERC State DISCOMs order pp. 377, 384; CRE Regulations 2024 pp. 14–20 (OCR) | 16 |
 | `msedcl` | tariff_schedule (HT I(A), HT II; EHV and HT), tod_slots, oa_charge (CSS 2.11), settlement (monthly ToD-slot banking) | MERC Case 75/2025 post-remand order of 25 Mar 2026, pp. 77–106 | 25 |
+| `ka_escoms` (BESCOM, MESCOM, CESC, HESCOM, GESCOM) | tariff_schedule (HT-2(a)), tod_slots | KERC FY 2026-27 order | 12 |
+| `tg_discoms` (TGSPDCL, TGNPDCL) | tariff_schedule (HT-I(A), kVAh by voltage), tod_slots | TGERC FY 2026-27 order p. 281 | 11 |
+| `pspcl` | tariff_schedule (LS general industry, two CD bands, 80 % floor) | PSERC FY 2026-27 order pp. 225–226 | 7 |
+
+GJ, RJ, HR, TN and AP are registered jurisdictions with no approved rules ("not yet sourced"; see `docs/known-gaps.md`).
 
 ## What changed
 
-- **Stage 8**: sign-in by email link and access control (`platform/auth.py`, `platform/mail.py`, `routers/auth.py`; tables `users`, `login_tokens`, `auth_sessions`, `bills.uploaded_by`, migration 0009); bills read once per file but owned per uploader; security headers; `/login` and `/login/verify` pages and a signed-in bar; server pages forward the session cookie; approved-rule cache in `rulebook.repository` (cleared when the approved set changes); worker `--concurrency`; `tools/dev/secrets-check.py` in the watcher and CI; `docker/compose.prod.yaml`, Caddy TLS by `SITE_ADDRESS`, `tools/dev/backup.sh`, `docs/deploy.md`.
+- **Stage 8**: sign-in by email link and access control (`platform/auth.py`, `platform/mail.py`, `routers/auth.py`; tables `users`, `login_tokens`, `auth_sessions`, `bills.uploaded_by`, migration 0009); bills read once per file but owned per uploader; security headers; `/login` and `/login/verify` pages and a signed-in bar; server pages forward the session cookie; approved-rule cache in `rulebook.repository` (cleared when the approved set changes); worker `--concurrency`; `tools/dev/secrets-check.py` in the watcher and CI; `docker/compose.prod.yaml`, Caddy TLS by `SITE_ADDRESS`, `tools/dev/backup.sh`, `docs/deploy.md`. Breadth: Karnataka, Telangana and Punjab rulebooks approved with golden tests (`packages/rulebooks/golden/{ka,ts,pb}`, `states/{ka,ts,pb}`), jurisdictions and DISCOM aliases for 18 more DISCOMs, `seed/stage8-jobs.yaml` (seed script takes a jobs file), `GET /rulebooks/coverage` and the coverage table on `/rulebooks`, "not yet sourced" notes on the options board and the live plan.
 - **Stage 7**: `report/` (plan, share, whatif, pdf, explain), `voice/tools.py`, providers `realtime_secret` and `chat_with_tools` with prompts `voice_v1` and `explain_v1`; tables `share_links`, `explanations` (migration 0008); routers `plan` and `voice`; settings `ergplan_web_internal_url`; Playwright (Python) for PDF export (also in the API image); journey step 6, `/p/[token]`, voice on intake, the rail carries the site; `tools/dev/billx_stub.py` and `tools/dev/e2e-journey.sh` (isolated browser end-to-end on real bills); `next.config` `distDir` from `NEXT_DIST_DIR`.
 - **Stage 6**: `optimizer/` (model, highs_solve, resettle, scenarios); `platform/runs.py` and `platform/worker.py`; tables `scenarios`, `runs`, `run_results` with audit triggers on `scenarios` and `runs` (migration 0007, `db/sql/0007_runs_audit.sql`); `rulebook.repository.Reader` and `pinned_rules` (replay); `units` gains years, tCO2, tCO2/MWh; settings `ergplan_optimizer_time_limit_s`, `ergplan_optimizer_mip_gap`; compose service `worker`; pytest marker `slow` (15-minute site solves, run by CI's site step); journey step 5.
 - **Stage 5**: `settlement/simulate.py`; hand-worked settlement cases in `apps/api/tests/settlement/cases/` mirrored in `packages/rulebooks/golden/<state>/settlement-cases.yaml`; normative generation curves `packages/profiles/cuf/` and `intake/generation.py`; landed-cost waterfall exposes the delivered share after losses; `POST /connections/{id}/settle`; analyst settlement explorer.

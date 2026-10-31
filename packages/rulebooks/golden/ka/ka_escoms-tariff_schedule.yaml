@@ -1,0 +1,11 @@
+# Written by reading the order's text layer, independently of the reader's output.
+# KERC Combined Tariff Order 2025 for ESCOMs (sha256 d84997a4…), Annexure-9, TARIFF SCHEDULE HT-2(a) for industries,
+# PDF page 566: FY2026-27 column — demand Rs.350/- per kVA per month of billing demand; energy 660 paise per kWh.
+jurisdiction: ka_escoms
+family: tariff_schedule
+tests:
+  - {name: "HT-2(a) demand FY2026-27", given: {context: {category: HT-2(a), voltage_kv: 11}, field: /demand_charge/value}, expect: {value: "350"}}
+  - {name: "HT-2(a) energy FY2026-27 (660 paise)", given: {context: {category: HT-2(a), voltage_kv: 11}, field: /energy_charge/base}, expect: {value: "6.60"}}
+  - {name: "HT-2(a) same at 66 kV", given: {context: {category: HT-2(a), voltage_kv: 66}, field: /energy_charge/base}, expect: {value: "6.60"}}
+  - {name: "HT-2(a) billed in kWh", given: {context: {category: HT-2(a), voltage_kv: 11}, field: /billing_basis}, expect: {value: kwh}}
+  - {name: "HT-2(b) not seeded", given: {context: {category: HT-2(b), voltage_kv: 11}}, expect: {absent: true}}

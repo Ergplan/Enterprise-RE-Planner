@@ -1,0 +1,12 @@
+# TGERC Retail Supply Tariff Order FY 2026-27 (sha256 1d76cba9…), para 4.16.4, PDF page 281:
+# HT-I(A): Industry General — demand Rs. 500 per kVA per month of billing demand; energy Rs/kVAh 11 kV 7.65, 33 kV 7.15,
+# 132 kV and above 6.65.
+jurisdiction: tg_discoms
+family: tariff_schedule
+tests:
+  - {name: "HT-I(A) 11 kV energy", given: {context: {category: HT-I(A), voltage_kv: 11}, field: /energy_charge/base}, expect: {value: "7.65"}}
+  - {name: "HT-I(A) 33 kV energy", given: {context: {category: HT-I(A), voltage_kv: 33}, field: /energy_charge/base}, expect: {value: "7.15"}}
+  - {name: "HT-I(A) 132 kV energy", given: {context: {category: HT-I(A), voltage_kv: 132}, field: /energy_charge/base}, expect: {value: "6.65"}}
+  - {name: "HT-I(A) 220 kV energy", given: {context: {category: HT-I(A), voltage_kv: 220}, field: /energy_charge/base}, expect: {value: "6.65"}}
+  - {name: "HT-I(A) demand", given: {context: {category: HT-I(A), voltage_kv: 33}, field: /demand_charge/value}, expect: {value: "500"}}
+  - {name: "HT-I(A) billed in kVAh", given: {context: {category: HT-I(A), voltage_kv: 11}, field: /billing_basis}, expect: {value: kvah}}

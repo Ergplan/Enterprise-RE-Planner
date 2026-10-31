@@ -1,0 +1,13 @@
+# PSERC Tariff Order FY 2026-27 for PSPCL (sha256 85fcad54…), Table on PDF page 225, new tariff w.e.f. 01.04.2026:
+# 3(c) Large Supply, General Industry — above 100 kVA up to 1000 kVA: 210/kVA, 5.90/kVAh; above 1000 kVA: 280/kVA,
+# 6.00/kVAh. Page 226 footnote: fixed charge on 80% of the contract demand (or the demand recorded, if higher).
+jurisdiction: pspcl
+family: tariff_schedule
+tests:
+  - {name: "LS GI 500 kVA demand", given: {context: {category: LS General Industry, voltage_kv: 11, contract_demand_kva: 500}, field: /demand_charge/value}, expect: {value: "210"}}
+  - {name: "LS GI 500 kVA energy", given: {context: {category: LS General Industry, voltage_kv: 11, contract_demand_kva: 500}, field: /energy_charge/base}, expect: {value: "5.90"}}
+  - {name: "LS GI 5000 kVA demand", given: {context: {category: LS General Industry, voltage_kv: 66, contract_demand_kva: 5000}, field: /demand_charge/value}, expect: {value: "280"}}
+  - {name: "LS GI 5000 kVA energy", given: {context: {category: LS General Industry, voltage_kv: 66, contract_demand_kva: 5000}, field: /energy_charge/base}, expect: {value: "6.00"}}
+  - {name: "LS GI exactly 1000 kVA is the lower slab", given: {context: {category: LS General Industry, voltage_kv: 11, contract_demand_kva: 1000}, field: /demand_charge/value}, expect: {value: "210"}}
+  - {name: "fixed charge on 80% of contract demand", given: {context: {category: LS General Industry, voltage_kv: 11, contract_demand_kva: 2000}, field: /demand_charge/billing_demand_rule/min_pct_of_contract_demand}, expect: {value: "80"}}
+  - {name: "billed in kVAh", given: {context: {category: LS General Industry, voltage_kv: 11, contract_demand_kva: 2000}, field: /billing_basis}, expect: {value: kvah}}

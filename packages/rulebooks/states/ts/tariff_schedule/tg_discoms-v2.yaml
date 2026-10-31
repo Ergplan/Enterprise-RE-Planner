@@ -1,0 +1,88 @@
+family: tariff_schedule
+jurisdiction: tg_discoms
+version: 2
+status: approved
+title: TGERC Retail Supply Tariff Order FY 2026-27 · p. 281 · HT-I(A) Industry - General
+effective_from: '2026-04-01'
+effective_to: '2027-03-31'
+origin: manual
+approved_by: build-agent@ergplan
+rows:
+- label: HT-I(A) Industry General · 11 kV
+  scope:
+    category:
+    - HT-I(A)
+    voltage_kv:
+      max: 11
+  body:
+    category: HT-I(A)
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month_billing_demand
+      value: '500'
+    energy_charge:
+      base: '7.65'
+  source_ref:
+    kind: order
+    page: 281
+    quote: |-
+      HT-I(A): Industry General
+      11 kV kVA 500 7.65
+      33 kV kVA 500 7.15
+      132 kV and above kVA 500 6.65
+      *Demand charge is calculated at Rs. /kVA/month of the Billing Demand
+    document_id: 0c84182f-4a13-5915-9fcb-b98639b59622
+    effective_from: '2026-04-01'
+- label: HT-I(A) Industry General · 33 kV
+  scope:
+    category:
+    - HT-I(A)
+    voltage_kv:
+      max: 33
+      min: 11
+      min_exclusive: true
+  body:
+    category: HT-I(A)
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month_billing_demand
+      value: '500'
+    energy_charge:
+      base: '7.15'
+  source_ref:
+    kind: order
+    page: 281
+    quote: |-
+      HT-I(A): Industry General
+      11 kV kVA 500 7.65
+      33 kV kVA 500 7.15
+      132 kV and above kVA 500 6.65
+      *Demand charge is calculated at Rs. /kVA/month of the Billing Demand
+    document_id: 0c84182f-4a13-5915-9fcb-b98639b59622
+    effective_from: '2026-04-01'
+- label: HT-I(A) Industry General · 132 kV and above
+  scope:
+    category:
+    - HT-I(A)
+    voltage_kv:
+      min: 33
+      min_exclusive: true
+  body:
+    category: HT-I(A)
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month_billing_demand
+      value: '500'
+    energy_charge:
+      base: '6.65'
+  source_ref:
+    kind: order
+    page: 281
+    quote: |-
+      HT-I(A): Industry General
+      11 kV kVA 500 7.65
+      33 kV kVA 500 7.15
+      132 kV and above kVA 500 6.65
+      *Demand charge is calculated at Rs. /kVA/month of the Billing Demand
+    document_id: 0c84182f-4a13-5915-9fcb-b98639b59622
+    effective_from: '2026-04-01'

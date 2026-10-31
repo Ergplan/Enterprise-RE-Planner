@@ -13,6 +13,7 @@ const STATUS_TONE: Record<string, string> = {
 
 export default async function RulebooksPage() {
   const versions = (await apiOrNull<Version[]>("/rulebooks/versions")) ?? [];
+  const coverage = (await apiOrNull<{ state: string; name: string; families: Record<string, string> }[]>("/rulebooks/coverage")) ?? [];
   const byJur = new Map<string, Version[]>();
   const order = { approved: 0, draft: 1, rejected: 2, superseded: 3 } as Record<string, number>;
   versions.sort((a, b) => a.jurisdiction_id.localeCompare(b.jurisdiction_id) || a.family.localeCompare(b.family) || order[a.status] - order[b.status]);
@@ -31,6 +32,24 @@ export default async function RulebooksPage() {
         <span className="eg-chip eg-chip--accent">{live} approved</span>
         <span className="eg-chip">{versions.filter((v) => v.status === "draft").length} drafts</span>
       </div>
+      {coverage.length > 0 && (
+        <section className="eg-card ep-panel">
+          <div className="eg-overline" style={{ marginBottom: 8 }}>Coverage today</div>
+          <table className="ep-table ep-small">
+            <thead><tr><th>State</th>{Object.keys(coverage[0].families).map((f) => <th key={f}>{FAMILY_LABEL[f] ?? f}</th>)}</tr></thead>
+            <tbody>
+              {coverage.map((c) => (
+                <tr key={c.state}>
+                  <td>{c.name}</td>
+                  {Object.entries(c.families).map(([f, st]) => (
+                    <td key={f}><span className={`eg-chip ${st === "approved" ? "eg-chip--accent" : ""}`}>{st}</span></td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )}
       {versions.length === 0 && <p className="ep-empty">No rulebooks yet. Read a regulation from the document library.</p>}
       {[...byJur.entries()].map(([jur, vs]) => (
         <section key={jur} className="eg-card">

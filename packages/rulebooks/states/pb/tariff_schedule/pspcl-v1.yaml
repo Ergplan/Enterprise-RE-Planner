@@ -1,0 +1,74 @@
+family: tariff_schedule
+jurisdiction: pspcl
+version: 1
+status: approved
+title: PSERC Tariff Order FY 2026-27 (PSPCL) · Large Supply General Industry
+effective_from: '2026-04-01'
+effective_to: '2027-03-31'
+origin: regreader_direct
+approved_by: build-agent@ergplan
+rows:
+- label: LS General Industry · Above 100 kVA & upto 1000 kVA
+  scope:
+    category:
+    - LS General Industry
+    contract_demand_kva:
+      max: 1000
+      min: 100
+      min_exclusive: true
+  body:
+    category: LS General Industry
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month
+      value: '210'
+      billing_demand_rule:
+        min_pct_of_contract_demand: '80'
+    energy_charge:
+      base: '5.90'
+  source_ref:
+    kind: order
+    page: 225
+    quote: "c. Large Supply \nGeneral \nIndustry \nAbove 100 kVA & \nupto 1000 kVA All Units 210/kVA 6.60/kVAh All Units 210/kVA\
+      \ 5.90/kVAh"
+    document_id: 8fc3d382-3fde-5496-9246-411738181d7e
+  field_refs:
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      page: 226
+      quote: "*Fixed Charge (unless otherwise specified in Schedule of Tariff) shall be levied on 80% of the \nsanctioned/contracted\
+        \ load (actual load recorded or detected, if higher) or contract demand (actual \ndemand recorded, if higher, restricted\
+        \ to the sanctioned contract demand) as may be applicable."
+      document_id: 8fc3d382-3fde-5496-9246-411738181d7e
+      effective_from: '2026-04-01'
+- label: LS General Industry · Above 1000 kVA
+  scope:
+    category:
+    - LS General Industry
+    contract_demand_kva:
+      min: 1000
+      min_exclusive: true
+  body:
+    category: LS General Industry
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month
+      value: '280'
+      billing_demand_rule:
+        min_pct_of_contract_demand: '80'
+    energy_charge:
+      base: '6.00'
+  source_ref:
+    kind: order
+    page: 225
+    quote: Above 1000 kVA All Units 280/kVA 6.70/kVAh All Units 280/kVA 6.00/kVAh
+    document_id: 8fc3d382-3fde-5496-9246-411738181d7e
+  field_refs:
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      page: 226
+      quote: "*Fixed Charge (unless otherwise specified in Schedule of Tariff) shall be levied on 80% of the \nsanctioned/contracted\
+        \ load (actual load recorded or detected, if higher) or contract demand (actual \ndemand recorded, if higher, restricted\
+        \ to the sanctioned contract demand) as may be applicable."
+      document_id: 8fc3d382-3fde-5496-9246-411738181d7e
+      effective_from: '2026-04-01'
