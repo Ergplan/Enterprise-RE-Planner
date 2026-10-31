@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "oa_charge.schema.json",
+  "title": "Open-access charge",
+  "description": "One charge component of the landed-cost waterfall, with its basis and the conditions under which it is exempt. Scope says which connections and sources it applies to.",
+  "type": "object",
+  "required": [
+    "scope",
+    "body",
+    "source_ref"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "scope": {
+      "$ref": "scope.schema.json"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component",
+        "basis"
+      ],
+      "properties": {
+        "component": {
+          "enum": [
+            "ists_transmission",
+            "ists_losses",
+            "stu_transmission",
+            "stu_losses",
+            "wheeling",
+            "wheeling_losses",
+            "cross_subsidy_surcharge",
+            "additional_surcharge",
+            "sldc_operating",
+            "rldc_operating",
+            "sldc_scheduling",
+            "banking_charge",
+            "electricity_duty_oa",
+            "dsm_passthrough",
+            "standby_charge",
+            "grid_support_charge",
+            "exchange_fee",
+            "trading_margin",
+            "green_tariff_premium",
+            "reactive_energy_charge",
+            "other"
+          ]
+        },
+        "basis": {
+          "enum": [
+            "inr_per_kwh",
+            "inr_per_kvah",
+            "inr_per_kw_month",
+            "inr_per_mw_month",
+            "inr_per_mw_day",
+            "inr_per_mwh",
+            "percent_in_kind",
+            "percent_of_price",
+            "percent_of_acos",
+            "inr_per_year"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "description": "Charge value in the basis unit (decimal as string)"
+        },
+        "value_by_voltage": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "description": "Value for a voltage band key such as '11', '33', '132' (decimal as string)"
+          },
+          "description": "Where the order tabulates by voltage, keyed by kV"
+        },
+        "cap": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "percent_of_acos": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "Cap as % of average cost of supply (GEOA Rules: CSS ≤ 20 %) (percent, decimal as string)"
+            },
+            "inr_per_kwh": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "Absolute cap (decimal as string)"
+            }
+          }
+        },
+        "exemptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "condition"
+            ],
+            "properties": {
+              "condition": {
+                "enum": [
+                  "captive_26_51",
+                  "group_captive",
+                  "geoa_contract_demand_not_reduced",
+                  "re_source_waiver",
+                  "behind_meter",
+                  "consumer_voltage_at_or_above_kv",
+                  "commissioned_in_band",
+                  "other"
+                ]
+              },
+              "param": {
+                "type": "string",
+                "description": "e.g. '66' for a voltage threshold, or a date band"
+              },
+              "waived_pct": {
+                "type": "string",
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "description": "Share of the charge waived; 100 = fully exempt (percent, decimal as string)"
+              },
+              "sunset": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "source_ref": {
+      "$ref": "source_ref.schema.json"
+    },
+    "position": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

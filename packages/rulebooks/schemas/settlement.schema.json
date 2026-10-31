@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "settlement.schema.json",
+  "title": "Settlement rule",
+  "description": "How injected energy is netted against drawal, banked and settled, for the connections and sources in scope. Slot names refer to the tod_slots family.",
+  "type": "object",
+  "required": [
+    "scope",
+    "body",
+    "source_ref"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "scope": {
+      "$ref": "scope.schema.json"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "granularity",
+        "banking"
+      ],
+      "properties": {
+        "granularity": {
+          "enum": [
+            "block_15min",
+            "hourly",
+            "tod_slot_monthly",
+            "monthly_aggregate",
+            "annual"
+          ]
+        },
+        "tod_slots_ref": {
+          "type": "string",
+          "description": "Rule id in the tod_slots family the slot names refer to"
+        },
+        "banking": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "allowed"
+          ],
+          "properties": {
+            "allowed": {
+              "type": "boolean"
+            },
+            "charge": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "value"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "in_kind_percent",
+                    "inr_per_kwh",
+                    "none"
+                  ]
+                },
+                "value": {
+                  "type": "string",
+                  "pattern": "^-?\\d+(\\.\\d+)?$",
+                  "description": "Charge (decimal as string)"
+                }
+              }
+            },
+            "cap_pct_of_generation": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "Maximum share of annual generation that may be banked (percent, decimal as string)"
+            },
+            "period": {
+              "enum": [
+                "monthly",
+                "quarterly",
+                "financial_year",
+                "calendar_year"
+              ]
+            },
+            "carry_over": {
+              "type": "boolean",
+              "description": "Whether unused bank carries into the next period within the year"
+            },
+            "buckets": {
+              "enum": [
+                "per_slot",
+                "pooled"
+              ],
+              "description": "Bank kept per ToD slot or as one pool"
+            },
+            "drawal_windows": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "allowed_slots"
+                ],
+                "properties": {
+                  "deposited_in_slots": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Which deposit slots this window governs; omit for all"
+                  },
+                  "allowed_slots": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "months": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 12
+                    },
+                    "uniqueItems": true,
+                    "description": "Calendar months the item applies to; omit for all"
+                  }
+                }
+              }
+            },
+            "withdrawal_priority": {
+              "enum": [
+                "same_slot_first",
+                "allowed_slots_in_order",
+                "any"
+              ]
+            },
+            "lapse": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "treatment"
+              ],
+              "properties": {
+                "treatment": {
+                  "enum": [
+                    "lapses",
+                    "paid",
+                    "paid_at_re_tariff"
+                  ]
+                },
+                "price": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "ref": {
+                      "enum": [
+                        "appc",
+                        "generic_re_tariff",
+                        "discom_avg_power_purchase",
+                        "fixed"
+                      ]
+                    },
+                    "factor": {
+                      "type": "string",
+                      "pattern": "^\\d+(\\.\\d+)?$"
+                    },
+                    "inr_per_kwh": {
+                      "type": "string",
+                      "pattern": "^-?\\d+(\\.\\d+)?$",
+                      "description": "Fixed price if ref=fixed (decimal as string)"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "surplus_without_banking": {
+          "enum": [
+            "lapses",
+            "sold_at_scenario_price",
+            "sold_at_appc"
+          ],
+          "description": "What happens to unmatched injection when banking is not allowed"
+        },
+        "set_off_order": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "rooftop",
+              "captive_thermal",
+              "btm_bess",
+              "oa_intra",
+              "oa_ists",
+              "iex",
+              "any"
+            ]
+          }
+        },
+        "kvah_treatment": {
+          "type": "string",
+          "description": "How RE injection is set off on a kVAh-billed consumer, as the order states"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "source_ref": {
+      "$ref": "source_ref.schema.json"
+    },
+    "position": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

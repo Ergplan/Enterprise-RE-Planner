@@ -1,0 +1,34 @@
+# ILLUSTRATIVE open-access charge rows. Placeholders, not the real UP values.
+family: oa_charge
+jurisdiction: UP
+version: 0-example
+status: draft
+rows:
+  - scope: {connection: [intra_state, ists], ownership: [third_party], source: [any_re]}
+    body:
+      component: cross_subsidy_surcharge
+      basis: inr_per_kwh
+      value_by_voltage: {"11": "1.85", "33": "1.60", "132": "1.20"}
+      cap: {percent_of_acos: "20"}
+      exemptions:
+        - {condition: captive_26_51, waived_pct: "100", note: "captive users exempt"}
+        - {condition: re_source_waiver, waived_pct: "50", sunset: "2026-03-31", note: "illustrative state RE waiver"}
+    source_ref: {kind: order, document_id: example-doc-id, page: 212, quote: "Cross subsidy surcharge for HV-2 consumers at 11 kV", effective_from: "2026-04-01"}
+  - scope: {connection: [intra_state, ists], ownership: [third_party]}
+    body:
+      component: additional_surcharge
+      basis: inr_per_kwh
+      value: "1.10"
+      exemptions:
+        - {condition: geoa_contract_demand_not_reduced, waived_pct: "100", note: "GEOA Rules 2022 rule 9(2)"}
+        - {condition: captive_26_51, waived_pct: "100"}
+    source_ref: {kind: order, document_id: example-doc-id, page: 215, quote: "Additional surcharge of Rs 1.10 per unit", effective_from: "2026-04-01"}
+  - scope: {connection: [intra_state], voltage_kv: {max: 33}}
+    body: {component: wheeling, basis: inr_per_kwh, value_by_voltage: {"11": "0.90", "33": "0.45"}}
+    source_ref: {kind: order, document_id: example-doc-id, page: 208, quote: "Wheeling charges at 11 kV and 33 kV", effective_from: "2026-04-01"}
+  - scope: {connection: [intra_state], voltage_kv: {max: 33}}
+    body: {component: wheeling_losses, basis: percent_in_kind, value_by_voltage: {"11": "6.0", "33": "4.5"}}
+    source_ref: {kind: order, document_id: example-doc-id, page: 208, quote: "Wheeling losses", effective_from: "2026-04-01"}
+  - scope: {connection: [intra_state, ists]}
+    body: {component: stu_transmission, basis: inr_per_mw_month, value: "150000"}
+    source_ref: {kind: order, document_id: example-doc-id, page: 190, quote: "Transmission charges per MW per month", effective_from: "2026-04-01"}

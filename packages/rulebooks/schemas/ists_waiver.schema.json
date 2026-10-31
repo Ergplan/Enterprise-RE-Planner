@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ists_waiver.schema.json",
+  "title": "ISTS waiver schedule",
+  "description": "CERC waiver of ISTS transmission charges and losses for RE and storage by commissioning date band.",
+  "type": "object",
+  "required": [
+    "scope",
+    "body",
+    "source_ref"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "scope": {
+      "$ref": "scope.schema.json"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "applies_to",
+        "bands"
+      ],
+      "properties": {
+        "applies_to": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "solar",
+              "wind",
+              "hybrid",
+              "bess",
+              "pumped_storage",
+              "green_hydrogen"
+            ]
+          }
+        },
+        "bands": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "commissioned_from",
+              "charges_waived_pct",
+              "losses_waived_pct",
+              "years"
+            ],
+            "properties": {
+              "commissioned_from": {
+                "type": "string",
+                "format": "date"
+              },
+              "commissioned_to": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "charges_waived_pct": {
+                "type": "string",
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "description": "Share of ISTS charges waived (percent, decimal as string)"
+              },
+              "losses_waived_pct": {
+                "type": "string",
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "description": "Share of ISTS losses waived (percent, decimal as string)"
+              },
+              "years": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Waiver duration from commissioning"
+              },
+              "conditions": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "source_ref": {
+      "$ref": "source_ref.schema.json"
+    },
+    "position": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

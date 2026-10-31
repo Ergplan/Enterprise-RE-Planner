@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tariff_schedule.schema.json",
+  "title": "Tariff schedule",
+  "description": "Retail rates for one DISCOM category and voltage from the tariff order. One row per category/voltage; slot names refer to the tod_slots family.",
+  "type": "object",
+  "required": [
+    "scope",
+    "body",
+    "source_ref"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "scope": {
+      "$ref": "scope.schema.json"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "category",
+        "billing_basis",
+        "demand_charge",
+        "energy_charge"
+      ],
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "billing_basis": {
+          "enum": [
+            "kwh",
+            "kvah"
+          ]
+        },
+        "demand_charge": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "basis"
+          ],
+          "properties": {
+            "value": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "Fixed/demand charge (decimal as string)"
+            },
+            "basis": {
+              "enum": [
+                "inr_per_kva_month",
+                "inr_per_kw_month",
+                "inr_per_kva_month_billing_demand"
+              ]
+            },
+            "billing_demand_rule": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "min_pct_of_contract_demand": {
+                  "type": "string",
+                  "pattern": "^-?\\d+(\\.\\d+)?$",
+                  "description": "Billing demand floor as % of contract demand (e.g. 75) (percent, decimal as string)"
+                },
+                "excess_demand_penalty_multiplier": {
+                  "type": "string",
+                  "pattern": "^\\d+(\\.\\d+)?$",
+                  "description": "Multiple of demand charge on demand above contract (e.g. 2)"
+                }
+              }
+            }
+          }
+        },
+        "energy_charge": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "base"
+          ],
+          "properties": {
+            "base": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "Energy charge per billed unit (basis above) (decimal as string)"
+            },
+            "by_slot": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "description": "Energy charge for this slot where the order prices slots directly (decimal as string)"
+              }
+            }
+          }
+        },
+        "fppca_inr_per_unit": {
+          "type": "string",
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "description": "Fuel/power purchase cost adjustment per billed unit, as currently notified (decimal as string)"
+        },
+        "electricity_duty": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "pct": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "ED as % of energy charge (percent, decimal as string)"
+            },
+            "inr_per_unit": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "ED per unit (decimal as string)"
+            }
+          }
+        },
+        "pf_incentive": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "pf_min",
+              "pf_max",
+              "pct"
+            ],
+            "properties": {
+              "pf_min": {
+                "type": "number"
+              },
+              "pf_max": {
+                "type": "number"
+              },
+              "pct": {
+                "type": "string",
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "description": "+ incentive / − penalty on energy charge (percent, decimal as string)"
+              }
+            }
+          }
+        },
+        "lf_incentive": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "lf_min_pct",
+              "lf_max_pct",
+              "rebate_inr_per_unit"
+            ],
+            "properties": {
+              "lf_min_pct": {
+                "type": "number"
+              },
+              "lf_max_pct": {
+                "type": "number"
+              },
+              "rebate_inr_per_unit": {
+                "type": "string",
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "description": "Rebate on units above the LF threshold (decimal as string)"
+              }
+            }
+          }
+        },
+        "prompt_payment_rebate_pct": {
+          "type": "string",
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "description": "Rebate for payment within the stated days (percent, decimal as string)"
+        },
+        "minimum_charge": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "inr_per_kva_month": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "Minimum charge basis (decimal as string)"
+            },
+            "min_units_per_kva_month": {
+              "type": "number"
+            }
+          }
+        },
+        "green_tariff_premium_inr_per_unit": {
+          "type": "string",
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "description": "Premium for DISCOM green tariff where offered (decimal as string)"
+        },
+        "taxes_pct": {
+          "type": "string",
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "description": "Other taxes/cess on the bill (percent, decimal as string)"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "source_ref": {
+      "$ref": "source_ref.schema.json"
+    },
+    "position": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

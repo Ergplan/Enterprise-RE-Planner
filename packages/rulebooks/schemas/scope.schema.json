@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scope.schema.json",
+  "title": "Scope",
+  "description": "When a rule row applies. Every listed field must match the evaluation context; an omitted field matches anything.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "ists",
+          "intra_state",
+          "behind_meter"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "source": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "solar",
+          "wind",
+          "hybrid",
+          "bess",
+          "pumped_storage",
+          "thermal",
+          "iex",
+          "any_re",
+          "any"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "ownership": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "captive",
+          "group_captive",
+          "third_party",
+          "discom"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "consumer_kind": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "ht",
+          "eht",
+          "lt"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "voltage_kv": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        }
+      },
+      "description": "Inclusive band of the consumer's supply voltage"
+    },
+    "category": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "DISCOM tariff category codes as printed (e.g. HV-2, HT-I)"
+    },
+    "capacity_mw": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        }
+      }
+    },
+    "contract_demand_kva": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        }
+      }
+    },
+    "commissioned": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string",
+          "format": "date"
+        },
+        "to": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "description": "Generator commissioning date band"
+    },
+    "iex_segment": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "dam",
+          "rtm",
+          "gdam",
+          "gtam",
+          "tam",
+          "hpdam"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "months": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 12
+      },
+      "uniqueItems": true,
+      "description": "Calendar months the item applies to; omit for all"
+    }
+  }
+}

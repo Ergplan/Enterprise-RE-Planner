@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "net_metering.schema.json",
+  "title": "Net metering regime",
+  "description": "Rooftop solar regime by system size for consumers in scope.",
+  "type": "object",
+  "required": [
+    "scope",
+    "body",
+    "source_ref"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "scope": {
+      "$ref": "scope.schema.json"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "regime"
+      ],
+      "properties": {
+        "regime": {
+          "enum": [
+            "net_metering",
+            "gross_metering",
+            "net_billing",
+            "behind_meter_only",
+            "virtual_net_metering",
+            "group_net_metering"
+          ]
+        },
+        "size_band_kw": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          }
+        },
+        "max_pct_of_sanctioned_load": {
+          "type": "string",
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "description": "Rooftop cap (percent, decimal as string)"
+        },
+        "export_price": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ref": {
+              "enum": [
+                "appc",
+                "generic_tariff",
+                "fixed",
+                "none"
+              ]
+            },
+            "inr_per_kwh": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "Price if fixed (decimal as string)"
+            }
+          }
+        },
+        "settlement": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "granularity": {
+              "enum": [
+                "block_15min",
+                "tod_slot_monthly",
+                "monthly_aggregate",
+                "annual"
+              ]
+            },
+            "carry_over": {
+              "type": "boolean"
+            },
+            "lapse_month": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            }
+          }
+        },
+        "banking_charge": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "in_kind_percent",
+                "inr_per_kwh",
+                "none"
+              ]
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "Charge (decimal as string)"
+            }
+          }
+        },
+        "grid_support_charge": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "basis": {
+              "enum": [
+                "inr_per_kwh",
+                "inr_per_kw_month"
+              ]
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "Charge (decimal as string)"
+            }
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "source_ref": {
+      "$ref": "source_ref.schema.json"
+    },
+    "position": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

@@ -1,0 +1,15 @@
+.env
+data/
+node_modules/
+.next/
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+tools/watch/status.json
+tools/watch/watch.log
+docs/stage-reports/*-review.md
+*.log
+.DS_Store

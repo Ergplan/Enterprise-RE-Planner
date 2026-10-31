@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "regulatory_limit.schema.json",
+  "title": "Regulatory limit",
+  "description": "A cap or mandate the optimizer must respect.",
+  "type": "object",
+  "required": [
+    "scope",
+    "body",
+    "source_ref"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "scope": {
+      "$ref": "scope.schema.json"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "limit",
+        "value",
+        "unit"
+      ],
+      "properties": {
+        "limit": {
+          "enum": [
+            "re_cap_pct_of_contract_demand",
+            "re_cap_pct_of_sanctioned_load",
+            "storage_mandate_pct_of_re",
+            "storage_mandate_pct_of_contract_demand",
+            "min_oa_capacity_mw",
+            "min_contract_demand_for_oa_kva",
+            "max_rooftop_pct_of_sanctioned_load",
+            "max_rooftop_kw",
+            "min_bess_hours",
+            "other"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^-?\\d+(\\.\\d+)?$"
+        },
+        "unit": {
+          "enum": [
+            "percent",
+            "mw",
+            "kw",
+            "kva",
+            "hours",
+            "count"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "source_ref": {
+      "$ref": "source_ref.schema.json"
+    },
+    "position": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

@@ -1,0 +1,37 @@
+# ILLUSTRATIVE rule rows showing the shape an analyst edits. Values are placeholders, not
+# Uttar Pradesh's actual regulation. Stage 1 replaces this with rows read from the real
+# UPERC documents, each with a real document_id, page and quote. The watcher validates every
+# YAML under packages/rulebooks/ against the family schema.
+family: settlement
+jurisdiction: UP
+version: 0-example
+status: draft
+rows:
+  - scope:
+      connection: [intra_state]
+      source: [solar, wind, hybrid]
+      ownership: [captive, group_captive, third_party]
+    body:
+      granularity: tod_slot_monthly
+      tod_slots_ref: up-hv2-tod-example
+      banking:
+        allowed: true
+        charge: {kind: in_kind_percent, value: "6"}
+        period: financial_year
+        carry_over: true
+        buckets: per_slot
+        drawal_windows:
+          - {allowed_slots: [normal, off_peak]}
+        withdrawal_priority: same_slot_first
+        lapse:
+          treatment: paid
+          price: {ref: appc, factor: "0.75"}
+      set_off_order: [rooftop, captive_thermal, oa_intra, oa_ists, iex]
+    source_ref:
+      kind: regulation
+      document_id: example-doc-id
+      page: 14
+      quote: "Banking charges shall be 6% of the energy banked"
+      effective_from: "2025-04-01"
+      effective_to: null
+      note: illustrative only
