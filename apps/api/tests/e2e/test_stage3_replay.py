@@ -148,9 +148,5 @@ def test_bill_drop_to_step_two(committed: None, monkeypatch: pytest.MonkeyPatch)
             urls = [x.get("url") or "" for x in ln["computed"]["source_refs"]]
             assert any(u.startswith("/documents/") and "#page=" in u for u in urls), ln["group"]
     a = client.get(f"/connections/{cid}/avoided-cost", params={"as_of": "2026-09-01"}).json()
-    rates = {Decimal(v) for row in a["matrix"] for v in row}
-    assert rates == {
-        Decimal("5.7800"),
-        Decimal("6.8000"),
-        Decimal("7.8200"),
-    }  # 6.80 ± 15%, kVAh = kWh on this bill
+    rates = {Decimal(a["cards"][i]["rate"]["value"]) for row in a["matrix"] for i in row}
+    assert rates == {Decimal("5.78"), Decimal("6.80"), Decimal("7.82")}  # 6.80 ± 15%, kVAh = kWh on this bill

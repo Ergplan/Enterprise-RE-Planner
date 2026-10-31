@@ -98,6 +98,7 @@ class ReplayLine:
     explanation: str
     gap: str | None = None
     billed_items: list[str] = field(default_factory=list)
+    billed_indices: list[int] = field(default_factory=list)  # billx element indices (for bill citations)
 
 
 @dataclass
@@ -354,6 +355,7 @@ def replay(
                 G.GAPS["tariff_period"],
                 "tariff_period",
                 [b.label],
+                [b.index],
             )
             for b in billed
         ]
@@ -427,6 +429,7 @@ def replay(
                 why,
                 gap,
                 [b.label for b in bl],
+                [b.index for b in bl],
             )
         )
     order = list(GROUP_LABEL)

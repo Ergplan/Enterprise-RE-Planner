@@ -4,7 +4,8 @@ import { RefChips } from "./RefChips";
 
 // Avoided cost of one grid kWh, month × time of day (the 35,040 blocks are exactly this matrix).
 export function Heatmap({ a }: { a: AvoidedOut }) {
-  const flat = a.matrix.flat().map(Number).filter((v) => v > 0);
+  const value = (i: number) => (i >= 0 ? Number(a.cards[i].rate.value) : 0);
+  const flat = a.matrix.flat().map(value).filter((v) => v > 0);
   const lo = Math.min(...flat);
   const hi = Math.max(...flat);
   const months = a.matrix.map((_, i) => {
@@ -39,7 +40,7 @@ export function Heatmap({ a }: { a: AvoidedOut }) {
             {a.matrix.map((row, m) => (
               <div key={m} className="ep-heat__row">
                 <span className="eg-muted">{monthLabel(months[m]).replace(" 20", " ’")}</span>
-                {row.map((v, b) => (
+                {row.map(value).map((v, b) => (
                   <span key={b} className="ep-heat__cell" style={{ ["--lvl" as string]: `${Number(v) > 0 ? 15 + Math.round(level(Number(v)) * 0.85) : 0}%` }}
                     title={`${monthLabel(months[m])} ${hhmm(b)}–${hhmm(b + 1)}: ₹${Number(v).toFixed(3)}/kWh`} />
                 ))}

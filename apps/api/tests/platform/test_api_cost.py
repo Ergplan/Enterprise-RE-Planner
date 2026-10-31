@@ -66,6 +66,9 @@ def test_replay_endpoint(connection: str) -> None:
     lines = {ln["group"]: ln for ln in r["lines"]}
     assert lines["demand"]["status"] == "match" and lines["energy"]["status"] == "match"
     assert lines["demand"]["computed"]["value"] == "1402050.00"
+    assert lines["demand"]["billed"]["source_refs"][0]["field_path"] == "elements.4.amount"
+    assert lines["demand"]["difference"]["value"] == "0.00"
+    assert r["billed_total"]["source_refs"][0]["field_path"] == "totals.current_charges"
     refs = lines["energy"]["computed"]["source_refs"]
     assert any(x.get("url", "").startswith("/documents/") and "#page=" in x["url"] for x in refs)
     assert any(x["kind"] == "bill" for x in refs)
@@ -77,8 +80,8 @@ def test_avoided_cost_endpoint(connection: str) -> None:
     a = client.get(f"/connections/{connection}/avoided-cost", params={"as_of": "2026-06-01"}).json()
     assert len(a["matrix"]) == 12 and len(a["matrix"][0]) == 96
     assert a["tariff_as_of"] == "2026-06-01"
-    solar, peak = a["matrix"][0][40], a["matrix"][0][80]
-    assert float(peak) > float(solar) > 0
+    rate = lambda m, b: float(a["cards"][a["matrix"][m][b]]["rate"]["value"])  # noqa: E731
+    assert rate(0, 80) > rate(0, 40) > 0
     factor = next(c for c in a["cards"] if c["slot"] == "peak")["kvah_factor"]
     assert factor["source_refs"][0]["kind"] == "bill"  # kVAh / kWh from the bill
     assert a["annual"][0]["label"] == "Energy at avoided rates (year)"

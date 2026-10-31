@@ -42,6 +42,7 @@ class Waterfall:
     annual: list[SourcedValue]  # fixed-side and energy totals for the year
     gaps: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
+    cell_cards: list[list[int]] = field(default_factory=list)  # index into `cards` per cell, −1 when none
 
 
 @dataclass(frozen=True)
@@ -123,6 +124,7 @@ def build(
     """The year from `year_start`: rate matrix, rate cards, and annual lines (energy at the
     avoided rates, demand charges at the profile's monthly peaks)."""
     matrix: list[list[Decimal]] = []
+    cell_cards: list[list[int]] = []
     cards: list[RateCard] = []
     annual: list[SourcedValue] = []
     gaps: list[str] = []
@@ -137,6 +139,7 @@ def build(
         n = calendar.monthrange(y, mo)[1] * 96
         rules = rules_for(first)
         row: list[Decimal] = []
+        idx_row: list[int] = []
         by_slot: dict[int | None, RateCard | None] = {}
         for b in range(96):
             idx = None
@@ -149,11 +152,13 @@ def build(
                     cards.append(by_slot[idx])  # type: ignore[arg-type]
             card = by_slot[idx]
             row.append(card.rate_inr_per_kwh.value if card else Decimal(0))
+            idx_row.append(next((j for j in range(len(cards) - 1, -1, -1) if cards[j] is card), -1))
         if rules.schedule is None:
             notes.append(
                 f"{first:%b %Y}: no approved tariff schedule; avoided cost not computed for this month"
             )
         matrix.append(row)
+        cell_cards.append(idx_row)
         seg = kw[i : i + n]
         for k, v in enumerate(seg):
             energy_cost += v * Decimal("0.25") * row[k % 96]
@@ -202,4 +207,4 @@ def build(
             for s in sched_rows
         ):
             gaps.append(gap)
-    return Waterfall(year_start, matrix, cards, annual, gaps, notes)
+    return Waterfall(year_start, matrix, cards, annual, gaps, notes, cell_cards)

@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field, JsonValue
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from ...core.sourced import RefKind, SourcedValue, SourceRef
+from ...core.sourced import RefKind, SourcedValue, SourceRef, derive
 from ...core.units import Unit
 from ...db.base import session_scope
 from ...db.models import Bill, Connection, LoadProfile, Site
@@ -54,14 +54,21 @@ class TariffLineOut(BaseModel):
     )
 
 
+BILL_KINDS: list[JsonValue] = ["bill", "client_stated"]
+
+
 class ReplayLineOut(BaseModel):
     group: str
     label: str
-    billed: str | None
+    billed: SourcedValue | None = Field(
+        json_schema_extra={"owner": "bills.billx_result", "ref_kinds": BILL_KINDS}
+    )
     computed: SourcedValue | None = Field(
         json_schema_extra={"owner": "rules.body + bills.billx_result", "ref_kinds": KINDS_RULE_AND_BILL}
     )
-    difference: str
+    difference: SourcedValue | None = Field(
+        json_schema_extra={"owner": "rules.body + bills.billx_result", "ref_kinds": KINDS_RULE_AND_BILL}
+    )
     status: str
     explanation: str
     gap: str | None
@@ -78,8 +85,12 @@ class ReplayOut(BaseModel):
     computed_total: SourcedValue | None = Field(
         json_schema_extra={"owner": "rules.body + bills.billx_result", "ref_kinds": KINDS_RULE_AND_BILL}
     )
-    billed_total: str | None
-    total_difference: str
+    billed_total: SourcedValue | None = Field(
+        json_schema_extra={"owner": "bills.billx_result", "ref_kinds": BILL_KINDS}
+    )
+    total_difference: SourcedValue | None = Field(
+        json_schema_extra={"owner": "rules.body + bills.billx_result", "ref_kinds": KINDS_RULE_AND_BILL}
+    )
     lines: list[ReplayLineOut]
     tariff_lines: list[TariffLineOut]
     gaps: dict[str, str]
@@ -147,6 +158,27 @@ def _bill_date(b: Bill, confirmed: dict[str, str]) -> date:
     return b.bill_month
 
 
+def _billed(bill_id: str, ln: replay.ReplayLine) -> SourcedValue | None:
+    """What the bill charged for a line group, citing billx's element for each printed line."""
+    if ln.billed is None:
+        return None
+    refs = tuple(
+        SourceRef(kind=RefKind.BILL, bill_id=bill_id, field_path=f"elements.{i}.amount")
+        for i in ln.billed_indices
+    ) or (SourceRef(kind=RefKind.BILL, bill_id=bill_id, field_path="elements"),)
+    return SourcedValue(value=ln.billed, unit=Unit.INR, source_refs=refs, label=f"{ln.label} (bill)")
+
+
+def _difference(
+    computed: SourcedValue | None, billed: list[SourcedValue | None], label: str
+) -> SourcedValue | None:
+    inputs = [x for x in [computed, *billed] if x is not None]
+    if not inputs:
+        return None
+    value = (computed.value if computed else Decimal(0)) - sum((x.value for x in billed if x), Decimal(0))
+    return derive(value, Unit.INR, inputs, label=label)
+
+
 def _replay_out(
     s: Session, conn: Connection, b: Bill, rules: Callable[[date], avoided_cost.MonthRules]
 ) -> ReplayOut:
@@ -167,15 +199,24 @@ def _replay_out(
         schedule=mr.schedule.label if mr.schedule else None,
         tod=mr.tod.label if mr.tod else None,
         computed_total=r.computed_total,
-        billed_total=None if r.billed_total is None else format(r.billed_total, "f"),
-        total_difference=format(r.total_difference, "f"),
+        billed_total=None
+        if r.billed_total is None
+        else SourcedValue(
+            value=r.billed_total,
+            unit=Unit.INR,
+            label="Current charges (bill)",
+            source_refs=(SourceRef(kind=RefKind.BILL, bill_id=b.id, field_path="totals.current_charges"),),
+        ),
+        total_difference=_difference(
+            r.computed_total, [_billed(b.id, ln) for ln in r.lines], "Rebuilt − billed"
+        ),
         lines=[
             ReplayLineOut(
                 group=ln.group,
                 label=ln.label,
-                billed=None if ln.billed is None else format(ln.billed, "f"),
+                billed=_billed(b.id, ln),
                 computed=ln.computed,
-                difference=format(ln.difference, "f"),
+                difference=_difference(ln.computed, [_billed(b.id, ln)], f"{ln.label}: rebuilt − billed"),
                 status=ln.status,
                 explanation=ln.explanation,
                 gap=ln.gap,
@@ -233,7 +274,7 @@ class AvoidedOut(BaseModel):
     profile_provenance: str
     year_start: date
     tariff_as_of: date
-    matrix: list[list[str]]  # 12 × 96 INR/kWh; each cell's components are in `cards`
+    matrix: list[list[int]]  # 12 × 96 indices into `cards`: every cell's rate is a cited SourcedValue
     cards: list[RateCardOut]
     annual: list[SourcedValue] = Field(
         json_schema_extra={
@@ -315,7 +356,7 @@ def connection_avoided_cost(
             profile_provenance=lp.provenance,
             year_start=wf.year_start,
             tariff_as_of=as_of or date.today(),
-            matrix=[[format(v.quantize(Decimal("0.0001")), "f") for v in row] for row in wf.matrix],
+            matrix=wf.cell_cards,
             cards=[
                 RateCardOut(
                     month=c.month,

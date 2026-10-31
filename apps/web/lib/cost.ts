@@ -2,18 +2,18 @@ import type { Ref, SourcedValue } from "./intake";
 
 export type TariffLine = { code: string; label: string; slot: string | null; amount: SourcedValue; quantity: SourcedValue | null; rate: SourcedValue | null };
 export type ReplayLine = {
-  group: string; label: string; billed: string | null; computed: SourcedValue | null; difference: string;
+  group: string; label: string; billed: SourcedValue | null; computed: SourcedValue | null; difference: SourcedValue | null;
   status: "match" | "explained" | "unexplained" | "not_billed"; explanation: string; gap: string | null; billed_items: string[];
 };
 export type ReplayOut = {
   bill_id: string; bill_month: string | null; evaluated_on: string; status: string; schedule: string | null; tod: string | null;
-  computed_total: SourcedValue | null; billed_total: string | null; total_difference: string; lines: ReplayLine[];
+  computed_total: SourcedValue | null; billed_total: SourcedValue | null; total_difference: SourcedValue | null; lines: ReplayLine[];
   tariff_lines: TariffLine[]; gaps: Record<string, string>; notes: string[]; file_url: string;
 };
 export type RateCard = { month: string; slot: string | null; components: SourcedValue[]; kvah_factor: SourcedValue | null; rate: SourcedValue };
 export type AvoidedOut = {
   connection_id: string; profile_version: number; profile_provenance: string; year_start: string; tariff_as_of: string;
-  matrix: string[][]; cards: RateCard[]; annual: SourcedValue[]; gaps: Record<string, string>; notes: string[];
+  matrix: number[][]; cards: RateCard[]; annual: SourcedValue[]; gaps: Record<string, string>; notes: string[];
 };
 
 export function inr(v: string | number | null | undefined, digits = 0): string {

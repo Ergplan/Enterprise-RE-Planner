@@ -14,9 +14,9 @@ export function ReplayCard({ r }: { r: ReplayOut }) {
   const st = STATUS[r.status] ?? STATUS.unexplained;
   // Totals over the lines the approved rules compute, so the two sides cover the same charges.
   const rebuilt = r.lines.filter((l) => l.computed);
-  const billedSum = rebuilt.reduce((s, l) => s + Number(l.billed ?? 0), 0);
+  const billedSum = rebuilt.reduce((s, l) => s + Number(l.billed?.value ?? 0), 0);
   const computedSum = rebuilt.reduce((s, l) => s + Number(l.computed?.value ?? 0), 0);
-  const elsewhere = r.lines.filter((l) => !l.computed).reduce((s, l) => s + Number(l.billed ?? 0), 0);
+  const elsewhere = r.lines.filter((l) => !l.computed).reduce((s, l) => s + Number(l.billed?.value ?? 0), 0);
   return (
     <section className="eg-glass ep-panel">
       <div className="eg-card__head">
@@ -45,9 +45,9 @@ export function ReplayCard({ r }: { r: ReplayOut }) {
                   {l.label}
                   {l.billed_items.length > 1 && <div className="eg-muted ep-small">{l.billed_items.join(" · ")}</div>}
                 </td>
-                <td className="num">{inr(l.billed, 2)}</td>
+                <td className="num">{inr(l.billed?.value, 2)}</td>
                 <td className="num">{l.computed ? inr(l.computed.value, 2) : <span className="eg-muted">not yet sourced</span>}</td>
-                <td className="num">{Math.abs(Number(l.difference)) < 1 ? "—" : inr(l.difference, 2)}</td>
+                <td className="num">{Math.abs(Number(l.difference?.value ?? 0)) < 1 ? "—" : inr(l.difference?.value, 2)}</td>
                 <td><span className={`eg-chip ${s.tone}`} title={l.explanation}>{s.label}</span></td>
                 <td>{l.computed ? <RefChips refs={uniqueRefs([l.computed])} /> : <span className="eg-muted ep-small" title={l.explanation}>{l.status === "explained" && l.gap ? "rule gap" : ""}</span>}</td>
               </tr>
