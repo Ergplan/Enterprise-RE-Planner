@@ -11,3 +11,4 @@ Recorded by tools/dev/stage-tags.sh. `apply` recreates them as git tags.
 | stage-2-start | 8c7e75a56c5099444d42e975d54f1499ba7f9a4e |
 | stage-2-done | 860d43743793e7925a128bc3850874e8906b41c5 |
 | stage-3-start | c28ffdee0e2f63e61ae6b0926dcbc94260eba9c2 |
+| stage-3-done | 2e85041ab3e97b1ca6dbace652fb592bef1b6831 |
