@@ -32,6 +32,8 @@ def assumed(value: str, unit: Unit, note: str, label: str) -> SourcedValue:
 
 def crf(rate_pct: SourcedValue, years: SourcedValue) -> SourcedValue:
     r = rate_pct.value / 100
+    if years.value != years.value.to_integral_value() or years.value < 1:
+        raise ValueError("economic life must be a whole number of years")
     n = int(years.value)
     f = (1 + r) ** n
     return derive(r * f / (f - 1), Unit.RATIO, [rate_pct, years], label="Capital recovery factor")

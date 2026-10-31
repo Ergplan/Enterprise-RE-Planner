@@ -276,3 +276,8 @@ def test_lcoe_and_lcos_hand_computed() -> None:
     assert _r4(lcoe.lcos(s).value) == _r4(
         (Decimal(12000) * crf12 + Decimal(240)) / (Decimal(330) * Decimal("0.9"))
     )
+
+
+def test_fractional_life_is_refused() -> None:
+    with pytest.raises(ValueError):
+        lcoe.crf(sv("10", Unit.PERCENT), sv("12.5", Unit.COUNT))

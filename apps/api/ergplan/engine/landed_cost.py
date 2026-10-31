@@ -29,7 +29,8 @@ from ..rulebook.models import RuleView
 from ..rulebook.scope import matches
 
 HUNDRED = Decimal(100)
-HOURS_IN_MONTH = Decimal("730")  # 8,760 / 12, for INR/MW/month over scheduled energy
+HOURS_IN_MONTH = Decimal(8760) / 12  # 730, for INR/MW/month over scheduled energy
+DAYS_IN_MONTH = Decimal(365) / 12  # INR/MW/day → INR/MW/month
 
 
 @dataclass(frozen=True)
@@ -239,13 +240,16 @@ def evaluate(
         injection.append(line)
         lines.append(line)
         used.append(r.id)
-        injection.extend(_exemptions(r, ptr, line, ctx, sc, lines, used))
+        ex_lines, ex_used = _exemptions(r, line, ctx, sc)
+        lines.extend(ex_lines)
+        injection.extend(ex_lines)
+        used.extend(ex_used)
     keep = Decimal(1)
     loss_inputs: list[SourcedValue] = []
     for comp in LOSS_COMPONENTS:
         r = by_comp.get(comp)
         if r is None:
-            if comp == "wheeling_losses" and spec.connection in ("intra_state", "ists"):
+            if comp in ("stu_losses", "wheeling_losses") and spec.connection in ("intra_state", "ists"):
                 gaps.append("oa_losses")
             continue
         v, ptr = _val(r, ctx)
@@ -297,7 +301,7 @@ def evaluate(
             * {
                 "inr_per_mw_month": Decimal(1),
                 "inr_per_kw_month": Decimal(1000),
-                "inr_per_mw_day": Decimal("30.4167"),
+                "inr_per_mw_day": DAYS_IN_MONTH,
             }[str(r.body["basis"])]
         )
         kwh = sc.capacity_mw.value * 1000 * HOURS_IN_MONTH * sc.cuf_pct.value / HUNDRED
@@ -343,7 +347,9 @@ def evaluate(
             line = _sv(r, ptr, v, Unit.INR_PER_KWH, str(r.label or comp))
         lines.append(line)
         used.append(r.id)
-        _exemptions(r, ptr, line, ctx, sc, lines, used)
+        ex_lines, ex_used = _exemptions(r, line, ctx, sc)
+        lines.extend(ex_lines)
+        used.extend(ex_used)
     if settlement is not None and sc.ownership in ("captive", "group_captive", "third_party"):
         ch = (settlement.body.get("banking") or {}).get("charge") or {}
         if ch.get("kind") == "in_kind_percent" and ch.get("value") not in (None, ""):
@@ -388,16 +394,12 @@ def _waive(
 
 
 def _exemptions(
-    r: RuleView,
-    ptr: str,
-    line: SourcedValue,
-    ctx: dict[str, Any],
-    sc: Scenario,
-    lines: list[SourcedValue],
-    used: list[str],
-) -> list[SourcedValue]:
-    """Exemption lines (negative) for the row's exemptions that apply to this scenario."""
-    out = []
+    r: RuleView, line: SourcedValue, ctx: dict[str, Any], sc: Scenario
+) -> tuple[list[SourcedValue], list[str]]:
+    """Exemption lines (negative) for the row's exemptions that apply to this scenario, and the
+    exemption fields used (rule id with the exemption's pointer)."""
+    out: list[SourcedValue] = []
+    used: list[str] = []
     for i, ex in enumerate(r.body.get("exemptions") or []):
         if ex.get("waived_pct") in (None, "") or not _exemption_applies(ex, ctx, sc):
             continue
@@ -408,13 +410,13 @@ def _exemptions(
             Unit.PERCENT,
             f"Exemption: {ex['condition'].replace('_', ' ')}",
         )
-        e = derive(
-            -line.value * w.value / HUNDRED,
-            Unit.INR_PER_KWH,
-            [line, w],
-            label=f"{line.label} · exemption ({ex['condition'].replace('_', ' ')})",
+        out.append(
+            derive(
+                -line.value * w.value / HUNDRED,
+                Unit.INR_PER_KWH,
+                [line, w],
+                label=f"{line.label} · exemption ({ex['condition'].replace('_', ' ')})",
+            )
         )
-        lines.append(e)
-        out.append(e)
-        used.append(r.id)
-    return out
+        used.append(f"{r.id}#/exemptions/{i}")
+    return out, used
