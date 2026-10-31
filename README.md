@@ -46,4 +46,4 @@ Checks: `python3 tools/watch/watch.py` (watch) or `--once`. Review: `tools/revie
 
 ## Status
 
-Stage 0 done (see `docs/stage-reports/stage-0.md`).
+Stage 1 done (see `docs/stage-reports/stage-1.md`): 12 approved rulebooks for Uttar Pradesh and Maharashtra with 91 golden tests.
