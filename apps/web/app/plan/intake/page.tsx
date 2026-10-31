@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { BillReview } from "@/components/intake/BillReview";
 import { IntakeReview } from "@/components/intake/IntakeReview";
 import { TypeFacts } from "@/components/intake/TypeFacts";
+import { VoicePanel } from "@/components/voice/VoicePanel";
 import { clientFetch, type BillOut, type SiteIntake } from "@/lib/intake";
 
 type Door = "bill" | "tell" | "type";
@@ -16,6 +17,7 @@ export default function IntakePage() {
   const [error, setError] = useState("");
   const [intake, setIntake] = useState<SiteIntake | null>(null);
   const [drag, setDrag] = useState(false);
+  const [spoken, setSpoken] = useState<Record<string, unknown> | null>(null);
   const input = useRef<HTMLInputElement>(null);
 
   async function upload(files: FileList | File[]) {
@@ -111,8 +113,12 @@ export default function IntakePage() {
         <section className="eg-card ep-panel">
           <h2 className="eg-card__title">Talk it through</h2>
           <p className="eg-card__sub">
-            Voice intake arrives with the live plan (step 6). It fills the same form as typing, so for now drop a bill or type the facts.
+            Say what is on your bill and how the plant runs; each value is set in the same form as typing. When it is complete, review it below.
           </p>
+          <VoicePanel mode="intake" onState={setSpoken} intro="Tell me your company, the DISCOM, your contract demand and a month's units from a bill." />
+          {spoken && isComplete(spoken) && (
+            <button className="eg-btn eg-btn--primary" onClick={() => setIntake(spoken as unknown as SiteIntake)}>Review these facts</button>
+          )}
         </section>
       ) : (
         <TypeFacts onReady={setIntake} />
@@ -120,4 +126,10 @@ export default function IntakePage() {
       {error && <p className="ep-error">{error}</p>}
     </>
   );
+}
+
+const REQUIRED = ["client_name", "site_name", "state", "discom", "category", "voltage_kv", "contract_demand_kva", "industry_shape", "weekly_off"];
+
+function isComplete(s: Record<string, unknown>): boolean {
+  return REQUIRED.every((k) => k in s) && Array.isArray(s.months) && s.months.length > 0;
 }

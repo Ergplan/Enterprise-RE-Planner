@@ -5,9 +5,6 @@ from __future__ import annotations
 from datetime import date
 from decimal import Decimal
 
-import pytest
-
-from ergplan.core.settings import get_settings
 from ergplan.report import pdf
 from ergplan.report.explain import _lines
 from ergplan.report.whatif import WhatIf
@@ -28,13 +25,8 @@ def test_what_if_describes_itself_in_words() -> None:
     assert WhatIf().describe() == "no change"
 
 
-def test_chromium_is_configured_or_found(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(get_settings(), "ergplan_chromium", "/opt/chrome")
-    assert pdf.chromium() == "/opt/chrome"
-    monkeypatch.setattr(get_settings(), "ergplan_chromium", "")
-    monkeypatch.setattr(pdf.shutil, "which", lambda c: None)
-    with pytest.raises(pdf.PdfUnavailable):
-        pdf.chromium()
+def test_the_pdf_prints_the_plan_page_in_print_mode() -> None:
+    assert pdf.page_url("abc").endswith("/p/abc?print=1")
 
 
 def test_explanation_input_keeps_values_and_sources_only() -> None:

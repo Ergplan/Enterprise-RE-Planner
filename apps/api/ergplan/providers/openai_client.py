@@ -221,7 +221,10 @@ def realtime_secret(
             "instructions": load_prompt(prompt_name, prompt_version),
             "tools": tools,
             "tool_choice": "auto",
-            "audio": {"output": {"voice": voice}},
+            "audio": {
+                "input": {"transcription": {"model": "gpt-4o-mini-transcribe"}},
+                "output": {"voice": voice},
+            },
         }
     }
     started = datetime.now(UTC)

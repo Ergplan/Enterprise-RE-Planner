@@ -66,3 +66,7 @@ A replayed bill line that differs from the approved tariff is "explained" only b
 | `iex_prices` | GDAM, G-TAM, TAM and HP-DAM files not supplied (RTM and DAM are loaded) | When the files arrive |
 | `regulatory_limits` | No `regulatory_limit` rulebook yet: the RE cap (% of contract demand), storage mandate, minimum OA capacity and minimum contract demand for OA need their regulations (GEOA Rules 2022, state GEOA regulations) in the corpus | When those documents are added |
 | `unmodelled_line` | A miscellaneous line the bill prints (delay-payment surcharge, rounding, adjustments) | By design |
+| Voice has not been tried end to end with a real microphone in this workspace (no audio device); the Realtime session minting, the tool relay and the tools are tested, one real minting call is marked external | First use on the Mac mini |
+| Editable assumption chips on the live plan cover PPA prices and contract demand; other assumptions (capex, CUF, grid factor) are visible in the jouleWise view but not yet editable by the client | Stage 8 |
+| What-if is an hourly check with sizes held; re-sizing on a changed assumption needs a new run (analyst or "Build my plan" after the change) | By design for speed |
+| Explanations are in English only | When a client asks |

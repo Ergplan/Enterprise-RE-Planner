@@ -14,3 +14,4 @@ docs/stage-reports/*-review.md
 *.log
 .DS_Store
 *.tsbuildinfo
+.next-e2e/

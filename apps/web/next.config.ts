@@ -6,6 +6,8 @@ const API_URL = process.env.API_URL ?? "http://localhost:8000";
 
 const config: NextConfig = {
   output: "standalone",
+  // a second dev server (the Stage 7 end-to-end) builds into its own folder
+  distDir: process.env.NEXT_DIST_DIR ?? ".next",
   // A bill takes billx one to three minutes to read; the /api proxy must wait for it.
   experimental: { proxyTimeout: 600_000 },
   async rewrites() {

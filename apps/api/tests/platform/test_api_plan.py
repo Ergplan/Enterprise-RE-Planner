@@ -68,6 +68,11 @@ def test_logged_out_visitor_reads_the_plan(plan: dict[str, str]) -> None:
     )
     assert any(e["tool"] == "set_price" for e in d["editable"])
     assert client.get("/p/not-a-token").status_code == 404
+    own = client.get(f"/connections/{plan['conn']}/plan", headers=CL).json()  # step 6, before sharing
+    assert own["token"] is None and own["recommended"] == d["recommended"]
+    assert client.get("/connections/missing/plan").status_code == 404
+    assert client.post("/connections/missing/plan").status_code == 404
+    assert client.post("/connections/missing/share").status_code == 404
     assert client.post(f"/connections/{plan['conn']}/share", headers=CL).json()["token"] == plan["token"]
 
 
@@ -153,6 +158,7 @@ def test_voice_session_and_plan_tool(plan: dict[str, str], monkeypatch: pytest.M
     r = client.post("/voice/session", json={"mode": "plan", "token": plan["token"]}).json()
     assert r["client_secret"] == "ek_x" and r["tools"]
     assert client.post("/voice/session", json={"mode": "plan"}).status_code == 422
+    assert {t["name"] for t in client.get("/voice/tools", params={"mode": "plan"}).json()} >= {"set_price"}
     t = client.post(
         "/voice/tool",
         json={

@@ -98,7 +98,7 @@ a.eg-btn { text-decoration: none; }
 .ep-heat__cell:hover { outline: 1px solid var(--ink); }
 
 /* Stage 4: landed costs */
-.ep-sources { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: var(--space-4); }
+.ep-sources { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr)); gap: var(--space-4); }
 .ep-source__total { text-align: right; font-size: 22px; }
 .ep-source__total span { font-size: 12px; }
 .ep-waterfall { margin-top: var(--space-2); }
@@ -120,8 +120,46 @@ a.eg-btn { text-decoration: none; }
 .ep-key { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin: 0 4px 0 10px; vertical-align: middle; }
 
 /* Stage 6: scenario cards and dispatch */
-.ep-scenarios { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); }
+.ep-scenarios { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: var(--space-4); }
 .ep-scenario--on { outline: 2px solid var(--eg-accent, #0ea5a4); outline-offset: -2px; }
 .ep-stat-big { margin: var(--space-2) 0 var(--space-3); }
 .ep-big { font-size: 1.8rem; font-weight: 600; line-height: 1.2; }
 .ep-list { margin: 0; padding-left: 1.1em; display: grid; gap: var(--space-2); }
+
+/* Stage 7: live plan, voice, print */
+.ep-public { min-height: 100vh; padding: var(--space-6) var(--space-4); }
+.ep-public__inner { max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+.ep-voice { display: grid; gap: var(--space-3); }
+.ep-transcript { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); max-height: 260px; overflow: auto; }
+.ep-transcript li { font-size: 0.9rem; }
+.ep-transcript__tool { opacity: 0.85; }
+.ep-answer { font-size: 1.1rem; margin-top: var(--space-3); }
+.ep-explain { font-size: 0.9rem; margin: var(--space-2) 0; }
+.ep-share-link { word-break: break-all; }
+.ep-cite-n { font-size: 0.6rem; font-weight: 400; opacity: 0.8; }
+.ep-print { color: #111; background: #fff; }
+@media print {
+  .ep-noprint { display: none !important; }
+  body.eg-stage { background: #fff !important; }
+  .eg-glass, .eg-card { box-shadow: none !important; background: #fff !important; color: #111 !important; border: 1px solid #ddd; }
+}
+@media (max-width: 600px) {
+  .ep-public { padding: var(--space-4) var(--space-3); }
+  .ep-public .ep-table { font-size: 0.85rem; display: block; overflow-x: auto; max-width: 100%; }
+  .ep-public__inner { min-width: 0; }
+  .ep-public h1 { overflow-wrap: anywhere; }
+}
+
+/* Stage 7: mobile journey — the rail becomes a scrolling step bar above the page */
+.ep-content { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 900px) {
+  .ep-shell { flex-direction: column; }
+  .ep-shell .ep-side { display: block; position: static; height: auto; flex: none; width: auto; margin: var(--space-2); padding: var(--space-2) var(--space-3); }
+  .ep-shell .ep-side .eg-nav { display: flex; gap: var(--space-2); overflow-x: auto; flex-wrap: nowrap; }
+  .ep-shell .ep-side .eg-nav__group, .ep-shell .ep-side .eg-side__foot { display: none; }
+  .ep-shell .ep-side .eg-nav__item { white-space: nowrap; flex: 0 0 auto; }
+  .ep-shell .ep-side .eg-brand { margin-bottom: var(--space-2); }
+  .ep-content { padding: var(--space-3); }
+  .ep-content .ep-table { display: block; overflow-x: auto; max-width: 100%; }
+  .ep-form { grid-template-columns: 1fr !important; }
+}

@@ -40,10 +40,10 @@ docker compose -f docker/compose.yaml exec api python -m ergplan.documents.corpu
 
 Web http://localhost:3000 · API http://localhost:8000/docs.
 
-Without Docker: Postgres 16 on :5432 with role/db `ergplan`, then `cd apps/api && python3.12 -m venv .venv && .venv/bin/pip install -e ".[dev]" && .venv/bin/alembic upgrade head && .venv/bin/uvicorn ergplan.platform.app:app`, and `cd apps/web && pnpm install && pnpm dev`.
+Without Docker: Postgres 16 on :5432 with role/db `ergplan`, then `cd apps/api && python3.12 -m venv .venv && .venv/bin/pip install -e ".[dev]" && .venv/bin/playwright install chromium && .venv/bin/alembic upgrade head && .venv/bin/uvicorn ergplan.platform.app:app`, the run worker `.venv/bin/python -m ergplan.platform.worker`, and `cd apps/web && pnpm install && pnpm dev`.
 
-Checks: `python3 tools/watch/watch.py` (watch) or `--once`. Review: `tools/review/run.sh N`.
+Checks: `python3 tools/watch/watch.py` (watch) or `--once`. Review: `tools/review/run.sh N`. 15-minute site solves: `cd apps/api && .venv/bin/pytest -m slow`. Browser end-to-end on real bills: `tools/dev/e2e-journey.sh`.
 
 ## Status
 
-Stage 1 done (see `docs/stage-reports/stage-1.md`): 12 approved rulebooks for Uttar Pradesh and Maharashtra with 91 golden tests.
+Stages 0–6 done; each has a report in `docs/stage-reports/`. The journey runs from a dropped bill to a shared live plan (`/p/{token}`) with voice what-if; every client-visible number cites the order page it comes from.

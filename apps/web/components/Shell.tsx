@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { ErgOSMount } from "./ErgOSMount";
 
 // The client journey (plan section 1). Steps light up as their stage ships.
@@ -12,7 +12,7 @@ const JOURNEY: { n: number; label: string; href: string; live: boolean }[] = [
   { n: 3, label: "Landed costs", href: "/plan/landed", live: true },
   { n: 4, label: "Describe the site", href: "/plan/site", live: true },
   { n: 5, label: "Optimise", href: "/plan/optimise", live: true },
-  { n: 6, label: "Your plan", href: "/plan/report", live: false },
+  { n: 6, label: "Your plan", href: "/plan/report", live: true },
 ];
 
 const ANALYST: { label: string; href: string; icon: string }[] = [
@@ -32,8 +32,22 @@ function toggleTheme() {
   }
 }
 
+const SITE_KEY = "ergplan-connection";
+
 export function Shell({ children }: { children: ReactNode }) {
   const path = usePathname() ?? "/";
+  // the site the journey is on: remembered from ?c= so every step of the rail opens it
+  const [site, setSite] = useState("");
+  useEffect(() => {
+    const c = new URLSearchParams(window.location.search).get("c");
+    try {
+      if (c) localStorage.setItem(SITE_KEY, c);
+      setSite(c ?? localStorage.getItem(SITE_KEY) ?? "");
+    } catch {
+      setSite(c ?? "");
+    }
+  }, [path]);
+  if (path.startsWith("/p/")) return <main className="ep-public">{children}</main>; // the shared plan: no rail
   const current = (href: string) => (path === href || path.startsWith(href + "/") ? "page" : undefined);
   return (
     <div className="ep-shell">
@@ -48,7 +62,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <nav className="eg-nav">
           <div className="eg-overline eg-nav__group">Plan</div>
           {JOURNEY.map((s) => (
-            <Link key={s.n} className="eg-nav__item ep-step" href={s.href} aria-current={current(s.href)}
+            <Link key={s.n} className="eg-nav__item ep-step" href={site && s.n > 1 ? `${s.href}?c=${site}` : s.href} aria-current={current(s.href)}
               aria-disabled={s.live ? undefined : "true"} tabIndex={s.live ? undefined : -1}>
               <span className="ep-step__n">{s.n}</span>
               {s.label}
