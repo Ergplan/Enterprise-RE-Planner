@@ -169,8 +169,65 @@
                       "description": "Fixed price if ref=fixed (decimal as string)"
                     }
                   }
+                },
+                "rec_eligible": {
+                  "type": "boolean",
+                  "description": "Lapsed energy is eligible for Renewable Energy Certificates"
                 }
               }
+            },
+            "cap": {
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Ceiling on energy carried forward at the end of each banking period",
+              "properties": {
+                "pct_of_injection": {
+                  "type": "string",
+                  "pattern": "^-?\\d+(\\.\\d+)?$",
+                  "description": "Percent of the energy injected in the period"
+                },
+                "pct_of_consumption": {
+                  "type": "string",
+                  "pattern": "^-?\\d+(\\.\\d+)?$",
+                  "description": "Percent of the consumer's energy drawn from the DISCOM in the period"
+                },
+                "combine": {
+                  "enum": [
+                    "higher",
+                    "lower",
+                    "only"
+                  ],
+                  "description": "How the two ceilings combine when both are printed"
+                },
+                "per_user": {
+                  "type": "boolean",
+                  "description": "Ceiling computed separately for each captive user"
+                },
+                "period": {
+                  "enum": [
+                    "month",
+                    "quarter",
+                    "year"
+                  ]
+                }
+              }
+            },
+            "ageing": {
+              "enum": [
+                "fifo",
+                "lifo",
+                "none"
+              ],
+              "description": "Which banked energy is withdrawn or lapses first"
+            },
+            "requires_day_ahead_schedule": {
+              "type": "boolean",
+              "description": "Banking and withdrawal must be scheduled day-ahead"
+            },
+            "in_block_banking_pct": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "Share of injection in MW terms that may be banked in each 15-minute block"
             }
           }
         },
@@ -187,11 +244,15 @@
           "items": {
             "enum": [
               "rooftop",
+              "captive_generation",
               "captive_thermal",
               "btm_bess",
+              "banked_energy",
               "oa_intra",
               "oa_ists",
               "iex",
+              "bilateral",
+              "discom",
               "any"
             ]
           }

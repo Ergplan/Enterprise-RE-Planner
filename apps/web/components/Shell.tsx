@@ -18,7 +18,6 @@ const JOURNEY: { n: number; label: string; href: string; live: boolean }[] = [
 const ANALYST: { label: string; href: string; icon: string }[] = [
   { label: "Rulebooks", href: "/rulebooks", icon: "layers" },
   { label: "Documents", href: "/documents", icon: "file" },
-  { label: "IEX prices", href: "/prices", icon: "exchange" },
 ];
 
 function toggleTheme() {

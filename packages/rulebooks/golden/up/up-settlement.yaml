@@ -1,0 +1,20 @@
+# UPERC (Captive and Renewable Energy Generating Plants) Regulations, 2024, Regulation 12 Banking of Energy,
+# scanned PDF pages 14-20 read from the OCR text (sha256 5ea285b3…): table 12(iv) row 2 (p. 16), 12(v) FIFO,
+# 12(vi) day-ahead scheduling, 12(viii) peak/off-peak withdrawal (p. 17), 12(xi) banking charges 8% / 12% (p. 19),
+# 12(xii)(a) settlement order (p. 20).
+jurisdiction: UP
+family: settlement
+tests:
+  - {name: "solar captive charge 8%", given: {context: {connection: intra_state, source: solar, ownership: captive}, field: /banking/charge/value}, expect: {value: "8"}}
+  - {name: "biomass captive charge 12%", given: {context: {connection: intra_state, source: biomass, ownership: captive}, field: /banking/charge/value}, expect: {value: "12"}}
+  - {name: "no banking for third-party sale", given: {context: {connection: intra_state, source: solar, ownership: third_party}}, expect: {absent: true}}
+  - {name: "monthly banking period", given: {context: {connection: intra_state, source: wind, ownership: captive}, field: /banking/period}, expect: {value: monthly}}
+  - {name: "cap 25% of injection", given: {context: {connection: intra_state, source: solar, ownership: group_captive}, field: /banking/cap/pct_of_injection}, expect: {value: "25"}}
+  - {name: "cap 30% of consumption", given: {context: {connection: intra_state, source: solar, ownership: captive}, field: /banking/cap/pct_of_consumption}, expect: {value: "30"}}
+  - {name: "higher of the two ceilings", given: {context: {connection: intra_state, source: solar, ownership: captive}, field: /banking/cap/combine}, expect: {value: higher}}
+  - {name: "FIFO", given: {context: {connection: intra_state, source: solar, ownership: captive}, field: /banking/ageing}, expect: {value: fifo}}
+  - {name: "off-peak energy only off-peak", given: {context: {connection: intra_state, source: solar, ownership: captive}, field: /banking/drawal_windows/0/allowed_slots/0}, expect: {value: off_peak}}
+  - {name: "peak energy also off-peak", given: {context: {connection: intra_state, source: solar, ownership: captive}, field: /banking/drawal_windows/1/allowed_slots/1}, expect: {value: off_peak}}
+  - {name: "lapsed energy not compensated", given: {context: {connection: intra_state, source: solar, ownership: captive}, field: /banking/lapse/treatment}, expect: {value: lapses}}
+  - {name: "captive generation set off first", given: {context: {connection: intra_state, source: solar, ownership: captive}, field: /set_off_order/0}, expect: {value: captive_generation}}
+  - {name: "DISCOM power set off last", given: {context: {connection: intra_state, source: solar, ownership: captive}, field: /set_off_order/3}, expect: {value: discom}}

@@ -1,0 +1,13 @@
+# MERC Case 75/2025 post-remand order of 25 Mar 2026 (sha256 5b1111fa…), 'Summary of HT Tariff for FY 2026-27,
+# effective from 1 April, 2026', PDF page 100. Read from the text layer.
+jurisdiction: msedcl
+family: tariff_schedule
+tests:
+  - {name: "HT I(A) EHV demand 650", given: {context: {category: "HT-I(A)", voltage_kv: 132}, field: /demand_charge/value}, expect: {value: "650"}}
+  - {name: "HT I(A) EHV energy 8.44", given: {context: {category: "HT-I(A)", voltage_kv: 132}, field: /energy_charge/base}, expect: {value: "8.44"}}
+  - {name: "HT I(A) EHV no retail wheeling", given: {context: {category: "HT-I(A)", voltage_kv: 220}, field: /retail_wheeling_charge}, expect: {value: "None"}}
+  - {name: "HT I(A) 11 kV energy 8.44", given: {context: {category: "HT I (A)", voltage_kv: 11}, field: /energy_charge/base}, expect: {value: "8.44"}}
+  - {name: "HT I(A) 22 kV retail wheeling 0.81", given: {context: {category: "HT I (A)", voltage_kv: 22}, field: /retail_wheeling_charge}, expect: {value: "0.81"}}
+  - {name: "HT II 33 kV energy 13.72", given: {context: {category: "HT II (A)", voltage_kv: 33}, field: /energy_charge/base}, expect: {value: "13.72"}}
+  - {name: "HT II EHV demand 650", given: {context: {category: "HT II", voltage_kv: 66}, field: /demand_charge/value}, expect: {value: "650"}}
+  - {name: "no row at 44 kV (between HT and EHV)", given: {context: {category: "HT I (A)", voltage_kv: 44}}, expect: {absent: true}}

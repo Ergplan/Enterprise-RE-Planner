@@ -19,6 +19,7 @@ def normalise(text: str) -> str:
     t = re.sub(r"[‐-―−]", "-", t)
     t = re.sub(r"[‘’´`]", "'", t)
     t = re.sub(r"[“”]", '"', t)
+    t = re.sub(r"[|¦]", " ", t)  # OCR'd tables carry column bars the printed text does not
     return re.sub(r"\s+", " ", t).strip().casefold()
 
 
@@ -34,7 +35,27 @@ def _fragment_on_page(fragment: str, page: str) -> bool:
     return q in page or _nospace(q) in _nospace(page)
 
 
-def quote_on_page(quote: str, page_text: str) -> bool:
+def _words_in_order(quote: str, page: str) -> bool:
+    """OCR of a multi-column table interleaves the columns' words. Each column keeps its own order,
+    so a quote from one column appears as its words in order with other words between them. Accept
+    that when the words span at most 4 x their count + 20 words of the page."""
+    q = re.findall(r"[\w.%/-]+", quote)
+    w = re.findall(r"[\w.%/-]+", page)
+    if len(q) < 4:
+        return False
+    limit = 4 * len(q) + 20
+    for start in (i for i, x in enumerate(w) if x == q[0]):
+        j, k = start, 0
+        while j < len(w) and k < len(q) and j - start <= limit:
+            if w[j] == q[k]:
+                k += 1
+            j += 1
+        if k == len(q):
+            return True
+    return False
+
+
+def quote_on_page(quote: str, page_text: str, ocr: bool = False) -> bool:
     """The quote is on the page. A table row whose cells the text layer splits across lines may be
     quoted as fragments joined by '...' or '…': every fragment must then be verbatim on the page,
     none shorter than 4 characters, and at least one 12 characters or longer."""
@@ -42,11 +63,15 @@ def quote_on_page(quote: str, page_text: str) -> bool:
     fragments = [f for f in _ELLIPSIS.split(quote) if f.strip()]
     if not fragments:
         return False
+
+    def found(f: str) -> bool:
+        return _fragment_on_page(f, p) or (ocr and _words_in_order(normalise(f), p))
+
     if len(fragments) == 1:
-        return len(normalise(fragments[0])) >= 8 and _fragment_on_page(fragments[0], p)
+        return len(normalise(fragments[0])) >= 8 and found(fragments[0])
     if any(len(normalise(f)) < 4 for f in fragments) or max(len(normalise(f)) for f in fragments) < 12:
         return False
-    return all(_fragment_on_page(f, p) for f in fragments)
+    return all(found(f) for f in fragments)
 
 
 def numbers_in(value: Any) -> list[str]:

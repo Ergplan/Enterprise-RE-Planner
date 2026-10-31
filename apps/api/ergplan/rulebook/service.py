@@ -121,17 +121,26 @@ def propose(
     title: str | None = None,
     origin: str = "manual",
     notes: str | None = None,
+    version: int | None = None,
 ) -> RulebookVersion:
-    """A new draft version with these rows. Every row must validate against its family schema."""
+    """A new draft version with these rows. Every row must validate against its family schema.
+    `version` is only for restoring a committed file under its own number; it must be unused."""
     if session.get(Jurisdiction, jurisdiction_id) is None:
         raise UnknownJurisdiction(jurisdiction_id)
     errors = validate_rows(family, rows)
     if errors:
         raise InvalidRows(errors)
+    taken = session.scalar(
+        select(RulebookVersion.id).where(
+            RulebookVersion.family == family,
+            RulebookVersion.jurisdiction_id == jurisdiction_id,
+            RulebookVersion.version == version,
+        )
+    )
     v = RulebookVersion(
         family=family,
         jurisdiction_id=jurisdiction_id,
-        version=_next_version(session, family, jurisdiction_id),
+        version=version if version and not taken else _next_version(session, family, jurisdiction_id),
         status="draft",
         effective_from=effective_from,
         effective_to=effective_to,
@@ -215,7 +224,13 @@ def delete_row(session: Session, version_id: str, rule_id: str) -> None:
     session.flush()
 
 
-def duplicate(session: Session, version_id: str, actor: str) -> RulebookVersion:
+def duplicate(
+    session: Session,
+    version_id: str,
+    actor: str,
+    effective_from: date | None = None,
+    notes: str | None = None,
+) -> RulebookVersion:
     """A new draft carrying the rows of any version: the way to change an approved rulebook."""
     src = session.get(RulebookVersion, version_id)
     if src is None:
@@ -239,11 +254,11 @@ def duplicate(session: Session, version_id: str, actor: str) -> RulebookVersion:
         jurisdiction_id=src.jurisdiction_id,
         rows=rows,
         actor=actor,
-        effective_from=src.effective_from,
+        effective_from=effective_from or src.effective_from,
         effective_to=src.effective_to,
         title=src.title,
         origin="duplicate",
-        notes=f"duplicated from version {src.version}",
+        notes=notes or f"duplicated from version {src.version}",
     )
 
 

@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 from ..core.ids import document_id
 from ..core.settings import get_settings
 from ..db.models import SourceDocument
+from . import ocr
 
 
 class NotAPdf(ValueError):
@@ -143,7 +144,16 @@ def page_text(doc: SourceDocument, page: int) -> str:
         raise PageOutOfRange(f"page {page} is outside 1..{doc.pages}")
     pdf = pdfium.PdfDocument(str(file_path(doc)))
     try:
-        tp = pdf[page - 1].get_textpage()
-        return str(tp.get_text_range())
+        text = str(pdf[page - 1].get_textpage().get_text_range())
     finally:
         pdf.close()
+    if len(text.strip()) < ocr.MIN_TEXT_CHARS:
+        scanned = ocr.ocr_text(doc.file_sha256, page)
+        if scanned is not None:
+            return scanned
+    return text
+
+
+def page_is_ocr(doc: SourceDocument, page: int) -> bool:
+    """True when page_text for this page comes from OCR rather than the PDF's text layer."""
+    return ocr.ocr_text(doc.file_sha256, page) is not None

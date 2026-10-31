@@ -1,0 +1,11 @@
+# MERC Case 75/2025 post-remand order, banking under DOA Regulation 20.3 (quoted p. 77) as ruled in para 18.21 (p. 79).
+jurisdiction: msedcl
+family: settlement
+tests:
+  - {name: "ToD-slot monthly netting", given: {context: {connection: intra_state, source: solar}, field: /granularity}, expect: {value: tod_slot_monthly}}
+  - {name: "monthly banking", given: {context: {connection: intra_state, source: wind}, field: /banking/period}, expect: {value: monthly}}
+  - {name: "no carry forward", given: {context: {connection: intra_state, source: solar}, field: /banking/carry_over}, expect: {value: "False"}}
+  - {name: "applies to RE only", given: {context: {connection: intra_state, source: thermal}}, expect: {absent: true}}
+  - {name: "normal-slot energy also drawn in solar hours", given: {context: {connection: intra_state, source: solar}, field: /banking/drawal_windows/0/allowed_slots/1}, expect: {value: solar}}
+  - {name: "solar-slot energy only in solar hours", given: {context: {connection: intra_state, source: solar}, field: /banking/drawal_windows/1/allowed_slots/0}, expect: {value: solar}}
+  - {name: "peak-slot energy also drawn in normal hours", given: {context: {connection: intra_state, source: solar}, field: /banking/drawal_windows/2/allowed_slots/1}, expect: {value: normal}}

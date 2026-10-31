@@ -63,7 +63,11 @@ def build_user_prompt(
 
 
 def check_row(
-    family: str, cand: dict[str, Any], pages: dict[int, str], doc: SourceDocument
+    family: str,
+    cand: dict[str, Any],
+    pages: dict[int, str],
+    doc: SourceDocument,
+    ocr_pages: frozenset[int] = frozenset(),
 ) -> tuple[dict[str, Any] | None, list[str]]:
     """Grounding and schema checks. Returns (row ready for the rulebook, []) or (None, reasons)."""
     reasons: list[str] = []
@@ -71,22 +75,30 @@ def check_row(
     quote = str(cand.get("quote") or "")
     if not isinstance(page, int) or page not in pages:
         return None, [f"cited page {page} was not among the pages read"]
-    if not quote_on_page(quote, pages[page]):
+    if not quote_on_page(quote, pages[page], ocr=page in ocr_pages):
         reasons.append(f"quote not found on page {page}")
     field_refs: dict[str, Any] = {}
     cited_texts = [pages[page]]
     for pointer, fq in (cand.get("field_quotes") or {}).items():
         fp, fqt = fq.get("page"), str(fq.get("quote") or "")
-        if fp not in pages or not quote_on_page(fqt, pages[fp]):
+        if fp not in pages or not quote_on_page(fqt, pages[fp], ocr=fp in ocr_pages):
             reasons.append(f"field quote for {pointer} not found on page {fp}")
             continue
         cited_texts.append(pages[fp])
-        field_refs[pointer] = {"kind": "order", "document_id": doc.id, "page": fp, "quote": fqt[:400]}
+        field_refs[pointer.removeprefix("/body")] = {
+            "kind": "regulation" if doc.document_kind == "regulation" else "order",
+            "document_id": doc.id,
+            "page": fp,
+            "quote": fqt[:400],
+        }
     body = cand.get("body") or {}
     missing = ungrounded_numbers(semantic_numbers(body, cited_texts), cited_texts)
     if missing:
         reasons.append(f"numbers not printed on the cited pages: {', '.join(missing)}")
-    ref: dict[str, Any] = {"kind": "order", "document_id": doc.id, "page": page, "quote": quote[:400]}
+    kind = "regulation" if doc.document_kind == "regulation" else "order"
+    ref: dict[str, Any] = {"kind": kind, "document_id": doc.id, "page": page, "quote": quote[:400]}
+    if page in ocr_pages:
+        ref["note"] = "page text read by OCR"
     if doc.effective_from:
         ref["effective_from"] = doc.effective_from.isoformat()
     row: dict[str, Any] = {
@@ -112,13 +124,16 @@ def read(
     pages: list[int],
     focus: str = "",
     model: str | None = None,
+    pages_per_call: int = PAGES_PER_CALL,
 ) -> ReadResult:
+    """Read the pages in groups of `pages_per_call` (a regulation that spans pages needs them in one call)."""
     doc = documents.get(session, document_id)
     texts = {p: documents.page_text(doc, p) for p in sorted(set(pages))}
+    ocr_pages = frozenset(p for p in texts if documents.page_is_ocr(doc, p))
     result = ReadResult()
     ordered = sorted(texts)
-    for i in range(0, len(ordered), PAGES_PER_CALL):
-        chunk = {p: texts[p] for p in ordered[i : i + PAGES_PER_CALL]}
+    for i in range(0, len(ordered), pages_per_call):
+        chunk = {p: texts[p] for p in ordered[i : i + pages_per_call]}
         if not any(t.strip() for t in chunk.values()):
             result.notes.append(f"pages {list(chunk)} have no text layer (scanned); not read")
             continue
@@ -138,7 +153,7 @@ def read(
         if r.data.get("notes"):
             result.notes.append(str(r.data["notes"]))
         for cand in r.data.get("rows") or []:
-            row, reasons = check_row(family, cand, texts, doc)
+            row, reasons = check_row(family, cand, texts, doc, ocr_pages)
             if row is None:
                 result.rejected.append(Rejected(cand, reasons))
             else:

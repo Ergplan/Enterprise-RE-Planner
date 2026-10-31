@@ -85,8 +85,8 @@ def load(path: Path) -> dict[str, Any]:
     return d
 
 
-def import_file(session: Session, path: Path, actor: str) -> RulebookVersion:
-    """Import a rulebook file as a new draft."""
+def import_file(session: Session, path: Path, actor: str, keep_identity: bool = False) -> RulebookVersion:
+    """Import a rulebook file as a new draft; `keep_identity` (restore) keeps its version and origin."""
     d = load(path)
     return service.propose(
         session,
@@ -97,15 +97,16 @@ def import_file(session: Session, path: Path, actor: str) -> RulebookVersion:
         effective_from=date.fromisoformat(str(d["effective_from"])),
         effective_to=date.fromisoformat(str(d["effective_to"])) if d.get("effective_to") else None,
         title=d.get("title"),
-        origin="yaml",
+        origin=d.get("origin", "yaml") if keep_identity else "yaml",
         notes=f"imported from {path.name}",
+        version=int(d["version"]) if keep_identity else None,
     )
 
 
 def restore(session: Session, path: Path) -> RulebookVersion:
     """Import an approved file and approve it again through the golden gate, as its approver."""
     d = load(path)
-    v = import_file(session, path, actor=d.get("approved_by") or "restore")
+    v = import_file(session, path, actor=d.get("approved_by") or "restore", keep_identity=True)
     if d.get("status") == "approved":
         service.approve(session, v.id, actor=d.get("approved_by") or "restore", role="analyst")
     return v

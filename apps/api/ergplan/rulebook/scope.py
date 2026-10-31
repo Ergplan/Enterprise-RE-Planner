@@ -13,7 +13,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Any
 
-RE_SOURCES = {"solar", "wind", "hybrid"}
+RE_SOURCES = {"solar", "wind", "hybrid", "biomass", "small_hydro", "waste_to_energy"}
 LIST_FIELDS = ("connection", "source", "ownership", "consumer_kind", "iex_segment")
 BAND_FIELDS = ("voltage_kv", "capacity_mw", "contract_demand_kva", "load_kw")
 

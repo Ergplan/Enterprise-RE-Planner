@@ -1,0 +1,11 @@
+# MERC Case 75/2025 post-remand order, ToD slabs approved (p. 77) with the FY 2026-27 solar rebates from the note
+# under the table (-15% Apr-Sep, -25% Oct-Mar), and the normal slot 00:00-09:00 from para 18.21 (p. 79).
+jurisdiction: msedcl
+family: tod_slots
+tests:
+  - {name: "one row in May", given: {context: {category: "HT I (A)", month: 5}}, expect: {count: 1}}
+  - {name: "normal starts at midnight", given: {context: {category: "HT I (A)", month: 5}, field: /slots/0/start}, expect: {value: "00:00"}}
+  - {name: "solar rebate 15% in summer", given: {context: {category: "HT I (A)", month: 6}, field: /slots/1/rebate_pct}, expect: {value: "15"}}
+  - {name: "solar rebate 25% in winter", given: {context: {category: "HT I (A)", month: 12}, field: /slots/1/rebate_pct}, expect: {value: "25"}}
+  - {name: "peak +20% in winter", given: {context: {category: "HT II", month: 1}, field: /slots/2/surcharge_pct}, expect: {value: "20"}}
+  - {name: "peak ends 24:00", given: {context: {category: "HT II", month: 9}, field: /slots/2/end}, expect: {value: "24:00"}}

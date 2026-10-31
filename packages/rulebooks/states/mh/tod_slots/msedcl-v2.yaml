@@ -1,0 +1,82 @@
+family: tod_slots
+jurisdiction: msedcl
+version: 2
+status: approved
+title: MSEDCL Case 75/2025, post-remand order of 25 March 2026 (review of the MYT order and revision of tariff) · pages 77–79
+effective_from: '2026-04-01'
+effective_to: null
+origin: duplicate
+approved_by: build-agent@ergplan
+rows:
+- label: HT I (A,B) & HT II (A) · ToD slots · Apr-Sep
+  scope:
+    months:
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    category:
+    - HT I (A)
+    - HT I (A) (i)
+    - HT I (B)
+    - HT II
+    - HT II (A)
+  body:
+    slots:
+    - end: 09:00
+      name: normal
+      start: 00:00
+    - end: '17:00'
+      name: solar
+      start: 09:00
+      rebate_pct: '15'
+    - end: '24:00'
+      name: peak
+      start: '17:00'
+      surcharge_pct: '20'
+    season_note: April to September daytime solar ToD rebate 15% and peak hours ToD surcharge 20% on energy charge
+  source_ref:
+    kind: order
+    page: 77
+    quote: "Solar \nHours\n09:00 hrs to \n17:00 hrs\n8\n-15%^\n(Apr to Sep)\n-25%^\n(Oct to Mar)\n... Peak \nHours\n17:00\
+      \ hrs to \n24:00 hrs 7 +20%# 0"
+    document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    effective_from: '2026-03-25'
+- label: HT I (A,B) & HT II (A) · ToD slots · Oct-Mar
+  scope:
+    months:
+    - 10
+    - 11
+    - 12
+    - 1
+    - 2
+    - 3
+    category:
+    - HT I (A)
+    - HT I (A) (i)
+    - HT I (B)
+    - HT II
+    - HT II (A)
+  body:
+    slots:
+    - end: 09:00
+      name: normal
+      start: 00:00
+    - end: '17:00'
+      name: solar
+      start: 09:00
+      rebate_pct: '25'
+    - end: '24:00'
+      name: peak
+      start: '17:00'
+      surcharge_pct: '20'
+    season_note: October to March daytime solar ToD rebate 25% and peak hours ToD surcharge 20% on energy charge
+  source_ref:
+    kind: order
+    page: 77
+    quote: "Solar \nHours\n09:00 hrs to \n17:00 hrs\n8\n-15%^\n(Apr to Sep)\n-25%^\n(Oct to Mar)\nRs. -0.80 (FY 26)\nRs. -0.85\
+      \ (FY 27) ... Peak \nHours\n17:00 hrs to \n24:00 hrs 7 +20%# 0"
+    document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    effective_from: '2026-03-25'

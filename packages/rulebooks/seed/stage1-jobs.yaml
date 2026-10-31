@@ -37,3 +37,29 @@ jobs:
     document: 3a046bfa2e2f
     pages: [377, 384]
     focus: "State-wide charges for open access in Uttar Pradesh: the intra-state transmission charge payable by open access customers for FY 2026-27 (para 10.2.1, component stu_transmission, basis inr_per_kwh, scope.connection ['intra_state','ists']); the inter-state transmission loss and the intra-state transmission loss applicable to all open access consumers (para 10.4.11), as components ists_losses and stu_losses with basis percent_in_kind."
+  - jurisdiction: msedcl
+    family: tariff_schedule
+    document: 5b1111fa8a7d          # MERC Case 75/2025 post-remand order of 25 Mar 2026 (MSEDCL tariff revised)
+    pages: [100]
+    focus: "Only the table 'Summary of HT Tariff for FY 2026-27, effective from 1 April, 2026'. Rows for HT I (A) HT - Industry and HT II: HT - Commercial, each twice: the EHV block (66 kV and above: scope.voltage_kv {min: 66}) and the HT block (33 kV, 22 kV and 11 kV: scope.voltage_kv {max: 33}). billing_basis kvah; demand_charge Rs/kVA/mth; energy_charge.base = Energy Charge; retail_wheeling_charge = Wheeling Charge where printed (the HT block), omitted where '-'."
+  - jurisdiction: msedcl
+    family: tod_slots
+    document: 5b1111fa8a7d
+    pages: [77, 79]
+    focus: "ToD slots approved for FY 2026-27, percentage of energy charge column (not the residential Rs./unit column). Two rows: April to September and October to March, scope.category ['HT I (A)', 'HT I (B)', 'HT II (A)']. Name the slots exactly 'normal' (00:00-09:00, no charge, from the banking ruling on p. 79), 'solar' (09:00-17:00, rebate) and 'peak' (17:00-24:00, +20%). The note under the table gives the FY 2026-27 (FY27) solar rebates: 15% April to September and 25% October to March."
+  - jurisdiction: msedcl
+    family: oa_charge
+    document: 5b1111fa8a7d
+    pages: [106]
+    focus: "Cross Subsidy Surcharge for FY 2026-27, HT category, column 'Approved CSS Rs./kWh' only: HT I (A) (i) HT - Industry and HT II (A) HT - Commercial, each for EHV (66 kV and above: scope.voltage_kv {min: 66}) and HT (33, 22, 11 kV: scope.voltage_kv {max: 33}); component cross_subsidy_surcharge, basis inr_per_kwh, scope.connection ['intra_state','ists']."
+  - jurisdiction: msedcl
+    family: settlement
+    document: 5b1111fa8a7d
+    pages: [77, 78, 79]
+    focus: "Banking of surplus energy as ruled in para 18.21 under Regulation 20.3 of the DOA Regulations: monthly banking, no carry forward, slot-wise drawal windows. One row, scope.connection ['intra_state','ists'], scope.source ['any_re']. granularity tod_slot_monthly; banking.allowed true; banking.period monthly; carry_over false; buckets per_slot; drawal_windows with deposited_in_slots and allowed_slots using slot names 'normal', 'solar', 'peak'; lapse.treatment as printed. Do not invent a banking charge."
+  - jurisdiction: UP
+    family: settlement
+    document: 5ea285b34934          # UPERC (Captive and Renewable Energy Generating Plants) Regulations, 2024 — scanned, OCR text
+    pages: [14, 15, 16, 17, 18, 19, 20]
+    pages_per_call: 7
+    focus: "Regulation 12 Banking of Energy for Renewable Energy based Captive plants (row 2 of the table in 12(iv), other than bagasse). Two rows: one for solar, wind and hybrid (scope.source ['solar','wind','hybrid'], banking charge 8% in kind per 12(xi)), one for other RE such as biomass and small hydro (scope.source ['any_re'] is not right for these; use scope.source ['any'] and say in notes it covers the 12% case). Both rows: scope.ownership ['captive','group_captive'], scope.connection ['intra_state']; granularity block_15min; banking.allowed true; banking.period monthly; banking.carry_over true; banking.cap {pct_of_injection '25', pct_of_consumption '30', combine 'higher', per_user true, period 'month'}; banking.in_block_banking_pct '100'; banking.ageing 'fifo'; banking.requires_day_ahead_schedule true; banking.buckets 'per_slot'; drawal_windows with slot names 'peak' and 'off_peak' per 12(viii); lapse treatment 'lapses' with rec_eligible true per the table; set_off_order per 12(xii)(a): captive_generation, banked_energy, bilateral (exchange or bilateral), discom."

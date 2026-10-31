@@ -38,7 +38,8 @@ def main() -> int:
                 print(f"!! {tag}: document {job['document']} not registered")
                 continue
             r = direct.read(s, document_id=doc.id, family=job["family"], jurisdiction_id=job["jurisdiction"],
-                            pages=job["pages"], focus=job["focus"])
+                            pages=job["pages"], focus=job["focus"],
+                            pages_per_call=job.get("pages_per_call", direct.PAGES_PER_CALL))
             eff, title = doc.effective_from or doc.order_date, f"{doc.title} · pages {job['pages'][0]}–{job['pages'][-1]}"
         print(f"== {tag}: {len(r.accepted)} accepted, {len(r.rejected)} rejected ({r.tokens_in}/{r.tokens_out} tokens)")
         for row in r.accepted:

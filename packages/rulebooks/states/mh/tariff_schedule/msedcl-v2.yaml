@@ -1,0 +1,102 @@
+family: tariff_schedule
+jurisdiction: msedcl
+version: 2
+status: approved
+title: MSEDCL Case 75/2025, post-remand order of 25 March 2026 (review of the MYT order and revision of tariff) · pages 100–100
+effective_from: '2026-04-01'
+effective_to: null
+origin: duplicate
+approved_by: build-agent@ergplan
+rows:
+- label: HT I (A) HT - Industry · EHV
+  scope:
+    category:
+    - HT I (A)
+    - HT I (A) (i)
+    voltage_kv:
+      min: 66
+  body:
+    category: HT I (A)
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month
+      value: '650'
+    energy_charge:
+      base: '8.44'
+  source_ref:
+    kind: order
+    page: 100
+    quote: |-
+      EHV (Rs./kVAh) (Rs./kVAh) (Rs./kVAh)
+      HT I (A) HT - Industry Rs/kVA/mth 650 8.44 - 8.44
+    document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    effective_from: '2026-03-25'
+- label: 'HT II: HT – Commercial · EHV'
+  scope:
+    category:
+    - HT II
+    - HT II (A)
+    voltage_kv:
+      min: 66
+  body:
+    category: HT II
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month
+      value: '650'
+    energy_charge:
+      base: '13.72'
+  source_ref:
+    kind: order
+    page: 100
+    quote: |-
+      EHV (Rs./kVAh) (Rs./kVAh) (Rs./kVAh)
+      ... HT II: HT – Commercial Rs/kVA/mth 650 13.72 - 13.72
+    document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    effective_from: '2026-03-25'
+- label: HT I (A) HT - Industry · HT (11–33 kV)
+  scope:
+    category:
+    - HT I (A)
+    - HT I (A) (i)
+    voltage_kv:
+      max: 33
+  body:
+    category: HT I (A)
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month
+      value: '650'
+    energy_charge:
+      base: '8.44'
+    retail_wheeling_charge: '0.81'
+  source_ref:
+    kind: order
+    page: 100
+    quote: |-
+      HT
+      HT I (A) HT - Industry Sub-total Rs/kVA/mth 650 8.44 0.81 9.25
+    document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    effective_from: '2026-03-25'
+- label: 'HT II: HT – Commercial · HT (11–33 kV)'
+  scope:
+    category:
+    - HT II
+    - HT II (A)
+    voltage_kv:
+      max: 33
+  body:
+    category: HT II
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month
+      value: '650'
+    energy_charge:
+      base: '13.72'
+    retail_wheeling_charge: '0.81'
+  source_ref:
+    kind: order
+    page: 100
+    quote: 'HT II: HT – Commercial Rs/kVA/mth 650 13.72 0.81 14.53'
+    document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    effective_from: '2026-03-25'

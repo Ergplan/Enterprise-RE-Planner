@@ -1,0 +1,97 @@
+family: oa_charge
+jurisdiction: msedcl
+version: 2
+status: approved
+title: MSEDCL Case 75/2025, post-remand order of 25 March 2026 (review of the MYT order and revision of tariff) · pages 106–106
+effective_from: '2026-04-01'
+effective_to: null
+origin: duplicate
+approved_by: build-agent@ergplan
+rows:
+- label: HT I (A) (i) HT - Industry · EHV 66 kV and above · Approved CSS Rs./kWh
+  scope:
+    category:
+    - HT I (A)
+    - HT I (A) (i)
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      min: 66
+  body:
+    basis: inr_per_kwh
+    value: '2.11'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 106
+    quote: "HT Category - EHV (66kV and Above)\nHT I (A) (i): HT - Industry 10.28 ... Approved \nCSS\nApproved \nCSS\nRs./kWh\
+      \ ... 2.11 2.11 2.07"
+    document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    effective_from: '2026-03-25'
+- label: HT II (A) HT - Commercial · EHV 66 kV and above · Approved CSS Rs./kWh
+  scope:
+    category:
+    - HT II
+    - HT II (A)
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      min: 66
+  body:
+    basis: inr_per_kwh
+    value: '2.11'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 106
+    quote: |-
+      HT Category - EHV (66kV and Above)
+      ... HT II (A): HT - Commercial 18.05 5.60 0.00% 3.26% 3.26% 0.85 11.42 2.11 2.11 2.07
+    document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    effective_from: '2026-03-25'
+- label: HT I (A) (i) HT - Industry · HT 33/22/11 kV · Approved CSS Rs./kWh
+  scope:
+    category:
+    - HT I (A)
+    - HT I (A) (i)
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      max: 33
+  body:
+    basis: inr_per_kwh
+    value: '2.11'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 106
+    quote: |-
+      HT Category - HT (33kV, 22kV and 11 kV)
+      HT I (A) (i): HT - Industry 10.88 5.60 7.50% 3.26% 10.52% 1.66 2.97 2.11 2.11 2.07
+    document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    effective_from: '2026-03-25'
+- label: HT II (A) HT - Commercial · HT 33/22/11 kV · Approved CSS Rs./kWh
+  scope:
+    category:
+    - HT II
+    - HT II (A)
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      max: 33
+  body:
+    basis: inr_per_kwh
+    value: '2.11'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 106
+    quote: |-
+      HT Category - HT (33kV, 22kV and 11 kV)
+      ... HT II (A): HT - Commercial 16.74 5.60 7.50% 3.26% 10.52% 1.66 8.83 2.11 2.11 2.07
+    document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    effective_from: '2026-03-25'

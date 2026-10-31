@@ -39,3 +39,10 @@ def test_semantic_zero_and_waiver() -> None:
     body = {"value": "1.03", "exemptions": [{"condition": "other", "waived_pct": "100"}]}
     assert ungrounded_numbers(semantic_numbers(body, [page + " 1.03"]), [page + " 1.03"]) == []
     assert ungrounded_numbers(semantic_numbers({"value": "0.00"}, ["value 5"]), ["value 5"]) == ["0.00"]
+
+
+def test_ocr_interleaved_columns() -> None:
+    page = "Renewable Banking of energy subject to a | Carry forward on monthly basis Energy maximum ceiling of 25% of | subject to the ceiling"
+    assert quote_on_page("Banking of energy subject to a maximum ceiling of 25% of", page, ocr=True)
+    assert not quote_on_page("Banking of energy subject to a maximum ceiling of 25% of", page, ocr=False)
+    assert not quote_on_page("Banking of energy subject to a maximum ceiling of 35% of", page, ocr=True)

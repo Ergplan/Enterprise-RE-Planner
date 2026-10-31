@@ -1,0 +1,87 @@
+family: settlement
+jurisdiction: msedcl
+version: 2
+status: approved
+title: MSEDCL Case 75/2025, post-remand order of 25 March 2026 (review of the MYT order and revision of tariff) · pages 77–79
+effective_from: '2026-04-01'
+effective_to: null
+origin: duplicate
+approved_by: build-agent@ergplan
+rows:
+- label: Banking · monthly ToD-slot set-off under Regulation 20.3
+  scope:
+    source:
+    - any_re
+    connection:
+    - intra_state
+    - ists
+  body:
+    banking:
+      period: monthly
+      allowed: true
+      buckets: per_slot
+      carry_over: false
+      drawal_windows:
+      - allowed_slots:
+        - normal
+        - solar
+        deposited_in_slots:
+        - normal
+      - allowed_slots:
+        - solar
+        deposited_in_slots:
+        - solar
+      - allowed_slots:
+        - peak
+        - normal
+        - solar
+        deposited_in_slots:
+        - peak
+    granularity: tod_slot_monthly
+  source_ref:
+    kind: order
+    page: 79
+    quote: "18.21Accordingly, the Commission rules that provisions of banking of surplus energy will continue to be governed\
+      \ by Regulation 20.3 of the DOA Regulations. Accordingly, conditions for Banking and its treatment thereof for adjustment\
+      \ of banked energy credits shall be as follows: \n• Energy banked during normal TOD slot (0000 hrs – 0600 hrs & 0600\
+      \ hrs – 0900 hrs) may be drawn in the same TOD slot and"
+    document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    effective_from: '2026-03-25'
+  field_refs:
+    /banking/period:
+      kind: order
+      page: 77
+      quote: "“20.3. Banking of energy shall be permitted only on monthly basis. \nProvided that the credit for banked energy\
+        \ shall not be permitted to be carried forward to subsequent months and the credit for energy banked during the month\
+        \ shall be adjusted during the same month as per the energy injected in the respective Time of Day (‘TOD’) slots"
+      document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    /banking/buckets:
+      kind: order
+      page: 77
+      quote: "the credit for energy banked during the \nmonth shall be adjusted during the same month as per the energy injected\
+        \ in \nthe respective Time of Day (‘TOD’) slots"
+      document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    /banking/carry_over:
+      kind: order
+      page: 77
+      quote: "Provided that the credit for banked energy shall not be permitted to be carried \nforward to subsequent months\
+        \ and the credit for energy banked during the \nmonth shall be adjusted during the same month as per the energy injected\
+        \ in \nthe respective Time of Day (‘TOD’) slots"
+      document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    /banking/drawal_windows/0/allowed_slots:
+      kind: order
+      page: 79
+      quote: "• Energy banked during normal TOD slot (0000 hrs – 0600 hrs & 0600 hrs – 0900 \nhrs) may be drawn in the same\
+        \ TOD slot and also during solar hours ToD slots"
+      document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    /banking/drawal_windows/1/allowed_slots:
+      kind: order
+      page: 79
+      quote: "• Energy banked during Solar Hours TOD slot (0900 hrs – 1700 hrs) may be \ndrawn in the same TOD slot"
+      document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
+    /banking/drawal_windows/2/allowed_slots:
+      kind: order
+      page: 79
+      quote: "• Energy banked during Peak Hours TOD slot (1700 hrs – 2400 hrs) may be \ndrawn in the same TOD slot and also\
+        \ during normal and Solar Hour TOD slots."
+      document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2

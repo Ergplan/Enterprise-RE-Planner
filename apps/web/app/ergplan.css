@@ -38,3 +38,9 @@ a.eg-btn { text-decoration: none; }
 .ep-page { display: grid; gap: var(--space-4); }
 .ep-page__bar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
 .ep-page__img { width: 100%; height: auto; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); display: block; }
+.ep-rule__grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--space-6); align-items: start; }
+.ep-citation blockquote { margin: 0 0 8px; padding: 10px 14px; border-left: 2px solid var(--accent); background: var(--surface-2);
+  border-radius: var(--radius-xs); font-size: 13px; line-height: 19px; color: var(--ink); white-space: pre-wrap; }
+.ep-json { width: 100%; box-sizing: border-box; font-family: var(--font-mono); font-size: 12px; color: var(--ink);
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-xs); padding: 12px; }
+@media (max-width: 900px) { .ep-rule__grid { grid-template-columns: 1fr; } }

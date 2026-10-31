@@ -195,6 +195,11 @@
         },
         "notes": {
           "type": "string"
+        },
+        "retail_wheeling_charge": {
+          "type": "string",
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "description": "Wheeling charge billed per unit with the energy charge to every consumer of the category (MERC HT and LT schedules), per billed unit (decimal as string)"
         }
       }
     },
