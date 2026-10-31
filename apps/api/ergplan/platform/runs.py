@@ -688,8 +688,16 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
         annualised += size * m.capex_inr * m.crf.value
         life = min(life, m.life_years)
     cash = saving + annualised  # yearly cash saving: the annualised capital is paid up front instead
-    pay = payback_years(capex, cash)
-    rate = irr([-capex] + [cash] * life) if capex > 0 else None
+    # Payback and IRR only when every source sized is owned plant: with a PPA in the mix the saving is
+    # mostly the PPA's, which needs no capital, and a ratio on the owned part alone would mislead.
+    ppa = any(m.crf is None and Decimal(str(sol.cap_kw.get(m.cid, 0.0))) > 0 for m in a.cands)
+    pay = None if ppa else payback_years(capex, cash)
+    rate = irr([-capex] + [cash] * life) if capex > 0 and not ppa else None
+    if ppa and capex > 0:
+        a.notes.append(
+            "payback and IRR are shown only when all the plant is owned; here an open-access purchase "
+            "brings most of the saving without capital"
+        )
 
     def sv(v: Decimal, unit: Unit, label: str, inputs: list[SourcedValue]) -> dict[str, Any]:
         return derive(_q(v, "0.01") if unit == Unit.INR else _q(v), unit, inputs, label=label).model_dump(

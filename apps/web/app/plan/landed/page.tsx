@@ -39,6 +39,7 @@ export default async function LandedPage({ searchParams }: { searchParams: Promi
               <Link key={m} href={`/plan/landed?c=${c}&month=${m}${analyst ? "&view=analyst" : ""}`} className="ep-seglink" aria-current={d.month === m ? "true" : undefined}>{months[m - 1]}</Link>
             ))}
           </div>
+          <Link className="eg-btn eg-btn--primary eg-btn--sm" href={`/plan/optimise?c=${c}`}>Size the plan</Link>
           <Link className="eg-btn eg-btn--ghost eg-btn--sm" href={`/plan/landed?c=${c}${month ? `&month=${month}` : ""}${analyst ? "" : "&view=analyst"}`}>
             {analyst ? "Client view" : "jouleWise view"}
           </Link>

@@ -34,6 +34,17 @@ services:
       interval: 10s
       retries: 12
 
+  worker:
+    # solves queued optimizer runs (Stage 6); same image as the API
+    build: { context: .., dockerfile: docker/api.Dockerfile }
+    command: ["python", "-m", "ergplan.platform.worker"]
+    env_file: ../.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-ergplan}:${POSTGRES_PASSWORD:-ergplan}@postgres:5432/${POSTGRES_DB:-ergplan}
+      ERGPLAN_DATA_DIR: /data
+    volumes: ["../data:/data"]
+    depends_on: { api: { condition: service_healthy } }
+
   web:
     build: { context: .., dockerfile: docker/web.Dockerfile }
     environment:

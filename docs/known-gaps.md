@@ -27,7 +27,13 @@ What is not yet right, and the stage that fixes it.
 | UP Solar Energy Policy 2022 wheeling and transmission exemptions (50% captive and third-party, 100% sale to DISCOM; CRE Regs p. 14) not applied: the policy's validity period is not in the corpus | When the policy is added |
 | Normative PPA prices, LCOE and LCOS inputs are assumptions (editable) | Client quotes |
 | A year of real OA settlement statements (anonymised) needed in `data/settlements/` to check the simulator within 0.5% (Stage 5 DoD); the simulator is checked against hand-worked cases and properties until then | When supplied |
-| One bank per consumer (the first matching settlement rule); mixed rules across sources share it or net without banking | Stage 6 |
+| One bank per consumer (the first matching settlement rule); mixed rules across sources share it or net without banking | When a client mixes rules |
+| Sizing passes under-value genuinely surplus banked energy by the deposit guard (at most the spread between the best withdrawal rate after the charge and the deposit slot's rate) and take the lower carry-over ceiling: sizes lean small where banking matters; the reported numbers are exact (judge) | A sizing refinement loop |
+| Sources of different set-off categories in block-level netting (UP): the rule draws the bank before bilateral supply in a block; the settlement pass maximises direct set-off first, so a captive + third-party mix with banking may fail re-settlement (it is then not shown) | When such a mix is needed |
+| Capacity of a captive thermal plant is not sized (existing units are dispatched with on/off, ramp and minimum up/down times); unit commitment at 15 minutes for a year is slow — use the hourly preview for sites with thermal | Stage 7 if needed |
+| Battery degradation, auxiliary consumption and a depth-of-discharge limit are not in the dispatch | Stage 7 |
+| IEX purchases priced at the month-slot mean, not block by block | When block prices matter for a client |
+| Land area does not bound any candidate (no on-site ground-mount source yet) | When one is added |
 | Generation for settlement comes from normative CUF curves unless a 15-minute injection is supplied | Developer profiles |
 
 ## Named rule gaps used by the bill replay (Stage 3)

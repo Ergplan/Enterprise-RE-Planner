@@ -40,6 +40,7 @@ export default async function SitePage({ searchParams }: { searchParams: Promise
       </div>
       <div className="ep-row">
         <Link className="eg-btn eg-btn--primary eg-btn--sm" href={`/plan/today?c=${c}`}>See today&apos;s cost</Link>
+        <Link className="eg-btn eg-btn--ghost eg-btn--sm" href={`/plan/optimise?c=${c}`}>Optimise</Link>
       </div>
       {prof && (
         <section className="eg-glass ep-panel">

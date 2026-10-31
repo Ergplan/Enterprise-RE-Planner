@@ -118,3 +118,10 @@ a.eg-btn { text-decoration: none; }
 .ep-stack__b { background: var(--warning); }
 .ep-stack__c { background: var(--ink-faint); }
 .ep-key { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin: 0 4px 0 10px; vertical-align: middle; }
+
+/* Stage 6: scenario cards and dispatch */
+.ep-scenarios { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); }
+.ep-scenario--on { outline: 2px solid var(--eg-accent, #0ea5a4); outline-offset: -2px; }
+.ep-stat-big { margin: var(--space-2) 0 var(--space-3); }
+.ep-big { font-size: 1.8rem; font-weight: 600; line-height: 1.2; }
+.ep-list { margin: 0; padding-left: 1.1em; display: grid; gap: var(--space-2); }
