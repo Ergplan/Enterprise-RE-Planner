@@ -20,3 +20,4 @@ Recorded by tools/dev/stage-tags.sh. `apply` recreates them as git tags.
 | stage-6-done | a747a8083b96461d10ef6b8a46dfb236ad6437db |
 | stage-7-start | 9f4b6eb168ef8073cbbae326f8ff20194a832e2d |
 | stage-7-done | b5c91b36a52df6283d37f34e4d13f1cb64c7c074 |
+| stage-8-start | b7b2bded236d4b6b82ad02f47fec00224c75efed |
