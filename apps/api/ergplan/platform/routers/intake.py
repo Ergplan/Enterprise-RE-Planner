@@ -212,13 +212,13 @@ class ProfileMonth(BaseModel):
     month: date
     energy_kwh: SourcedValue = Field(
         json_schema_extra={
-            "owner": "load_profiles.series_kw",
+            "owner": "load_profiles.series_kw + load_profiles.method",
             "ref_kinds": ["bill", "client_stated", "assumption", "measured"],
         }
     )
     max_kw: SourcedValue = Field(
         json_schema_extra={
-            "owner": "load_profiles.series_kw",
+            "owner": "load_profiles.series_kw + load_profiles.method",
             "ref_kinds": ["bill", "client_stated", "assumption", "measured"],
         }
     )
@@ -335,6 +335,7 @@ def _profile_out(p: LoadProfile) -> ProfileOut:
             best = (billed, energy, i)
         rep = reports.get(first.isoformat(), {})
         if p.provenance == "measured":
+            # measured_upload.store records the meter file name under method["file"]
             mref: tuple[SourceRef, ...] = (
                 SourceRef(kind=RefKind.MEASURED, note=f"meter file {p.method.get('file')}"),
             )
@@ -351,6 +352,18 @@ def _profile_out(p: LoadProfile) -> ProfileOut:
                 pref = eref
             else:
                 eref = _refs(src.get("energy") if src else None, "month energy")
+                if src and src.get("energy_unit") == "kVAh":
+                    pf_note = (
+                        "the bill's power factor"
+                        if src.get("power_factor")
+                        else "a power factor of 0.95 (assumed)"
+                    )
+                    eref = (
+                        *eref,
+                        SourceRef(
+                            kind=RefKind.ASSUMPTION, note=f"billed in kVAh; converted to kWh with {pf_note}"
+                        ),
+                    )
                 pref = eref + tuple(
                     r
                     for k in ("max_kva", "power_factor")

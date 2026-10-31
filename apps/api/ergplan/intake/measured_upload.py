@@ -1,6 +1,7 @@
 """Measured 15-minute load from a meter export (CSV): a timestamp column and a kW or kWh column.
 
-The year starts at the first timestamp's 1 April (or the given start). Gaps are reported, not
+The year starts at the 1 April on or before the first timestamp (or the given start), so a file
+starting mid-year has a long leading gap and is refused unless `year_start` is given. Gaps are reported, not
 filled silently: up to `max_gap_blocks` consecutive missing blocks are interpolated linearly and
 counted; a longer gap rejects the file. kWh per block is converted to kW (× 4).
 """

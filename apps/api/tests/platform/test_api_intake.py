@@ -204,3 +204,23 @@ def test_prices_endpoints() -> None:
     cov = client.get("/prices/coverage", params={"segment": "rtm"}).json()
     assert [c["blocks"] for c in cov] == [2, 1]
     assert len(client.get("/prices/coverage").json()) == 3
+
+
+def test_kvah_month_carries_the_conversion_assumption() -> None:
+    si = {
+        "client_name": {"value": "Acme"},
+        "site_name": {"value": "P"},
+        "state": {"value": "MH"},
+        "discom": {"value": "msedcl"},
+        "category": {"value": "HT I(A)"},
+        "voltage_kv": {"value": "22"},
+        "contract_demand_kva": {"value": "2200"},
+        "industry_shape": {"value": "two_shift"},
+        "weekly_off": {"value": [6]},
+        "months": [{"month": "2026-04-01", "energy": {"value": "1000000"}, "energy_unit": "kVAh"}],
+    }
+    cid = client.post("/sites", json={"intake": si}).json()["connection_id"]
+    apr = client.get(f"/connections/{cid}/profile").json()["months"][0]
+    assert apr["energy_kwh"]["value"] == "950000.000"
+    notes = [r.get("note") or "" for r in apr["energy_kwh"]["source_refs"]]
+    assert any("0.95 (assumed)" in n for n in notes)

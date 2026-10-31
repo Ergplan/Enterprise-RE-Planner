@@ -11,7 +11,7 @@ describe("intake helpers", () => {
   it("links a bill ref to the stored bill page and a document ref to the viewer", () => {
     expect(refHref({ kind: "bill", bill_id: "b1", field_path: "energy.kwh", url: "/bills/b1/file#page=2" })).toBe("/api/bills/b1/file#page=2");
     expect(refHref({ kind: "bill", bill_id: "b1", field_path: "energy.kwh" })).toBe("/api/bills/b1/file");
-    expect(refHref({ kind: "order", document_id: "d", page: 3, quote: "q" })).toBe("/documents/d?page=3");
+    expect(refHref({ kind: "order", document_id: "d", page: 3, quote: "q" })).toBe("/api/documents/d#page=3");
     expect(refHref({ kind: "assumption", note: "n" })).toBeNull();
   });
   it("reads API errors", () => {

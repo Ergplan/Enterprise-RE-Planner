@@ -13,3 +13,4 @@ tools/watch/watch.log
 docs/stage-reports/*-review.md
 *.log
 .DS_Store
+*.tsbuildinfo

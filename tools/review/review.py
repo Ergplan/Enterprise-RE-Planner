@@ -18,7 +18,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 EXCLUDE = [":(exclude)apps/web/public/vendor", ":(exclude)apps/web/pnpm-lock.yaml", ":(exclude)packages/rulebooks/corpus",
-           ":(exclude)apps/api/uv.lock", ":(exclude)docs/stage-reports", ":(exclude)packages/rulebooks/states"]
+           ":(exclude)apps/api/uv.lock", ":(exclude)docs/stage-reports", ":(exclude)packages/rulebooks/states",
+           ":(exclude)*.pdf", ":(exclude)apps/api/tests/fixtures/billx/*.json"]
 MAX_DIFF = 520_000  # about 130k tokens; code and tests are sent first so truncation drops data files, not code
 CODE_FIRST = ["apps/api/ergplan", "apps/api/tests", "apps/api/alembic", "apps/web", "tools", "docker", "packages", "docs", "."]
 
@@ -36,7 +37,8 @@ Use kind=code_defect only for something the code in this diff gets wrong that a 
 
 
 def sh(*args: str) -> str:
-    return subprocess.run(args, cwd=ROOT, capture_output=True, text=True, check=True).stdout
+    out = subprocess.run(args, cwd=ROOT, capture_output=True, check=True).stdout
+    return out.decode("utf-8", errors="replace")
 
 
 def stage_prompt(n: int) -> str:
