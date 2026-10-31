@@ -210,6 +210,20 @@ class Shift(BaseModel):
     end: str
     days: list[int] = Field(default_factory=lambda: [0, 1, 2, 3, 4, 5])
 
+    @field_validator("start", "end")
+    @classmethod
+    def _hhmm(cls, v: str) -> str:
+        if not _HHMM.match(v):
+            raise ValueError("a time is HH:MM")
+        return v
+
+    @field_validator("days")
+    @classmethod
+    def _weekdays(cls, v: list[int]) -> list[int]:
+        if any(not 0 <= d <= 6 for d in v):
+            raise ValueError("days are 0 (Mon) to 6 (Sun)")
+        return v
+
 
 class SiteIntake(BaseModel):
     model_config = ConfigDict(extra="forbid")

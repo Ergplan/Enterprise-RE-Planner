@@ -300,3 +300,11 @@ def test_typed_tod_hours_shape_the_profile() -> None:
         may = lp.method["months"][1]
         assert may["tod"][0]["kwh"] == pytest.approx(200000, rel=1e-3)
         assert may["max_kw"] == pytest.approx(2500 * 0.98)
+
+
+def test_shift_days_and_times_validated() -> None:
+    assert site_intake.Shift(start="06:00", end="14:00", days=[0, 6]).days == [0, 6]
+    with pytest.raises(ValidationError, match="0 \\(Mon\\)"):
+        site_intake.Shift(start="06:00", end="14:00", days=[7])
+    with pytest.raises(ValidationError, match="HH:MM"):
+        site_intake.Shift(start="6am", end="14:00")

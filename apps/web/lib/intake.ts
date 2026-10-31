@@ -195,7 +195,8 @@ export function monthLabel(iso: string): string {
 
 export function refHref(ref: Ref | null | undefined): string | null {
   if (!ref) return null;
-  if (ref.kind === "bill" && ref.bill_id) return `/api/bills/${ref.bill_id}/file${ref.url?.includes("#page=") ? ref.url.slice(ref.url.indexOf("#")) : ""}`;
+  // the API's SourceRef.url is the path behind the same-origin /api proxy
+  if (ref.kind === "bill" && ref.bill_id) return `/api${ref.url ?? `/bills/${ref.bill_id}/file`}`;
   // invariant 1: a document ref opens the stored PDF at its page (/documents/{id}#page=N, through the /api proxy)
   if (ref.document_id && ref.page) return `/api/documents/${ref.document_id}#page=${ref.page}`;
   return null;
