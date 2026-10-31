@@ -158,17 +158,30 @@ def ingest(
     filename: str,
     client: BillxClient | None = None,
     connection_id: str | None = None,
+    uploaded_by: str | None = None,
 ) -> list[Bill]:
     """Read a bill file through billx (or reuse the stored result for the same file) and store one
-    row per bill in it."""
+    row per bill in it. Each uploader gets their own rows; billx reads a file once."""
     sha = store_file(data)
-    existing = list(session.scalars(select(Bill).where(Bill.file_sha256 == sha).order_by(Bill.bill_index)))
-    if existing:
-        for b in existing:
+    q = select(Bill).where(Bill.file_sha256 == sha)
+    mine = list(
+        session.scalars(
+            q.where(
+                Bill.uploaded_by.is_(None) if uploaded_by is None else Bill.uploaded_by == uploaded_by
+            ).order_by(Bill.bill_index)
+        )
+    )
+    if mine:
+        for b in mine:
             if connection_id and b.connection_id is None:
                 b.connection_id = connection_id
-        return existing
-    result = (client or BillxClient()).read(data, filename, account_ref=connection_id)
+        return mine
+    earlier = session.scalars(q.order_by(Bill.created_at)).first()
+    result = (
+        earlier.billx_result
+        if earlier is not None
+        else (client or BillxClient()).read(data, filename, account_ref=connection_id)
+    )
     rows = []
     for f in bill_fields.from_result(result):
         b = Bill(
@@ -182,6 +195,7 @@ def ingest(
             accepted=f.accepted,
             accepted_by=f.accepted_by or ("engine" if f.accepted else None),
             billx_result=result,
+            uploaded_by=uploaded_by,
         )
         session.add(b)
         rows.append(b)

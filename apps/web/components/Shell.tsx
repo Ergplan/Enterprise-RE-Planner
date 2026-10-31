@@ -47,6 +47,34 @@ export function Shell({ children }: { children: ReactNode }) {
       setSite(c ?? "");
     }
   }, [path]);
+  // who is signed in; in production a signed-out visitor is sent to /login (the shared plan stays open)
+  const [me, setMe] = useState<{ email: string | null; role: string; signed_in: boolean; required: boolean } | null>(null);
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((m) => {
+        if (!m) return;
+        setMe(m);
+        try {
+          if (m.signed_in && m.role === "analyst") localStorage.setItem("ergplan-analyst", m.email);
+          else if (m.required) localStorage.removeItem("ergplan-analyst");
+        } catch {
+          /* storage may be unavailable */
+        }
+        const open = path.startsWith("/login") || path.startsWith("/p/") || path.startsWith("/documents");
+        if (m.required && !m.signed_in && !open) window.location.replace(`/login?next=${encodeURIComponent(path + window.location.search)}`);
+      })
+      .catch(() => undefined);
+  }, [path]);
+  async function signOut() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    try {
+      localStorage.removeItem("ergplan-analyst");
+    } catch {
+      /* storage may be unavailable */
+    }
+    window.location.replace("/login");
+  }
   if (path.startsWith("/p/")) return <main className="ep-public">{children}</main>; // the shared plan: no rail
   const current = (href: string) => (path === href || path.startsWith(href + "/") ? "page" : undefined);
   return (
@@ -88,6 +116,10 @@ export function Shell({ children }: { children: ReactNode }) {
             jouleWise <span data-icon="chevron-right" data-size="14"></span> <b>ergPLAN</b>
           </div>
           <div className="eg-topbar__end">
+            {me?.signed_in ? (
+              <span className="ep-row ep-small"><span className="eg-muted">{me.email}{me.role === "analyst" ? " · jouleWise" : ""}</span>
+                <button className="eg-btn eg-btn--ghost eg-btn--sm" onClick={signOut}>Sign out</button></span>
+            ) : me?.required ? <a className="eg-btn eg-btn--ghost eg-btn--sm" href="/login">Sign in</a> : null}
             <button className="eg-icon-btn eg-icon-btn--sm" aria-label="Switch theme" onClick={toggleTheme}>
               <span data-icon="moon" data-size="18"></span>
             </button>

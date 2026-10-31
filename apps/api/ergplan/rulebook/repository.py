@@ -25,7 +25,35 @@ _SQL = text(
 )
 
 
+_STAMP = text(
+    "select count(*), max(coalesce(approved_at, created_at)), max(effective_to) from rulebook_versions "
+    "where status = 'approved'"
+)
+_CACHE: dict[tuple[str, tuple[str, ...], date], list[RuleView]] = {}
+_CACHE_STAMP: list[object] = [None]
+CACHE_MAX = 4096
+
+
 def approved_rules(session: Session, family: str, jurisdiction_ids: list[str], on: date) -> list[RuleView]:
+    """Approved rows of a family for a jurisdiction chain on a date. Cached in the process; the cache
+    is dropped whenever the set of approved versions changes (checked on every call, in the caller's
+    own transaction, so an approval is seen at once)."""
+    stamp = tuple(session.execute(_STAMP).one())
+    if stamp != _CACHE_STAMP[0]:
+        _CACHE.clear()
+        _CACHE_STAMP[0] = stamp
+    key = (family, tuple(jurisdiction_ids), on)
+    hit = _CACHE.get(key)
+    if hit is not None:
+        return list(hit)
+    out = _approved_rules(session, family, jurisdiction_ids, on)
+    if len(_CACHE) >= CACHE_MAX:
+        _CACHE.clear()
+    _CACHE[key] = out
+    return list(out)
+
+
+def _approved_rules(session: Session, family: str, jurisdiction_ids: list[str], on: date) -> list[RuleView]:
     session.execute(text("select set_config('ergplan.on_date', :d, true)"), {"d": on.isoformat()})
     rows = session.execute(_SQL, {"family": family, "jids": jurisdiction_ids}).mappings()
     return [

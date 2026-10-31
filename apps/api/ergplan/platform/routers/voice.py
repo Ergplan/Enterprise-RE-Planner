@@ -16,7 +16,7 @@ from ...providers import openai_client
 from ...report import share
 from ...report.whatif import WhatIf, WhatIfFailed, evaluate
 from ...voice import tools as vt
-from ..auth import Caller, caller
+from ..auth import Caller, caller, production
 from .plan import recommended_run
 
 router = APIRouter(tags=["voice"])
@@ -114,6 +114,8 @@ def run_tool(mode: str, name: str, args: dict[str, Any], state: dict[str, Any], 
 def voice_session(body: SessionIn, who: Annotated[Caller, Depends(caller)]) -> SessionOut:
     if body.mode == "plan":
         _plan_token(body.token)
+    elif production() and not who.signed_in:
+        raise HTTPException(401, "sign in first")
     specs = vt.specs(body.mode)
     try:
         sec = openai_client.realtime_secret(
@@ -137,10 +139,12 @@ def voice_tools(mode: Literal["intake", "plan"]) -> list[dict[str, Any]]:
 
 
 @router.post("/chat", response_model=ChatOut)
-def chat(body: ChatIn) -> ChatOut:
+def chat(body: ChatIn, who: Annotated[Caller, Depends(caller)]) -> ChatOut:
     """Text chat with the same tools: the model asks for tools, the API runs them, the model reads back."""
     if body.mode == "plan":
         _plan_token(body.token)
+    elif production() and not who.signed_in:
+        raise HTTPException(401, "sign in first")
     msgs: list[dict[str, Any]] = [
         {"role": m.get("role", "user"), "content": str(m.get("content", ""))}
         for m in body.messages

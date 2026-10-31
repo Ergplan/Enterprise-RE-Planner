@@ -1,0 +1,130 @@
+"""Stage 8 sign-in and access, in production mode: email link → session cookie; development headers
+are ignored; signed-out callers reach only the public routes; a client reaches only what they created;
+analysts reach everything; the shared plan opens logged out; security headers."""
+
+from __future__ import annotations
+
+from datetime import UTC, datetime, timedelta
+from typing import Any
+
+import pytest
+from fastapi.testclient import TestClient
+
+from ergplan.core.settings import get_settings
+from ergplan.db.base import session_scope
+from ergplan.db.models import LoginToken
+from ergplan.intake import bills as bill_store
+from ergplan.platform import mail
+from ergplan.platform.app import app
+from tests.engine.helpers import restore_committed
+from tests.intake.helpers import FakeBillx
+from tests.platform.test_api_runs import msedcl_5mw
+
+
+@pytest.fixture
+def prod(monkeypatch: pytest.MonkeyPatch) -> list[tuple[str, str]]:
+    monkeypatch.setattr(get_settings(), "ergplan_env", "prod")
+    sent: list[tuple[str, str]] = []
+
+    def fake_send(to: str, subject: str, body: str) -> bool:
+        sent.append((to, body))
+        return True
+
+    monkeypatch.setattr(mail, "send", fake_send)
+    return sent
+
+
+def sign_in(email: str, sent: list[tuple[str, str]]) -> TestClient:
+    c = TestClient(app, base_url="https://testserver")
+    r = c.post("/auth/request", json={"email": email})
+    assert r.status_code == 200 and r.json() == {"sent": True, "dev_link": None}
+    token = sent[-1][1].split("token=")[1].split("&")[0].split()[0]
+    v = c.post("/auth/verify", json={"token": token})
+    assert v.status_code == 200, v.text
+    assert "ergplan_session" in c.cookies
+    assert c.post("/auth/verify", json={"token": token}).status_code == 401  # one use only
+    return c
+
+
+def test_sign_in_roles_and_logout(prod: list[tuple[str, str]]) -> None:
+    a = sign_in("Priya@joulewise.in", prod)
+    assert a.get("/auth/me").json() == {
+        "email": "priya@joulewise.in",
+        "role": "analyst",
+        "signed_in": True,
+        "required": True,
+    }
+    c = sign_in("ops@acme.in", prod)
+    assert c.get("/auth/me").json()["role"] == "client"
+    assert c.post("/auth/logout").json()["signed_in"] is False
+    assert c.get("/auth/me").json()["signed_in"] is False
+
+
+def test_expired_link_is_refused(prod: list[tuple[str, str]]) -> None:
+    c = TestClient(app, base_url="https://testserver")
+    c.post("/auth/request", json={"email": "late@acme.in"})
+    token = prod[-1][1].split("token=")[1].split("&")[0]
+    with session_scope() as s:
+        for t in s.query(LoginToken).all():
+            t.expires_at = datetime.now(UTC) - timedelta(minutes=1)
+    assert c.post("/auth/verify", json={"token": token}).status_code == 401
+
+
+def test_development_headers_are_ignored_in_production(prod: list[tuple[str, str]]) -> None:
+    c = TestClient(app, base_url="https://testserver")
+    fake = {"X-Ergplan-Actor": "intruder@x.in", "X-Ergplan-Role": "analyst"}
+    assert c.get("/auth/me", headers=fake).json()["signed_in"] is False
+    assert c.get("/rulebooks/versions", headers=fake).status_code == 401
+    assert c.get("/health").status_code == 200 and c.get("/documents").status_code == 200
+    r = c.get("/health")
+    assert r.headers["x-content-type-options"] == "nosniff" and "strict-transport-security" in r.headers
+
+
+def test_a_client_reaches_only_their_own_sites(
+    prod: list[tuple[str, str]], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    restore_committed()
+    fake = FakeBillx()
+    monkeypatch.setattr(bill_store, "BillxClient", fake.client)
+    owner = sign_in("owner@acme.in", prod)
+    other = sign_in("someone@else.in", prod)
+    analyst = sign_in("ana@joulewise.in", prod)
+    pdf = fake.register("b", msedcl_5mw())
+    assert (
+        TestClient(app, base_url="https://testserver")
+        .post("/bills", files={"file": ("b.pdf", pdf, "application/pdf")})
+        .status_code
+        == 401
+    )
+    [bill] = owner.post("/bills", files={"file": ("b.pdf", pdf, "application/pdf")}).json()
+    # the same file from someone else: their own bill row, billx not called again
+    calls = fake.calls
+    [theirs] = other.post("/bills", files={"file": ("b.pdf", pdf, "application/pdf")}).json()
+    assert theirs["id"] != bill["id"] and fake.calls == calls
+    assert other.get(f"/bills/{bill['id']}").status_code == 403
+    assert other.post("/intake/from-bills", json={"bill_ids": [bill["id"]]}).status_code == 403
+    si = owner.post("/intake/from-bills", json={"bill_ids": [bill["id"]]}).json()
+    out = owner.post("/sites", json={"intake": si}).json()
+    conn, site = out["connection_id"], out["site_id"]
+    for path in (
+        f"/connections/{conn}",
+        f"/connections/{conn}/profile",
+        f"/sites/{site}/scenarios",
+        f"/connections/{conn}/plan",
+    ):
+        assert owner.get(path).status_code == 200, path
+        assert other.get(path).status_code == 403, path
+        assert analyst.get(path).status_code == 200, path
+    tok = owner.post(f"/connections/{conn}/share").json()["token"]
+    assert other.post(f"/connections/{conn}/share").status_code == 403
+    anon = TestClient(app, base_url="https://testserver")
+    d: dict[str, Any] = anon.get(f"/p/{tok}").json()  # the shared plan opens logged out
+    assert d["connection_id"] == conn
+    assert anon.get(f"/p/{tok}", params={"view": "analyst"}).status_code == 403
+    assert anon.post("/voice/session", json={"mode": "intake"}).status_code == 401
+    assert (
+        anon.post(
+            "/chat", json={"mode": "intake", "messages": [{"role": "user", "content": "hi"}]}
+        ).status_code
+        == 401
+    )

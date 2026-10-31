@@ -17,6 +17,9 @@ from sqlalchemy import text
 from ergplan.db.base import get_engine
 
 APP_TABLES = [
+    "auth_sessions",
+    "login_tokens",
+    "users",
     "explanations",
     "share_links",
     "run_results",

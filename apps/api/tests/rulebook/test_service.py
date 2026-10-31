@@ -170,3 +170,17 @@ def test_view_itself_hides_rules_outside_their_dates() -> None:
         assert s.execute(text("select count(*) from rules_approved")).scalar_one() == 0
         s.execute(text("select set_config('ergplan.on_date', '2026-08-01', true)"))
         assert s.execute(text("select count(*) from rules_approved")).scalar_one() == 2
+
+
+def test_the_rules_cache_sees_an_approval_at_once() -> None:
+    """Stage 8 caches approved rows per process; approving or superseding a version clears it."""
+    _add_golden()
+    with session_scope() as s:
+        assert repository.approved_rules(s, "tariff_schedule", ["npcl"], date(2026, 8, 1)) == []
+    vid = _propose()
+    _approve(vid)
+    with session_scope() as s:
+        rows = repository.approved_rules(s, "tariff_schedule", ["npcl"], date(2026, 8, 1))
+        assert [r.version_id for r in rows] and {r.version_id for r in rows} == {vid}
+        again = repository.approved_rules(s, "tariff_schedule", ["npcl"], date(2026, 8, 1))
+        assert [r.id for r in again] == [r.id for r in rows]

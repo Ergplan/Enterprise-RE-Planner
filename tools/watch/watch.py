@@ -38,6 +38,7 @@ CHECKS: list[tuple[str, list[str], Path]] = [
     ("web-typecheck", ["pnpm", "-s", "typecheck"], WEB),
     ("web-test", ["pnpm", "-s", "test"], WEB),
     ("rulebooks", [PY, "tools/dev/validate-rulebooks.py"], ROOT),
+    ("secrets", [PY, "tools/dev/secrets-check.py"], ROOT),
     ("field-trace", [PY, "tools/dev/field-trace.py", "--check"], ROOT),
     ("claude-md", ["bash", "-c", "cp CLAUDE.md /tmp/.cm && tools/dev/sync-claude-md.sh >/dev/null && diff -q /tmp/.cm CLAUDE.md"], ROOT),
 ]

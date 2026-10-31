@@ -25,8 +25,20 @@ export class ApiError extends Error {
   }
 }
 
+// Server components forward the visitor's session cookie, so the API sees who is asking (Stage 8).
+async function sessionHeader(): Promise<Record<string, string>> {
+  try {
+    const { cookies } = await import("next/headers");
+    const c = (await cookies()).get("ergplan_session");
+    return c ? { Cookie: `ergplan_session=${c.value}` } : {};
+  } catch {
+    return {};
+  }
+}
+
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const r = await fetch(`${API_URL}${path}`, { cache: "no-store", ...init });
+  const headers = { ...(await sessionHeader()), ...((init?.headers as Record<string, string>) ?? {}) };
+  const r = await fetch(`${API_URL}${path}`, { cache: "no-store", ...init, headers });
   if (!r.ok) throw new ApiError(r.status, `${r.status} ${await r.text()}`);
   return (await r.json()) as T;
 }

@@ -25,7 +25,7 @@ from ...db.models import Bill, Client, Connection, LoadProfile, Site
 from ...intake import bills as bill_store
 from ...intake import defaults, measured_upload, profile_synthesis, site_intake
 from ...intake.billx_client import BillxError, BillxUnavailable
-from ..auth import Caller, caller
+from ..auth import Caller, caller, owned_bills, owned_connection
 
 router = APIRouter(tags=["intake"])
 
@@ -82,6 +82,7 @@ def _bill_out(s: Any, b: Bill) -> BillOut:
 @router.post("/bills", response_model=list[BillOut], status_code=201)
 async def upload_bill(
     file: Annotated[UploadFile, File()],
+    who: Annotated[Caller, Depends(caller)],
     connection_id: Annotated[str | None, Form()] = None,
 ) -> list[BillOut]:
     data = await file.read()
@@ -91,7 +92,14 @@ async def upload_bill(
         with session_scope() as s:
             if connection_id and s.get(Connection, connection_id) is None:
                 raise HTTPException(404, "connection not found")
-            rows = bill_store.ingest(s, data, file.filename or "bill.pdf", connection_id=connection_id)
+            owned_connection(s, who, connection_id)
+            rows = bill_store.ingest(
+                s,
+                data,
+                file.filename or "bill.pdf",
+                connection_id=connection_id,
+                uploaded_by=who.actor if who.signed_in else None,
+            )
             out = [_bill_out(s, b) for b in rows]
             s.commit()
             return out
@@ -171,8 +179,9 @@ class FromBillsIn(BaseModel):
 
 
 @router.post("/intake/from-bills", response_model=site_intake.SiteIntake)
-def intake_from_bills(body: FromBillsIn) -> site_intake.SiteIntake:
+def intake_from_bills(body: FromBillsIn, who: Annotated[Caller, Depends(caller)]) -> site_intake.SiteIntake:
     with session_scope() as s:
+        owned_bills(s, who, body.bill_ids)
         try:
             return site_intake.from_bills(s, body.bill_ids, body.overrides)
         except bill_store.BillNotFound as e:
@@ -198,6 +207,7 @@ class BuildOut(BaseModel):
 @router.post("/sites", response_model=BuildOut, status_code=201)
 def build_site(body: BuildIn, who: Annotated[Caller, Depends(caller)]) -> BuildOut:
     with session_scope() as s:
+        owned_connection(s, who, body.connection_id)
         try:
             out = site_intake.build(s, body.intake, who.actor, connection_id=body.connection_id)
         except LookupError as e:

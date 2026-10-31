@@ -260,6 +260,7 @@ class Bill(Base):
     accepted: Mapped[bool] = mapped_column(default=False)
     accepted_by: Mapped[str | None] = mapped_column(String(64))  # engine|human|bill_confirmations
     billx_result: Mapped[dict[str, Any]] = mapped_column(JSONType)
+    uploaded_by: Mapped[str | None] = mapped_column(String(254), index=True)  # who dropped the file (Stage 8)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -436,3 +437,45 @@ class Explanation(Base):
     text: Mapped[str] = mapped_column(Text)
     model_call_id: Mapped[str | None] = mapped_column(String(36))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+# ---------------------------------------------------------------- Stage 8: login
+
+
+class User(Base):
+    """A person who signs in by email link. Role analyst (jouleWise) or client."""
+
+    __tablename__ = "users"
+
+    email: Mapped[str] = mapped_column(String(254), primary_key=True)
+    role: Mapped[str] = mapped_column(String(16))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (CheckConstraint("role in ('analyst','client')", name="users_role"),)
+
+
+class LoginToken(Base):
+    """A one-time sign-in link (only its SHA-256 is stored)."""
+
+    __tablename__ = "login_tokens"
+
+    token_sha256: Mapped[str] = mapped_column(String(64), primary_key=True)
+    email: Mapped[str] = mapped_column(String(254), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class AuthSession(Base):
+    """A signed-in browser (only the SHA-256 of the cookie value is stored)."""
+
+    __tablename__ = "auth_sessions"
+
+    token_sha256: Mapped[str] = mapped_column(String(64), primary_key=True)
+    email: Mapped[str] = mapped_column(
+        String(254), ForeignKey("users.email", name="auth_sessions_user_fk"), index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

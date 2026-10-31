@@ -1,5 +1,12 @@
-# Local: http://localhost. On the VM (Stage 8) replace :80 with the jouleWise hostname for automatic TLS.
-:80 {
+# SITE_ADDRESS is the jouleWise hostname on the VM (automatic TLS by Let's Encrypt), ":80" locally.
+{$SITE_ADDRESS::80} {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
 	handle /api/* {
 		uri strip_prefix /api
 		reverse_proxy api:8000
