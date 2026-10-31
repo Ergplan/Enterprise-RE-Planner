@@ -43,3 +43,11 @@ export function hhmm(block: number): string {
   const m = block * 15;
   return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
 }
+
+export type SlotWaterfall = { slot: string; lines: SourcedValue[]; total: SourcedValue };
+export type LandedSource = { id: string; label: string; available: boolean; reason: string | null; by_slot: SlotWaterfall[]; gaps: string[]; notes: string[]; rules_used: string[] };
+export type LandedOut = {
+  connection_id: string; as_of: string; month: number; slots: { name: string; start: string; end: string }[];
+  avoided: { slot: string; rate: SourcedValue }[]; sources: LandedSource[];
+  limits: { limit: string; value: SourcedValue; label: string | null }[]; gaps: Record<string, string>;
+};

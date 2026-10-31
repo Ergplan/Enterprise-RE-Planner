@@ -96,3 +96,18 @@ a.eg-btn { text-decoration: none; }
 .ep-heat__axis span { color: var(--ink-muted); font-size: 10px; }
 .ep-heat__cell { height: 16px; background: color-mix(in oklab, var(--accent) var(--lvl), var(--surface-2)); }
 .ep-heat__cell:hover { outline: 1px solid var(--ink); }
+
+/* Stage 4: landed costs */
+.ep-sources { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: var(--space-4); }
+.ep-source__total { text-align: right; font-size: 22px; }
+.ep-source__total span { font-size: 12px; }
+.ep-waterfall { margin-top: var(--space-2); }
+.ep-compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-6); }
+.ep-compare__slot { display: grid; gap: 6px; }
+.ep-compare__row { display: grid; grid-template-columns: 150px 1fr 60px; gap: 8px; align-items: center; }
+.ep-compare__track { position: relative; height: 12px; background: var(--surface-2); border-radius: var(--radius-pill); }
+.ep-compare__bar { position: absolute; left: 0; top: 0; bottom: 0; border-radius: var(--radius-pill); background: var(--negative); opacity: .75; }
+.ep-compare__bar--save { background: var(--accent); }
+.ep-compare__grid { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
+.ep-seglink { display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: var(--radius-pill); color: var(--ink-muted); text-decoration: none; font-size: 12px; }
+.ep-seglink[aria-current="true"] { background: var(--glass-strong); color: var(--ink); }

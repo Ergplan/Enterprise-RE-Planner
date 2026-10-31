@@ -1,0 +1,6 @@
+# DRAFT by the build agent, awaiting jouleWise approval. MSEDCL: only CSS (HT I(A) Rs 2.11/kWh, Case 75/2025 p. 106) is
+# approved; OA wheeling, losses, additional surcharge and the captive CSS exemption are named gaps (known-gaps). P = 3.10.
+consumer,discom,voltage_kv,source,ownership,price,stu,wheeling,loss_gross_up,css,additional_surcharge,landed
+mh_11kv_tp,msedcl,11,oa_solar_intra,third_party,3.10,,,,2.11,,5.2100
+mh_33kv_tp,msedcl,33,oa_solar_intra,third_party,3.10,,,,2.11,,5.2100
+mh_132kv_tp,msedcl,132,oa_solar_intra,third_party,3.10,,,,2.11,,5.2100

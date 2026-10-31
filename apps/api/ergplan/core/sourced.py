@@ -37,6 +37,7 @@ class RefKind(StrEnum):
     MEASURED = "measured"
     DERIVED = "derived"
     BILL = "bill"  # read by billx from the client's own bill (invariant 7); links to the stored bill page
+    MARKET = "market"  # an exchange price from an uploaded IEX file (price_vintages; invariant 8)
 
 
 DOCUMENT_KINDS = {RefKind.REGULATION, RefKind.ORDER}
@@ -56,6 +57,7 @@ class SourceRef(BaseModel):
     rule_id: str | None = None  # the rule row this value came from, when it came from one
     bill_id: str | None = None  # kind bill: bills.id
     field_path: str | None = None  # kind bill: the billx contract path (demand.max_kva)
+    vintage_id: str | None = None  # kind market: price_vintages.id (file name and SHA-256 are on the vintage)
 
     @model_validator(mode="before")
     @classmethod
@@ -71,6 +73,8 @@ class SourceRef(BaseModel):
             raise ValueError("a regulation or order ref needs document_id, page and quote")
         if self.kind == RefKind.BILL and not (self.bill_id and self.field_path):
             raise ValueError("a bill ref needs bill_id and field_path")
+        if self.kind == RefKind.MARKET and not self.vintage_id:
+            raise ValueError("a market ref needs vintage_id")
         return self
 
     @computed_field  # type: ignore[prop-decorator]
@@ -81,6 +85,8 @@ class SourceRef(BaseModel):
             return f"/documents/{self.document_id}#page={self.page}"
         if self.kind == RefKind.BILL and self.bill_id:
             return f"/bills/{self.bill_id}/file" + (f"#page={self.page}" if self.page else "")
+        if self.kind == RefKind.MARKET and self.vintage_id:
+            return f"/prices/vintages/{self.vintage_id}"
         return None
 
     def to_json(self) -> dict[str, Any]:
@@ -108,7 +114,8 @@ class SourcedValue(BaseModel):
     def is_sourced(self) -> bool:
         """True when every ref points at a document, a bill or meter data (not stated or assumed)."""
         return all(
-            r.kind in DOCUMENT_KINDS or r.kind in (RefKind.DERIVED, RefKind.BILL, RefKind.MEASURED)
+            r.kind in DOCUMENT_KINDS
+            or r.kind in (RefKind.DERIVED, RefKind.BILL, RefKind.MEASURED, RefKind.MARKET)
             for r in self.source_refs
         )
 

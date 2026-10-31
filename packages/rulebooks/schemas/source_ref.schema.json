@@ -17,7 +17,8 @@
         "assumption",
         "measured",
         "derived",
-        "bill"
+        "bill",
+        "market"
       ]
     },
     "document_id": {
@@ -64,6 +65,10 @@
     "field_path": {
       "type": "string",
       "description": "the billx contract path of that value (e.g. demand.max_kva)"
+    },
+    "vintage_id": {
+      "type": "string",
+      "description": "price_vintages.id, for a market price (kind market)"
     }
   },
   "allOf": [
@@ -98,6 +103,20 @@
         "required": [
           "bill_id",
           "field_path"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "market"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "vintage_id"
         ]
       }
     }

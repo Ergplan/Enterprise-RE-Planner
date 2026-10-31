@@ -40,6 +40,27 @@ GAPS: dict[str, str] = {
         "The DISCOM prorates the monthly demand charge by the days in the billing period "
         "(days / (365/12)); the order's provision for it is not yet located"
     ),
+    "ists_charges": (
+        "ISTS transmission charges (CERC Sharing Regulations) are not in the corpus; ISTS "
+        "sources carry no ISTS charge line yet"
+    ),
+    "ists_waiver": (
+        "The CERC ISTS charge and loss waiver schedule by commissioning date is not in the corpus"
+    ),
+    "oa_wheeling": ("No approved open-access wheeling charge for this DISCOM and voltage"),
+    "oa_losses": ("No approved open-access distribution (wheeling) loss for this DISCOM and voltage"),
+    "oa_css": ("No approved cross-subsidy surcharge for this category and voltage"),
+    "oa_additional_surcharge": ("No approved additional surcharge for this DISCOM"),
+    "iex_fees": ("IEX transaction fees and trader margin (CERC) are not in the corpus"),
+    "scheduled_energy": (
+        "A capacity charge needs the source's capacity and CUF to spread it over scheduled energy"
+    ),
+    "green_tariff": ("The DISCOM's green-tariff premium is not in the approved tariff schedule"),
+    "iex_prices": ("No IEX prices are loaded for this market segment"),
+    "regulatory_limits": (
+        "No regulatory-limit rulebook (RE cap, storage mandate, minimum OA size and contract "
+        "demand) is approved for this jurisdiction"
+    ),
     "tariff_period": (
         "No approved tariff schedule covers the bill's date: the tariff order in force then "
         "(e.g. UPERC FY 2025-26) is not in the corpus"

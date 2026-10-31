@@ -34,6 +34,7 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
           approved tariff order, line by line; click a page chip to open the order at that page.
         </p>
         <div className="ep-row" style={{ marginTop: "var(--space-3)" }}>
+          <Link className="eg-btn eg-btn--primary eg-btn--sm" href={`/plan/landed?c=${c}`}>Landed costs of every source</Link>
           <Link className="eg-btn eg-btn--ghost eg-btn--sm" href={`/plan/site?c=${c}`}>Your site and load profile</Link>
         </div>
       </div>

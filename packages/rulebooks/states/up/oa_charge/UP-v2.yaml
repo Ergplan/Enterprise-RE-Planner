@@ -1,11 +1,11 @@
 family: oa_charge
 jurisdiction: UP
-version: 1
+version: 2
 status: approved
 title: State DISCOMs Tariff Order FY 2026-27 (PVVNL, MVVNL, PuVVNL, DVVNL, KESCO) · pages 377–384
 effective_from: '2026-07-02'
 effective_to: null
-origin: regreader_direct
+origin: duplicate
 approved_by: build-agent@ergplan
 rows:
 - label: Open access · intra-state transmission charge FY 2026-27
@@ -27,7 +27,6 @@ rows:
 - label: Open access · inter-state transmission loss
   scope:
     connection:
-    - intra_state
     - ists
   body:
     basis: percent_in_kind

@@ -1,0 +1,12 @@
+# DRAFT by the build agent, awaiting jouleWise approval (master prompt Stage 4: "the person supplies or approves the spreadsheet").
+# Hand-computed from the approved pages, independently of engine/landed_cost.py: UPERC State DISCOMs order FY 2026-27
+# (wheeling 0.9318 p. 379; OA distribution losses 8/3/1% p. 384; CSS HV-2 0.38 (11 kV), 0.49 (above 11 up to 66), 0.33 (above 66 up to 132), 0.14 (above 132) p. 386; STU 0.3075/kWh p. 377;
+# STU loss 3.18% p. 384) and the CRE Regulations 2024 Reg. 11.II (captive: no CSS, p. 13). P = 3.10 INR/kWh at the bus.
+# gross_up = (P + STU + wheeling) x (1 / ((1 - 3.18%) x (1 - distribution loss)) - 1). INR/kWh, 4 places.
+consumer,discom,voltage_kv,source,ownership,price,stu,wheeling,loss_gross_up,css,additional_surcharge,landed
+up_11kv_tp,pvvnl,11,oa_solar_intra,third_party,3.10,0.3075,0.9318,0.5322,0.3800,0,5.2515
+up_11kv_captive,pvvnl,11,oa_solar_intra,captive,3.10,0.3075,0.9318,0.5322,0,0,4.8715
+up_33kv_tp,pvvnl,33,oa_solar_intra,third_party,3.10,0.3075,0.9318,0.2811,0.4900,0,5.1104
+up_33kv_captive,pvvnl,33,oa_solar_intra,captive,3.10,0.3075,0.9318,0.2811,0,0,4.6204
+up_132kv_tp,pvvnl,132,oa_solar_intra,third_party,3.10,0.3075,0.9318,0.1878,0.3300,0,4.8571
+up_132kv_captive,pvvnl,132,oa_solar_intra,captive,3.10,0.3075,0.9318,0.1878,0,0,4.5271

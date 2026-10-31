@@ -92,6 +92,16 @@ def vintages(segment: str | None = None) -> list[VintageOut]:
         return [VintageOut.of(v) for v in s.scalars(q)]
 
 
+@router.get("/vintages/{vintage_id}", response_model=VintageOut)
+def vintage(vintage_id: str) -> VintageOut:
+    """The file a market price came from (a `market` source_ref resolves here)."""
+    with session_scope() as s:
+        v = s.get(PriceVintage, vintage_id)
+        if v is None:
+            raise HTTPException(404, "vintage not found")
+        return VintageOut.of(v)
+
+
 class CoverageDay(BaseModel):
     segment: str
     day: date

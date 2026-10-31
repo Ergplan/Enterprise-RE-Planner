@@ -12,3 +12,7 @@ tests:
   - {name: "CSS HV-2 at 33 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 33}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.49"}}
   - {name: "CSS HV-2 at 132 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 132}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.33"}}
   - {name: "CSS HV-2 at 220 kV", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 220}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.14"}}
+  # UPERC CRE Regulations 2024, Reg. 11.II (scanned, OCR, PDF p. 13): "A Captive Generating Plant shall not be liable to pay
+  # cross subsidy surcharge"; recorded as a 100% exemption on the CSS rows for captive and group-captive use.
+  - {name: "CSS waived for captive use", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 33}, where: {/component: cross_subsidy_surcharge}, field: /exemptions/0/waived_pct}, expect: {value: "100"}}
+  - {name: "CSS waived for group captive", given: {context: {connection: intra_state, category: HV-2, voltage_kv: 33}, where: {/component: cross_subsidy_surcharge}, field: /exemptions/1/condition}, expect: {value: group_captive}}
