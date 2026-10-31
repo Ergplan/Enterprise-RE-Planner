@@ -44,7 +44,20 @@ Dated in `docs/decisions.md` (1 Nov 2026, Stage 6): three passes; the solver's o
 
 ## Reviewer findings
 
-(filled after the review)
+Three rounds (`docs/stage-reports/stage-6-review.md` holds the last).
+
+Fixed:
+- The re-settled cost in the analyst check is now a quantised Decimal string.
+- Every SourcedValue in a run summary is checked for refs by the integration test (more than 20 per run).
+- `pinned_rules` is tested never to return a draft, and the recording reader never returns one.
+- Reported costs no longer pass through floats: the problem carries Decimal inputs (`Exact`) beside the solver's floats; solver outputs become Decimals in one place.
+- The resolution is pinned with the run.
+
+Not changed, with reasons:
+- The solver works in floats internally (HiGHS needs them). The optimizer settings (time limit, MIP gap) are floats too: they are solver options, not money or energy. Nothing stored or returned as money or energy is a float.
+- "measured" is not a missing source-ref kind: `RefKind.MEASURED` exists since Stage 2. The reviewer saw only the diff.
+- Older scenario rows without `resolution_min` cannot exist: the table is new in this stage, and the field defaults to 15.
+- Things a diff cannot prove: solver determinism across library versions (pinned `highspy==1.15.1`), other client paths to unsettled runs (none exist: step 5 reads only `/runs` and `/sites/{id}/scenarios`, both filtered), the claims in this report.
 
 ## Open questions
 
@@ -55,4 +68,4 @@ Dated in `docs/decisions.md` (1 Nov 2026, Stage 6): three passes; the solver's o
 
 ## Cost
 
-No billx reads. App model calls: none. Reviewer: see below. Builder: Claude subscription.
+No billx reads and no app model calls. Reviewer: three gpt-5.1 calls, about 200,000 tokens in and 10,000 out, about USD 0.35. Builder: Claude subscription.
