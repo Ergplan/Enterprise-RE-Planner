@@ -38,6 +38,9 @@ export default async function SitePage({ searchParams }: { searchParams: Promise
           {conn.client.name} · {conn.discom_id.toUpperCase()} · {conn.tariff_category} · {Number(conn.voltage_kv)} kV · contract demand {Number(conn.contract_demand_kva).toLocaleString("en-IN")} kVA
         </p>
       </div>
+      <div className="ep-row">
+        <Link className="eg-btn eg-btn--primary eg-btn--sm" href={`/plan/today?c=${c}`}>See today&apos;s cost</Link>
+      </div>
       {prof && (
         <section className="eg-glass ep-panel">
           <div className="eg-card__head">

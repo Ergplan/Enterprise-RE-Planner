@@ -8,7 +8,7 @@ import { ErgOSMount } from "./ErgOSMount";
 // The client journey (plan section 1). Steps light up as their stage ships.
 const JOURNEY: { n: number; label: string; href: string; live: boolean }[] = [
   { n: 1, label: "Drop a bill", href: "/plan/intake", live: true },
-  { n: 2, label: "Today's cost", href: "/plan/today", live: false },
+  { n: 2, label: "Today's cost", href: "/plan/today", live: true },
   { n: 3, label: "Landed costs", href: "/plan/landed", live: false },
   { n: 4, label: "Describe the site", href: "/plan/site", live: true },
   { n: 5, label: "Optimise", href: "/plan/optimise", live: false },

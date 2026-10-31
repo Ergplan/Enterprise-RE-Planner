@@ -37,6 +37,10 @@ GROUP_LABEL = {
     "minimum": "Minimum charge",
     "taxes": "Taxes",
     "prompt_payment": "Prompt-payment rebate",
+    "bulk_consumption_rebate": "Bulk and incremental consumption rebates",
+    "state_subsidy": "State subsidy",
+    "tax_on_sale": "Tax on sale of electricity",
+    "regulatory_discount": "Regulatory discount",
 }
 COMPUTED_GROUP = {
     "demand_charge": "demand",

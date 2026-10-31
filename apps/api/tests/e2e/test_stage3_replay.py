@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 from datetime import date
+from decimal import Decimal
 from typing import Any
 
 import pytest
@@ -102,3 +103,54 @@ def test_at_least_ten_real_bills_and_four_inside_the_approved_tariffs() -> None:
     names = {c[0] for c in CASES}
     assert len(CASES) >= 10
     assert len(names & COMPUTED) >= 3
+
+
+@pytest.mark.skipif(
+    not any(c[0] == "NPCL July - Aug Plant.pdf" for c in CASES), reason="NPCL July–Aug bill not cached"
+)
+def test_bill_drop_to_step_two(committed: None, monkeypatch: pytest.MonkeyPatch) -> None:
+    """From dropping the real NPCL July–August bill (billx's stored reading of it) to the step-2 data:
+    the rebuilt demand and energy, every rebuilt line citing an order page, and the avoided cost."""
+    import hashlib
+
+    import httpx
+    from fastapi.testclient import TestClient
+
+    from ergplan.intake import bills as bill_store
+    from ergplan.intake.billx_client import BillxClient
+    from ergplan.platform.app import app
+
+    pdf = next((REPO_ROOT / "data" / "bills").rglob("NPCL July - Aug Plant.pdf")).read_bytes()
+    res = json.loads((RESULTS / f"{hashlib.sha256(pdf).hexdigest()}.json").read_text())["result"]
+    transport = httpx.MockTransport(
+        lambda req: httpx.Response(200, json={"job_id": "j", "status": "done", "result": res})
+    )
+    monkeypatch.setattr(
+        bill_store, "BillxClient", lambda: BillxClient(base_url="http://b", token="t", transport=transport)
+    )
+    client = TestClient(app)
+    [bill] = client.post("/bills", files={"file": ("npcl.pdf", pdf, "application/pdf")}).json()
+    for path in bill["outstanding"]:
+        value = next(f["value"] for f in bill["fields"] if f["path"] == path)
+        bill = client.post(f"/bills/{bill['id']}/confirm", json={"path": path, "value": value}).json()
+    assert bill["accepted"]
+    si = client.post(
+        "/intake/from-bills", json={"bill_ids": [bill["id"]], "overrides": {"voltage_kv": "33"}}
+    ).json()
+    assert si["rate_block"]["value"] == "urban" and si["rate_block"]["provenance"] == "assumption"
+    cid = client.post("/sites", json={"intake": si}).json()["connection_id"]
+    [r] = client.get(f"/connections/{cid}/replay").json()
+    lines = {ln["group"]: ln for ln in r["lines"]}
+    assert lines["energy"]["status"] == "match"
+    assert lines["demand"]["status"] == "explained" and lines["demand"]["gap"] == "demand_proration"
+    for ln in r["lines"]:
+        if ln["computed"]:
+            urls = [x.get("url") or "" for x in ln["computed"]["source_refs"]]
+            assert any(u.startswith("/documents/") and "#page=" in u for u in urls), ln["group"]
+    a = client.get(f"/connections/{cid}/avoided-cost", params={"as_of": "2026-09-01"}).json()
+    rates = {Decimal(v) for row in a["matrix"] for v in row}
+    assert rates == {
+        Decimal("5.7800"),
+        Decimal("6.8000"),
+        Decimal("7.8200"),
+    }  # 6.80 ± 15%, kVAh = kWh on this bill

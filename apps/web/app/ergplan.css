@@ -80,3 +80,19 @@ a.eg-btn { text-decoration: none; }
 .ep-fact__value { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .ep-bill td.num .ep-fact__input { display: inline-flex; width: 200px; vertical-align: middle; }
 .ep-bill td.num { white-space: nowrap; }
+
+/* Stage 3: today's cost */
+.ep-small { font-size: 12px; }
+.ep-refs { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.ep-ref { text-decoration: none; height: 22px; font-size: 11px; }
+.ep-replay tr.ep-diff td { background: var(--negative-soft); }
+.ep-replay tr.ep-total td { font-weight: 600; border-top: 1px solid var(--line-strong); }
+.ep-details { margin-top: var(--space-4); }
+.ep-details summary { cursor: pointer; color: var(--accent); font-size: 13px; margin-bottom: var(--space-2); }
+.ep-gaps { margin-top: var(--space-4); display: grid; gap: 6px; font-size: 13px; }
+.ep-gaps p { margin: 0; }
+.ep-heat { display: grid; gap: 2px; margin-top: var(--space-3); }
+.ep-heat__row { display: grid; grid-template-columns: 64px repeat(96, 1fr); gap: 0; align-items: center; font-size: 11px; }
+.ep-heat__axis span { color: var(--ink-muted); font-size: 10px; }
+.ep-heat__cell { height: 16px; background: color-mix(in oklab, var(--accent) var(--lvl), var(--surface-2)); }
+.ep-heat__cell:hover { outline: 1px solid var(--ink); }
