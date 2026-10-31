@@ -12,7 +12,7 @@ from decimal import Decimal
 
 from ..settlement.simulate import Block, Result, SourceIn, simulate
 from .highs_solve import Solution
-from .model import Problem
+from .model import Problem, exact_of
 
 QUANTITIES = ("grid", "setoff", "withdrawn", "banked", "charge", "lapsed")
 KWH = Decimal("0.001")
@@ -90,63 +90,58 @@ def resettle(p: Problem, sol: Solution, tolerance_kwh: Decimal) -> Resettled:
 
 
 def costs(p: Problem, sol: Solution, res: Result, blocks: list[Block]) -> dict[str, Decimal]:
-    """Annual INR by line at the solver's sizes and the judge's settlement."""
-    d = Decimal
+    """Annual INR by line: the problem's Decimal inputs × the solver's sizes (to the watt) and the
+    judge's quantities."""
+    x = exact_of(p)
     c: dict[str, Decimal] = defaultdict(lambda: Decimal(0))
     for cand in p.candidates:
         cap = dec(sol.cap_kw[cand.id])
-        if cand.fixed_inr_per_kw_year:
-            c[f"fixed:{cand.id}"] += cap * d(str(cand.fixed_inr_per_kw_year))
+        if x.fixed_kw.get(cand.id):
+            c[f"fixed:{cand.id}"] += cap * x.fixed_kw[cand.id]
         series = sol.gen[cand.id] if cand.btm else sol.delivered[cand.id]
+        rates = x.energy[cand.id]
         c[f"energy:{cand.id}"] += sum(
-            (dec(series[t]) * d(str(cand.energy_inr_per_kwh[t])) for t in range(p.n) if series[t]),
-            Decimal(0),
+            (dec(series[t]) * rates[t] for t in range(p.n) if series[t]), Decimal(0)
         )
-    c["grid_energy"] = sum((res.grid_kwh[t] * d(str(p.grid.rate[t])) for t in range(p.n)), Decimal(0))
+    c["grid_energy"] = sum((res.grid_kwh[t] * x.rate[t] for t in range(p.n)), Decimal(0))
     for b in p.batteries:
-        c[f"fixed:{b.id}"] += dec(sol.bess_kw[b.id]) * d(str(b.inr_per_kw_year)) + dec(
+        c[f"fixed:{b.id}"] += dec(sol.bess_kw[b.id]) * x.fixed_kw.get(b.id, Decimal(0)) + dec(
             sol.bess_kwh[b.id]
-        ) * d(str(b.inr_per_kwh_year))
+        ) * x.fixed_kwh.get(b.id, Decimal(0))
     for u in p.thermals:
-        c[f"energy:{u.id}"] += sum((dec(x) for x in sol.thermal[u.id]), Decimal(0)) * d(
-            str(u.fuel_inr_per_kwh)
-        )
+        c[f"energy:{u.id}"] += sum((dec(v) for v in sol.thermal[u.id]), Decimal(0)) * x.fuel[u.id]
     c.update(demand_costs(p, [b.load_kwh for b in blocks], dec(sol.cd_kva)))
     if p.grid.cd_step_kva:
-        c["cd_change"] = abs(dec(sol.cd_kva) - d(str(p.grid.cd_kva))) * d(
-            str(p.grid.cd_change_inr_per_kva_year)
-        )
+        c["cd_change"] = abs(dec(sol.cd_kva) - x.cd_kva) * x.cd_change
     ch = ((p.rule.body.get("banking") or {}).get("charge") or {}) if p.rule else {}
     if ch.get("kind") == "inr_per_kwh" and ch.get("value"):
         gross = sum((sum(v, Decimal(0)) for v in res.deposit_kwh.values()), Decimal(0)) + sum(
             (sum(v, Decimal(0)) for v in res.charge_kwh.values()), Decimal(0)
         )
-        c["banking_charge"] = gross * d(str(ch["value"]))
-    if p.lapse_inr_per_kwh:
-        c["lapse_payment"] = -sum((x["kwh"] for x in res.lapsed), Decimal(0)) * d(str(p.lapse_inr_per_kwh))
+        c["banking_charge"] = gross * Decimal(str(ch["value"]))
+    if x.lapse:
+        c["lapse_payment"] = -sum((v["kwh"] for v in res.lapsed), Decimal(0)) * x.lapse
     return {k: v.quantize(INR) for k, v in c.items()}
 
 
 def demand_costs(p: Problem, metered_kwh: list[Decimal], cd_kva: Decimal) -> dict[str, Decimal]:
     """Demand and excess-demand charges for a year of metered drawal (kWh per block)."""
-    d = Decimal
-    gr = p.grid
+    x = exact_of(p)
     by_month: dict[date, Decimal] = defaultdict(lambda: Decimal(0))
-    per_kva = d(str(p.hours)) * d(str(gr.pf))
+    per_kva = Decimal(repr(p.hours)) * x.pf
     for t, b in enumerate(p.blocks):
         by_month[b.month] = max(by_month[b.month], metered_kwh[t] / per_kva)
     out = {"demand": Decimal(0), "excess_demand": Decimal(0)}
-    floor = cd_kva * d(str(gr.floor_pct)) / 100
+    floor = cd_kva * x.floor_pct / 100
     for mo, md in by_month.items():
-        out["demand"] += max(md, floor) * d(str(gr.demand_rate.get(mo, 0.0)))
-        out["excess_demand"] += max(md - cd_kva, Decimal(0)) * d(str(gr.excess_rate.get(mo, 0.0)))
+        out["demand"] += max(md, floor) * x.demand_rate.get(mo, Decimal(0))
+        out["excess_demand"] += max(md - cd_kva, Decimal(0)) * x.excess_rate.get(mo, Decimal(0))
     return out
 
 
 def status_quo(p: Problem) -> dict[str, Decimal]:
-    """The year's grid cost with nothing built: every kWh from the DISCOM."""
-    d = Decimal
-    loads = [dec(x) for x in p.load_kwh]
-    out = {"grid_energy": sum((loads[t] * d(str(p.grid.rate[t])) for t in range(p.n)), Decimal(0))}
-    out.update(demand_costs(p, loads, d(str(p.grid.cd_kva))))
+    """The year's grid cost with nothing built: every kWh from the DISCOM, from the Decimal inputs."""
+    x = exact_of(p)
+    out = {"grid_energy": sum((x.load_kwh[t] * x.rate[t] for t in range(p.n)), Decimal(0))}
+    out.update(demand_costs(p, x.load_kwh, x.cd_kva))
     return {k: v.quantize(INR) for k, v in out.items()}

@@ -219,6 +219,8 @@ def assemble(
     blocks: list[om.BlockMeta] = []
     load: list[float] = []
     rate: list[float] = []
+    load_d: list[Decimal] = []
+    rate_d: list[Decimal] = []
     for i in range(0, len(kw), step):
         day = days[i // 96]
         mf = date(day.year, day.month, 1)
@@ -227,15 +229,19 @@ def assemble(
         name = str(sl["name"]) if sl else "all hours"
         cls = frozenset({"peak" if sl and slot_adjustment_pct(sl) > 0 else "off_peak"})
         blocks.append(om.BlockMeta(mf, name, cls, i // 4))
-        load.append(_f(sum(kw[i : i + step], ZERO) * Decimal("0.25")))
+        load_d.append(sum(kw[i : i + step], ZERO) * Decimal("0.25"))
+        load.append(_f(load_d[-1]))
         rv = card_rate.get((mf, name))
         if rv is None:
             raise RunError(f"no avoided-cost rate for {name} in {mf:%b %Y}")
         rate.append(_f(rv.value))
+        rate_d.append(rv.value)
 
     # demand side
     demand_rate: dict[date, float] = {}
     excess_rate: dict[date, float] = {}
+    demand_d: dict[date, Decimal] = {}
+    excess_d: dict[date, Decimal] = {}
     floor = ZERO
     demand_inputs: list[SourcedValue] = []
     for mf in month_firsts:
@@ -243,7 +249,8 @@ def assemble(
         assert sch is not None
         dc = sch.get("/demand_charge/value")
         if dc not in (None, ""):
-            demand_rate[mf] = float(Decimal(str(dc)))
+            demand_d[mf] = Decimal(str(dc))
+            demand_rate[mf] = _f(demand_d[mf])
             sv = _sv(
                 Decimal(str(dc)), Unit.INR_PER_KVA_MONTH, sch.ref("/demand_charge/value"), "Demand charge"
             )
@@ -251,7 +258,8 @@ def assemble(
                 demand_inputs.append(sv)
             mult = sch.get("/demand_charge/billing_demand_rule/excess_demand_penalty_multiplier")
             if mult not in (None, ""):
-                excess_rate[mf] = float(Decimal(str(dc)) * Decimal(str(mult)))
+                excess_d[mf] = Decimal(str(dc)) * Decimal(str(mult))
+                excess_rate[mf] = _f(excess_d[mf])
         fp = sch.get("/demand_charge/billing_demand_rule/min_pct_of_contract_demand")
         if fp not in (None, ""):
             floor = Decimal(str(fp))
@@ -309,8 +317,13 @@ def assemble(
     months = sorted(slots_of)
     first_of = {mf.month: mf for mf in month_firsts}
 
-    def per_block(by_slot: dict[tuple[int, str], Decimal]) -> list[float]:
-        return [_f(by_slot.get((b.month.month, b.slot), ZERO)) for b in blocks]
+    energy_d: dict[str, list[Decimal]] = {}
+    fixed_kw: dict[str, Decimal] = {}
+    fixed_kwh: dict[str, Decimal] = {}
+
+    def per_block(cid: str, by_slot: dict[tuple[int, str], Decimal]) -> list[float]:
+        energy_d[cid] = [by_slot.get((b.month.month, b.slot), ZERO) for b in blocks]
+        return [_f(x) for x in energy_d[cid]]
 
     for idx, cs in enumerate(spec.candidates):
         src = landed_cost.SOURCE_BY_ID[cs.kind]
@@ -338,6 +351,7 @@ def assemble(
                 f,
                 int(st.life_years.value),
             )
+            fixed_kwh[cid] = yearly
             meta.inputs = [st.capex_inr_per_kwh, st.om_pct_of_capex, st.round_trip_pct, f]
             if not cs.max_mw:
                 notes.append(
@@ -391,6 +405,8 @@ def assemble(
             )
             meta.capex_inr, meta.crf, meta.life_years = g.capex_inr_per_kw.value, f, int(g.life_years.value)
             meta.cuf = g.cuf_pct
+            fixed_kw[cid] = yearly
+            energy_d[cid] = [ZERO] * n
             meta.inputs = [g.capex_inr_per_kw, g.om_pct_of_capex, g.cuf_pct, f]
             cands.append(meta)
             continue
@@ -495,7 +511,7 @@ def assemble(
             om.Candidate(
                 cid,
                 shape=oa_shape,
-                energy_inr_per_kwh=per_block(energy),
+                energy_inr_per_kwh=per_block(cid, energy),
                 min_kw=_f(cs.min_mw * 1000),
                 max_kw=_f(mx),
                 category="exchange" if src.price_kind == "iex" else CATEGORY[ownership],
@@ -566,6 +582,21 @@ def assemble(
         rule=governing,
         limits=limits,
         lapse_inr_per_kwh=_f(lapse),
+        exact=om.Exact(
+            load_kwh=load_d,
+            rate=rate_d,
+            demand_rate=demand_d,
+            excess_rate=excess_d,
+            floor_pct=floor,
+            cd_kva=cd_kva,
+            pf=pf.value,
+            energy=energy_d,
+            fixed_kw=fixed_kw,
+            fixed_kwh=fixed_kwh,
+            fuel={u.id: Decimal(repr(u.fuel_inr_per_kwh)) for u in thermals},
+            lapse=lapse,
+            cd_change=cds.change_inr_per_kva_year if cds else ZERO,
+        ),
     )
     profile_ref = _sv(
         sum(kw, ZERO) * Decimal("0.25"),
@@ -955,6 +986,7 @@ def execute(run_id: str) -> str:
                 "price_vintages": a.vintages,
                 "price_vintages_by_segment": vint_by_seg,
                 "solver": sol.solver,
+                "resolution_min": run.resolution_min,
                 "as_of": a.as_of.isoformat(),
             }
             run.solver = {

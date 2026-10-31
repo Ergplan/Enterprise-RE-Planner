@@ -26,6 +26,7 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date
+from decimal import Decimal
 from typing import Any
 
 import pyomo.environ as pyo
@@ -115,6 +116,26 @@ class Limit:
 
 
 @dataclass(frozen=True)
+class Exact:
+    """The problem's money and energy inputs as Decimals. The solver reads floats; every reported
+    cost is computed from these (with the solver's sizes and the judge's quantities)."""
+
+    load_kwh: list[Decimal]
+    rate: list[Decimal]  # INR/kWh per block
+    demand_rate: dict[date, Decimal]
+    excess_rate: dict[date, Decimal]
+    floor_pct: Decimal
+    cd_kva: Decimal
+    pf: Decimal
+    energy: dict[str, list[Decimal]]  # candidate → INR/kWh per block
+    fixed_kw: dict[str, Decimal]  # candidate or battery → INR per kW-year
+    fixed_kwh: dict[str, Decimal]  # battery → INR per kWh-year
+    fuel: dict[str, Decimal]  # thermal unit → INR/kWh
+    lapse: Decimal = Decimal(0)
+    cd_change: Decimal = Decimal(0)
+
+
+@dataclass(frozen=True)
 class Start:
     soc_kwh: dict[str, float] = field(default_factory=dict)
     bank_kwh: dict[str, float] = field(default_factory=dict)
@@ -148,6 +169,7 @@ class Problem:
     next_month: date | None = None  # the month after the last block when the year goes on (a chunk)
     start: Start | None = None  # state carried in from the previous chunk; None: a whole, cyclic year
     fixed: Fixed | None = None  # sizes fixed (a dispatch pass)
+    exact: Exact | None = None  # Decimal inputs for reporting (None: derived from the floats, tests only)
 
     @property
     def n(self) -> int:
@@ -792,3 +814,32 @@ def periods_of(p: Problem) -> list[list[int]]:
     for t, b in enumerate(p.blocks):
         out.setdefault(_period_index(b.month, kind), []).append(t)
     return [out[k] for k in sorted(out)]
+
+
+def exact_of(p: Problem) -> Exact:
+    """The Decimal inputs: those assembled with the problem, or (synthetic problems in tests) the
+    floats read back through their shortest decimal form."""
+    if p.exact is not None:
+        return p.exact
+
+    def d(x: float) -> Decimal:
+        return Decimal(repr(float(x)))
+
+    return Exact(
+        load_kwh=[d(x) for x in p.load_kwh],
+        rate=[d(x) for x in p.grid.rate],
+        demand_rate={k: d(v) for k, v in p.grid.demand_rate.items()},
+        excess_rate={k: d(v) for k, v in p.grid.excess_rate.items()},
+        floor_pct=d(p.grid.floor_pct),
+        cd_kva=d(p.grid.cd_kva),
+        pf=d(p.grid.pf),
+        energy={c.id: [d(x) for x in c.energy_inr_per_kwh] for c in p.candidates},
+        fixed_kw={
+            **{c.id: d(c.fixed_inr_per_kw_year) for c in p.candidates},
+            **{b.id: d(b.inr_per_kw_year) for b in p.batteries},
+        },
+        fixed_kwh={b.id: d(b.inr_per_kwh_year) for b in p.batteries},
+        fuel={u.id: d(u.fuel_inr_per_kwh) for u in p.thermals},
+        lapse=d(p.lapse_inr_per_kwh),
+        cd_change=d(p.grid.cd_change_inr_per_kva_year),
+    )
