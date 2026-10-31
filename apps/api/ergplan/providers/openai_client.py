@@ -54,6 +54,10 @@ def _prices() -> dict[str, dict[str, float]]:
     return dict(yaml.safe_load((Path(__file__).parent / "prices.yaml").read_text()))
 
 
+def price_known(model: str) -> bool:
+    return bool(_prices().get(model) or _prices().get(model.rsplit("-", 1)[0]))
+
+
 def cost_usd(model: str, tokens_in: int, tokens_out: int) -> Decimal:
     p = _prices().get(model) or _prices().get(model.rsplit("-", 1)[0])
     if not p:
@@ -138,6 +142,7 @@ def call_json(
                     tokens_out=tout,
                     cost_usd=cost_usd(model, tin, tout),
                     status="ok",
+                    error=None if price_known(model) else "price unknown: cost recorded as 0",
                     ref_type=ref_type,
                     ref_id=ref_id,
                     started_at=started,

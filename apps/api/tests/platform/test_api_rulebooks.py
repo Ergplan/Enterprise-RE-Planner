@@ -189,3 +189,10 @@ def test_tariff_oder_import_from_explorer_json() -> None:
         ).status_code
         == 422
     )
+
+
+def test_families_and_locate_errors() -> None:
+    fams = client.get("/rulebooks/families").json()
+    assert set(fams) >= {"tariff_schedule", "tod_slots", "oa_charge", "settlement"}
+    assert "energy_charge" in fams["tariff_schedule"]["properties"]["body"]["properties"]
+    assert client.get("/regreader/locate/nope?topic=banking").status_code == 404

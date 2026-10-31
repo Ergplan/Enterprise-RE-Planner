@@ -18,8 +18,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 EXCLUDE = [":(exclude)apps/web/public/vendor", ":(exclude)apps/web/pnpm-lock.yaml", ":(exclude)packages/rulebooks/corpus",
-           ":(exclude)apps/api/uv.lock", ":(exclude)docs/stage-reports"]
-MAX_DIFF = 180_000
+           ":(exclude)apps/api/uv.lock", ":(exclude)docs/stage-reports", ":(exclude)packages/rulebooks/states"]
+MAX_DIFF = 520_000  # about 130k tokens; code and tests are sent first so truncation drops data files, not code
+CODE_FIRST = ["apps/api/ergplan", "apps/api/tests", "apps/api/alembic", "apps/web", "tools", "docker", "packages", "docs", "."]
 
 CHECKLIST = """Answer this fixed checklist about the diff, citing file and line for every finding. Nothing else.
 (a) Every invariant in CLAUDE.md section 3 upheld by the code in this diff, or the violation.
@@ -58,7 +59,12 @@ def env(name: str) -> str:
 def main() -> int:
     n = int(sys.argv[1])
     base = sys.argv[2] if len(sys.argv) > 2 else f"stage-{n}-start"
-    diff = sh("git", "diff", base, "--", ".", *EXCLUDE)
+    parts, seen = [], set()
+    for path in CODE_FIRST:
+        d = sh("git", "diff", base, "--", path, *EXCLUDE, *[f":(exclude){x}" for x in seen if x != "."])
+        parts.append(d)
+        seen.add(path)
+    diff = "".join(parts)
     untracked = sh("git", "ls-files", "--others", "--exclude-standard")
     truncated = len(diff) > MAX_DIFF
     diff = diff[:MAX_DIFF]

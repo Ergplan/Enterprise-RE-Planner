@@ -7,7 +7,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import JSON, BigInteger, Date, DateTime, Integer, Numeric, String, Text, func
+from sqlalchemy import JSON, BigInteger, CheckConstraint, Date, DateTime, Integer, Numeric, String, Text, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -84,6 +84,12 @@ class RulebookVersion(Base):
     """One version of one family for one jurisdiction. Written only by rulebook.service; audited."""
 
     __tablename__ = "rulebook_versions"
+    __table_args__ = (
+        CheckConstraint(
+            "status in ('draft','approved','superseded','rejected')", name="rulebook_versions_status"
+        ),
+        CheckConstraint("golden_status in ('not_run','green','red')", name="rulebook_versions_golden"),
+    )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
     family: Mapped[str] = mapped_column(String(32), index=True)
