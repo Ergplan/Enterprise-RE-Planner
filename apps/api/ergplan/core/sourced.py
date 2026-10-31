@@ -92,9 +92,10 @@ class SourcedValue(BaseModel):
 
     @property
     def is_sourced(self) -> bool:
-        """True when every ref points at a document or the client's bill (not stated, not assumed)."""
+        """True when every ref points at a document, a bill or meter data (not stated or assumed)."""
         return all(
-            r.kind in DOCUMENT_KINDS or r.kind in (RefKind.DERIVED, RefKind.BILL) for r in self.source_refs
+            r.kind in DOCUMENT_KINDS or r.kind in (RefKind.DERIVED, RefKind.BILL, RefKind.MEASURED)
+            for r in self.source_refs
         )
 
 

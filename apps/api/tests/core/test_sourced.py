@@ -51,3 +51,14 @@ def test_stated_and_assumed_are_not_sourced() -> None:
     a = assumed("0.95", Unit.RATIO, note="normative power factor")
     assert a.source_refs[0].kind == RefKind.ASSUMPTION
     assert not a.is_sourced
+
+
+def test_bill_and_measured_refs_count_as_sourced() -> None:
+    bill = SourceRef(kind=RefKind.BILL, bill_id="b", field_path="energy.kwh", page=2)
+    assert bill.url == "/bills/b/file#page=2"
+    assert SourcedValue(value="1", unit=Unit.KWH, source_refs=(bill,)).is_sourced
+    assert SourcedValue(
+        value="1", unit=Unit.KW, source_refs=(SourceRef(kind=RefKind.MEASURED, note="meter"),)
+    ).is_sourced
+    with pytest.raises(ValueError, match="bill ref"):
+        SourceRef(kind=RefKind.BILL, bill_id="b")
