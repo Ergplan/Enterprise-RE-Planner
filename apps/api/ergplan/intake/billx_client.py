@@ -41,7 +41,7 @@ class BillxClient:
         self.http = httpx.Client(
             base_url=(base_url or st.billx_url).rstrip("/"),
             headers={"Authorization": f"Bearer {token if token is not None else st.billx_token}"},
-            timeout=httpx.Timeout(70.0, connect=5.0),
+            timeout=httpx.Timeout(180.0, connect=5.0),
             transport=transport,
         )
 

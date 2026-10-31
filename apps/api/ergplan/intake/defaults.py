@@ -36,6 +36,7 @@ BILLX_PROFILE_ALIASES = {"uppcl": "pvvnl", "mahadiscom": "msedcl", "mseb": "msed
 CATEGORY_PATTERNS: dict[str, list[tuple[str, str]]] = {
     "UP": [
         (r"\bHV\s*[-–]?\s*2\b", "HV-2"),
+        (r"^H2\d*T?\b", "HV-2"),  # UPPCL billing codes (H21T = HV-2 with ToD metering)
         (r"\bHV\s*[-–]?\s*1\b", "HV-1"),
         (r"\bLMV\s*[-–]?\s*6\b", "LMV-6"),
     ],
@@ -130,3 +131,18 @@ def weekly_off(shape_id: str) -> Assumed:
     off = [d for d in range(7) if d not in working_days(shape_id)]
     names = ", ".join(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][d] for d in off) or "none"
     return Assumed(off, assumption(f"weekly off not stated; {names} assumed from the {shape_id} pattern"))
+
+
+# States whose retail schedules split by supply area (rate block); the default is the urban schedule.
+RATE_BLOCK_STATES = {"UP"}
+
+
+def rate_block(state: str) -> Assumed | None:
+    if state in RATE_BLOCK_STATES:
+        return Assumed(
+            "urban",
+            assumption(
+                "rate schedule not stated; the urban schedule assumed (rural feeders carry a rebate); confirm"
+            ),
+        )
+    return None

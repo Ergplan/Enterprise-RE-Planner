@@ -12,3 +12,7 @@ tests:
   - {name: "HV-2 urban 220 kV · demand", given: {context: {category: HV-2, voltage_kv: 220, rate_block: urban}, field: /demand_charge/value}, expect: {value: "270.00"}}
   - {name: "HV-2 billed in kVAh", given: {context: {category: HV-2, voltage_kv: 11, rate_block: urban}, field: /billing_basis}, expect: {value: kvah}}
   - {name: "no rural row", given: {context: {category: HV-2, voltage_kv: 11, rate_block: rural}}, expect: {absent: true}}
+  # General provisions of the rate schedule, PDF pages 354, 355: billable demand is the recorded maximum or 75% of the
+  # contracted demand, whichever is higher; demand above contract is levied at 200% of the normal rate in addition.
+  - {name: "HV-2 billable demand floor 75% of contract", given: {context: {category: HV-2, voltage_kv: 33, rate_block: urban}, field: /demand_charge/billing_demand_rule/min_pct_of_contract_demand}, expect: {value: "75"}}
+  - {name: "HV-2 excess demand at 200%", given: {context: {category: HV-2, voltage_kv: 11, rate_block: urban}, field: /demand_charge/billing_demand_rule/excess_demand_penalty_multiplier}, expect: {value: "2"}}

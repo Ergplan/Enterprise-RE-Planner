@@ -24,3 +24,23 @@ What is not yet right, and the stage that fixes it.
 | Months without a bill are extrapolated at the billed months' mean daily energy (no seasonality) | Stage 3 (seasonality from history when billx returns it) |
 | Hand-built landed-cost spreadsheet for six test consumers needed as `tests/fixtures/landed_cost_<state>.csv` | Stage 4 |
 | A year of real OA settlement statements (anonymised) needed in `data/settlements/` | Stage 5 |
+
+## Named rule gaps used by the bill replay (Stage 3)
+
+A replayed bill line that differs from the approved tariff is "explained" only by one of these ids (`apps/api/ergplan/engine/gaps.py`; a test keeps the two lists equal).
+
+| Gap id | What is missing | Fixed in |
+| --- | --- | --- |
+| `fppca_monthly` | Fuel and power purchase adjustment (MSEDCL FAC, UP FPPAS) is notified monthly by the DISCOM; no monthly FPPCA rulebook | Stage 4 (monthly FPPCA family with the DISCOM notifications) |
+| `electricity_duty` | Electricity duty is set by the state Electricity Duty Acts (UP; Maharashtra 7.5% of demand + energy + wheeling + ToD + FAC on the April 2026 bill), not by the tariff order; the Acts are not in the corpus | When the Acts are added to the corpus |
+| `tax_on_sale` | Maharashtra tax on sale of electricity (paise per unit) | With the duty Acts |
+| `load_factor_incentive` | Load-factor incentive bands (MERC) are in the order but not yet read into `tariff_schedule.lf_incentive` | Stage 4 |
+| `prompt_payment_rebate` | Prompt-payment rebate terms are in the orders' general conditions, not yet read | Stage 4 |
+| `bulk_consumption_rebate` | MSEDCL bulk and incremental consumption rebates | Stage 4 |
+| `state_subsidy` | State industrial subsidies (Maharashtra textile and region-based) are government schemes outside the tariff order | Not modelled (client-specific; entered as stated) |
+| `regulatory_discount` | NPCL's 10% regulatory discount on demand + energy, printed on the FY 2026-27 bills; the order provision is not yet located | Stage 4 |
+| `tod_split_unknown` | The bill gives no energy by ToD slot, so the ToD adjustment cannot be recomputed | When billx returns the split |
+| `billing_demand_rule` | The schedule row states no billing-demand floor (MSEDCL) while recorded demand is below contract | Stage 4 (MERC billing-demand clause) |
+| `demand_proration` | NPCL prorates the monthly demand charge by days in the billing period (31 / (365/12)); the provision is not yet located | Stage 4 |
+| `tariff_period` | No approved tariff covers the bill's dates: the FY 2025-26 orders (UPERC for NPCL and the UPPCL DISCOMs, MERC for MSEDCL before 1 Apr 2026) are not in the corpus | When those orders are added |
+| `unmodelled_line` | A miscellaneous line the bill prints (delay-payment surcharge, rounding, adjustments) | By design |

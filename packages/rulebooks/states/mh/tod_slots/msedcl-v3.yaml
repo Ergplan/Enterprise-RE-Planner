@@ -1,6 +1,6 @@
 family: tod_slots
 jurisdiction: msedcl
-version: 2
+version: 3
 status: approved
 title: MSEDCL Case 75/2025, post-remand order of 25 March 2026 (review of the MYT order and revision of tariff) · pages 77–79
 effective_from: '2026-04-01'
@@ -35,7 +35,7 @@ rows:
     - end: '24:00'
       name: peak
       start: '17:00'
-      surcharge_pct: '20'
+      surcharge_pct: '25'
     season_note: April to September daytime solar ToD rebate 15% and peak hours ToD surcharge 20% on energy charge
   source_ref:
     kind: order
@@ -44,6 +44,13 @@ rows:
       \ hrs to \n24:00 hrs 7 +20%# 0"
     document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
     effective_from: '2026-03-25'
+  field_refs:
+    /slots/2/surcharge_pct:
+      kind: order
+      note: the +20%# in the Case 75/2025 table (p. 77) carries this note from the MYT order
+      page: 565
+      quote: Peak 17:00 hrs to 7 +20%# 0 Hours 24:00 hrs ... [#Note – For HT & LT Industrial & Commercial Categories = +25%]
+      document_id: c1d27543-6ebe-5f8c-8e07-f2a6625b1100
 - label: HT I (A,B) & HT II (A) · ToD slots · Oct-Mar
   scope:
     months:
@@ -71,7 +78,7 @@ rows:
     - end: '24:00'
       name: peak
       start: '17:00'
-      surcharge_pct: '20'
+      surcharge_pct: '25'
     season_note: October to March daytime solar ToD rebate 25% and peak hours ToD surcharge 20% on energy charge
   source_ref:
     kind: order
@@ -80,3 +87,10 @@ rows:
       \ (FY 27) ... Peak \nHours\n17:00 hrs to \n24:00 hrs 7 +20%# 0"
     document_id: 5ee7dce7-acfb-5b8b-a933-4ea3865809e2
     effective_from: '2026-03-25'
+  field_refs:
+    /slots/2/surcharge_pct:
+      kind: order
+      note: the +20%# in the Case 75/2025 table (p. 77) carries this note from the MYT order
+      page: 565
+      quote: Peak 17:00 hrs to 7 +20%# 0 Hours 24:00 hrs ... [#Note – For HT & LT Industrial & Commercial Categories = +25%]
+      document_id: c1d27543-6ebe-5f8c-8e07-f2a6625b1100

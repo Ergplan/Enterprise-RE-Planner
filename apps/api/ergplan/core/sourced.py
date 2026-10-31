@@ -15,7 +15,15 @@ from decimal import Decimal
 from enum import StrEnum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, field_serializer, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    computed_field,
+    field_serializer,
+    field_validator,
+    model_validator,
+)
 
 from .money import to_decimal
 from .units import Unit
@@ -49,6 +57,14 @@ class SourceRef(BaseModel):
     bill_id: str | None = None  # kind bill: bills.id
     field_path: str | None = None  # kind bill: the billx contract path (demand.max_kva)
 
+    @model_validator(mode="before")
+    @classmethod
+    def _url_is_derived(cls, data: Any) -> Any:
+        """`url` is computed from the other fields; a ref read back from JSON may carry it."""
+        if isinstance(data, dict) and "url" in data:
+            data = {k: v for k, v in data.items() if k != "url"}
+        return data
+
     @model_validator(mode="after")
     def _document_refs_are_complete(self) -> SourceRef:
         if self.kind in DOCUMENT_KINDS and not (self.document_id and self.page and self.quote):
@@ -57,6 +73,7 @@ class SourceRef(BaseModel):
             raise ValueError("a bill ref needs bill_id and field_path")
         return self
 
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def url(self) -> str | None:
         """The link that opens the stored PDF at the cited page."""
@@ -67,10 +84,7 @@ class SourceRef(BaseModel):
         return None
 
     def to_json(self) -> dict[str, Any]:
-        d = self.model_dump(mode="json", exclude_none=True)
-        if self.url:
-            d["url"] = self.url
-        return d
+        return self.model_dump(mode="json", exclude_none=True)
 
 
 class SourcedValue(BaseModel):

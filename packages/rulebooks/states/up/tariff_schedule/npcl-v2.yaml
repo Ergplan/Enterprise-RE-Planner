@@ -1,0 +1,175 @@
+family: tariff_schedule
+jurisdiction: npcl
+version: 2
+status: approved
+title: NPCL Tariff Order FY 2026-27 (Petition 2330/2025) · pages 387–388
+effective_from: '2026-07-02'
+effective_to: null
+origin: duplicate
+approved_by: build-agent@ergplan
+rows:
+- label: HV-2 urban · supply up to 11 kV
+  scope:
+    category:
+    - HV-2
+    rate_block: Urban Schedule
+    voltage_kv:
+      max: 11
+  body:
+    category: HV-2
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month
+      value: '300.00'
+      billing_demand_rule:
+        min_pct_of_contract_demand: '75'
+        excess_demand_penalty_multiplier: '2'
+    energy_charge:
+      base: '7.10'
+  source_ref:
+    kind: order
+    page: 387
+    quote: "(A) Urban Schedule: ... For supply up to 11 \nkV ... BASE RATE\nDemand Charges Rs. 300.00 / kVA / \nmonth ...\
+      \ Energy Charges Rs. 7.10 / kVAh"
+    document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    effective_from: '2026-07-02'
+  field_refs:
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      note: General provisions, billable demand
+      page: 354
+      quote: the billable load / demand during a month shall be the actual maximum load / demand as recorded by the meter
+        (can be in parts of kW or kVA) or 75% of the contracted load / demand (kW or kVA), whichever is higher
+      document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    /demand_charge/billing_demand_rule/excess_demand_penalty_multiplier:
+      kind: order
+      note: General provisions 7(ii)(b), other categories
+      page: 355
+      quote: such excess load / demand shall be levied equal to 200% of the normal rate apart from the normal fixed / demand
+        charges
+      document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+- label: HV-2 urban · supply above 11 kV and up to 66 kV
+  scope:
+    category:
+    - HV-2
+    rate_block: Urban Schedule
+    voltage_kv:
+      max: 66
+      min: 11
+      min_exclusive: true
+  body:
+    category: HV-2
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month
+      value: '290.00'
+      billing_demand_rule:
+        min_pct_of_contract_demand: '75'
+        excess_demand_penalty_multiplier: '2'
+    energy_charge:
+      base: '6.80'
+  source_ref:
+    kind: order
+    page: 387
+    quote: "For supply above 11 \nkV and up to 66 kV ... BASE RATE\nDemand Charges ... Rs. 290.00 / kVA / \nmonth ... Energy\
+      \ Charges ... Rs. 6.80 / kVAh"
+    document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    effective_from: '2026-07-02'
+  field_refs:
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      note: General provisions, billable demand
+      page: 354
+      quote: the billable load / demand during a month shall be the actual maximum load / demand as recorded by the meter
+        (can be in parts of kW or kVA) or 75% of the contracted load / demand (kW or kVA), whichever is higher
+      document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    /demand_charge/billing_demand_rule/excess_demand_penalty_multiplier:
+      kind: order
+      note: General provisions 7(ii)(b), other categories
+      page: 355
+      quote: such excess load / demand shall be levied equal to 200% of the normal rate apart from the normal fixed / demand
+        charges
+      document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+- label: HV-2 urban · supply above 66 kV and up to 132 kV
+  scope:
+    category:
+    - HV-2
+    rate_block: Urban Schedule
+    voltage_kv:
+      max: 132
+      min: 66
+      min_exclusive: true
+  body:
+    category: HV-2
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month
+      value: '270.00'
+      billing_demand_rule:
+        min_pct_of_contract_demand: '75'
+        excess_demand_penalty_multiplier: '2'
+    energy_charge:
+      base: '6.40'
+  source_ref:
+    kind: order
+    page: 387
+    quote: "For supply above 66 \nkV and up to 132 kV ... BASE RATE\nDemand Charges ... Rs. 270.00 / kVA / \nmonth ... Energy\
+      \ Charges ... Rs. 6.40 / kVAh"
+    document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    effective_from: '2026-07-02'
+  field_refs:
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      note: General provisions, billable demand
+      page: 354
+      quote: the billable load / demand during a month shall be the actual maximum load / demand as recorded by the meter
+        (can be in parts of kW or kVA) or 75% of the contracted load / demand (kW or kVA), whichever is higher
+      document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    /demand_charge/billing_demand_rule/excess_demand_penalty_multiplier:
+      kind: order
+      note: General provisions 7(ii)(b), other categories
+      page: 355
+      quote: such excess load / demand shall be levied equal to 200% of the normal rate apart from the normal fixed / demand
+        charges
+      document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+- label: HV-2 urban · supply above 132 kV
+  scope:
+    category:
+    - HV-2
+    rate_block: Urban Schedule
+    voltage_kv:
+      min: 132
+      min_exclusive: true
+  body:
+    category: HV-2
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month
+      value: '270.00'
+      billing_demand_rule:
+        min_pct_of_contract_demand: '75'
+        excess_demand_penalty_multiplier: '2'
+    energy_charge:
+      base: '6.10'
+  source_ref:
+    kind: order
+    page: 387
+    quote: "For supply above \n132 kV ... BASE RATE\nDemand Charges ... Rs. 270.00 / kVA / \nmonth ... Energy Charges ...\
+      \ Rs. 6.10 / kVAh"
+    document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    effective_from: '2026-07-02'
+  field_refs:
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      note: General provisions, billable demand
+      page: 354
+      quote: the billable load / demand during a month shall be the actual maximum load / demand as recorded by the meter
+        (can be in parts of kW or kVA) or 75% of the contracted load / demand (kW or kVA), whichever is higher
+      document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3
+    /demand_charge/billing_demand_rule/excess_demand_penalty_multiplier:
+      kind: order
+      note: General provisions 7(ii)(b), other categories
+      page: 355
+      quote: such excess load / demand shall be levied equal to 200% of the normal rate apart from the normal fixed / demand
+        charges
+      document_id: aea2bbdf-dfff-5466-858d-2e448e7e60e3

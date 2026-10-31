@@ -416,6 +416,13 @@ def from_bills(session: Session, bill_ids: list[str], overrides: dict[str, Any] 
         else None,
         industry_shape=shape_fact,
         weekly_off=weekly_off,
+        rate_block=(
+            stated(o.pop("rate_block"))
+            if "rate_block" in o
+            else assumed(rb)
+            if (rb := defaults.rate_block(st)) is not None
+            else None
+        ),
         months=[months[k] for k in sorted(months)][-12:],
     )
     for k, val in o.items():
