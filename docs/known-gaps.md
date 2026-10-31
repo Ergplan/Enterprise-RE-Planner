@@ -70,3 +70,4 @@ A replayed bill line that differs from the approved tariff is "explained" only b
 | Editable assumption chips on the live plan cover PPA prices and contract demand; other assumptions (capex, CUF, grid factor) are visible in the jouleWise view but not yet editable by the client | Stage 8 |
 | What-if is an hourly check with sizes held; re-sizing on a changed assumption needs a new run (analyst or "Build my plan" after the change) | By design for speed |
 | Explanations are in English only | When a client asks |
+| Voice sessions and text chat in intake mode can be opened by anyone who reaches the site (plan mode needs a valid share token); each session costs OpenAI audio usage. Login, roles per endpoint and rate limits are Stage 8 (rule 12) | Stage 8 |

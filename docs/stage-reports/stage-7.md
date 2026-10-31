@@ -64,7 +64,12 @@ These are dated in `docs/decisions.md` (1 Nov 2026, Stage 7):
 
 ## Reviewer findings
 
-(filled after the review)
+One round (`docs/stage-reports/stage-7-review.md`). Its four "code defects" are not changed, for these reasons:
+- **Voice session and chat open without login.** By design until Stage 8 (rule 12: no login, roles or rate limits before Stage 8). Plan mode already needs a valid share token. Intake mode is open because the journey has no login yet. The cost exposure is a named gap fixed in Stage 8.
+- **`/p/{token}` with an anonymous caller.** Already handled: an anonymous or client caller gets the client view, and `view=analyst` needs role analyst with a named actor (403 otherwise). Tests cover no headers, a client and an analyst.
+- **The PDF URL test and the default `kind` field.** The reviewer itself says these are consistent; no defect.
+
+Nothing else was raised: every new endpoint has a test, there are no writes to rules or runs without audit, and there are no model imports outside `providers/`.
 
 ## Open questions
 
@@ -74,4 +79,4 @@ These are dated in `docs/decisions.md` (1 Nov 2026, Stage 7):
 
 ## Cost
 
-No billx reads (the end-to-end uses stored readings). App model calls in this stage: none outside tests; the Realtime and chat calls are mocked in the suite. Reviewer: see below. Builder: Claude subscription.
+No billx reads: the end-to-end uses stored readings. No app model calls in this stage; the Realtime and chat calls are mocked in the suite, and the one real Realtime call is marked external and was not run. Reviewer: one gpt-5.1 call, about 60,000 tokens in, about USD 0.10. Builder: Claude subscription.
