@@ -15,6 +15,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Integer,
+    LargeBinary,
     Numeric,
     String,
     Text,
@@ -186,3 +187,159 @@ class AuditLog(Base):
     at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     before: Mapped[dict[str, Any] | None] = mapped_column(JSONType)
     after: Mapped[dict[str, Any] | None] = mapped_column(JSONType)
+
+
+# ---------------------------------------------------------------- Stage 2: intake
+
+
+class Client(Base):
+    __tablename__ = "clients"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    name: Mapped[str] = mapped_column(Text)
+    gstin: Mapped[str | None] = mapped_column(String(15))
+    created_by: Mapped[str] = mapped_column(String(128))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Site(Base):
+    __tablename__ = "sites"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    client_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("clients.id", name="sites_client_fk"), index=True
+    )
+    name: Mapped[str] = mapped_column(Text)
+    state: Mapped[str] = mapped_column(String(8))
+    address: Mapped[str | None] = mapped_column(Text)
+    industry_shape: Mapped[str] = mapped_column(String(32), default="two_shift")
+    shift_hours: Mapped[dict[str, Any]] = mapped_column(JSONType, default=dict)
+    weekly_off: Mapped[list[int]] = mapped_column(JSONType, default=list)  # 0=Mon … 6=Sun
+    land_acres: Mapped[Decimal | None] = mapped_column(Numeric(12, 3))
+    roof_sqm: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+    provenance: Mapped[dict[str, Any]] = mapped_column(
+        JSONType, default=dict
+    )  # field → bill|client_stated|assumption
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Connection(Base):
+    __tablename__ = "connections"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    site_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("sites.id", name="connections_site_fk"), index=True
+    )
+    discom_id: Mapped[str] = mapped_column(String(32))
+    consumer_number: Mapped[str | None] = mapped_column(String(64))
+    tariff_category: Mapped[str | None] = mapped_column(String(64))
+    voltage_kv: Mapped[Decimal | None] = mapped_column(Numeric(8, 3))
+    contract_demand_kva: Mapped[Decimal | None] = mapped_column(Numeric(14, 3))
+    connection_kind: Mapped[str] = mapped_column(String(8), default="ht")  # ht|eht|lt
+    rate_block: Mapped[str | None] = mapped_column(String(32))  # urban|rural where the schedule splits
+    provenance: Mapped[dict[str, Any]] = mapped_column(JSONType, default=dict)
+
+
+class Bill(Base):
+    """A bill as billx read it (invariant 7: billx is the only bill reader)."""
+
+    __tablename__ = "bills"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    connection_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("connections.id", name="bills_connection_fk")
+    )
+    file_sha256: Mapped[str] = mapped_column(String(64), index=True)
+    filename: Mapped[str | None] = mapped_column(Text)
+    billx_job_id: Mapped[str | None] = mapped_column(String(64))
+    bill_index: Mapped[int] = mapped_column(Integer, default=0)  # a file can hold several bills
+    bill_month: Mapped[date | None] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(
+        String(32)
+    )  # billx status: passed|confirmed|needs_review|unreadable|…
+    accepted: Mapped[bool] = mapped_column(default=False)
+    accepted_by: Mapped[str | None] = mapped_column(String(64))  # engine|human|bill_confirmations
+    billx_result: Mapped[dict[str, Any]] = mapped_column(JSONType)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class BillConfirmation(Base):
+    __tablename__ = "bill_confirmations"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    bill_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("bills.id", name="bill_confirmations_bill_fk"), index=True
+    )
+    path: Mapped[str] = mapped_column(String(128))
+    value: Mapped[str | None] = mapped_column(Text)
+    confirmed_by: Mapped[str] = mapped_column(String(128))
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Asset(Base):
+    __tablename__ = "assets"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    site_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("sites.id", name="assets_site_fk"), index=True
+    )
+    kind: Mapped[str] = mapped_column(String(32))  # rooftop_pv|captive_thermal|waste_heat|bess|dg
+    params: Mapped[dict[str, Any]] = mapped_column(JSONType)
+    provenance: Mapped[dict[str, Any]] = mapped_column(JSONType, default=dict)
+
+
+class LoadProfile(Base):
+    """A year of 15-minute demand (kW) for a connection, with how it was made (invariant 8)."""
+
+    __tablename__ = "load_profiles"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    connection_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("connections.id", name="load_profiles_connection_fk"), index=True
+    )
+    version: Mapped[int] = mapped_column(Integer)
+    provenance: Mapped[str] = mapped_column(String(16))  # measured|synthesised|stated
+    resolution_min: Mapped[int] = mapped_column(Integer, default=15)
+    year_start: Mapped[date] = mapped_column(Date)
+    blocks: Mapped[int] = mapped_column(Integer)
+    series_kw: Mapped[bytes] = mapped_column(LargeBinary)  # zlib-compressed text of decimals, one per block
+    method: Mapped[dict[str, Any]] = mapped_column(JSONType, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (
+        CheckConstraint("provenance in ('measured','synthesised','stated')", name="load_profiles_provenance"),
+    )
+
+
+class PriceVintage(Base):
+    """One uploaded IEX price file (invariant 8: every result names the vintage it priced with)."""
+
+    __tablename__ = "price_vintages"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    segment: Mapped[str] = mapped_column(String(8))  # dam|rtm|gdam|gtam|tam|hpdam
+    filename: Mapped[str] = mapped_column(Text)
+    file_sha256: Mapped[str] = mapped_column(String(64), index=True)
+    rows: Mapped[int] = mapped_column(Integer)
+    duplicates_dropped: Mapped[int] = mapped_column(Integer, default=0)
+    date_from: Mapped[date] = mapped_column(Date)
+    date_to: Mapped[date] = mapped_column(Date)
+    source_note: Mapped[str | None] = mapped_column(Text)
+    uploaded_by: Mapped[str] = mapped_column(String(128))
+    uploaded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    superseded_by: Mapped[str | None] = mapped_column(String(36))
+
+
+class PricePoint(Base):
+    __tablename__ = "price_series"
+
+    vintage_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("price_vintages.id", name="price_series_vintage_fk", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    day: Mapped[date] = mapped_column(Date, primary_key=True)
+    block: Mapped[int] = mapped_column(Integer, primary_key=True)  # 1..96, block 1 = 00:00-00:15
+    segment: Mapped[str] = mapped_column(String(8), index=True)
+    mcp_inr_per_mwh: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+    mcv_mw: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))

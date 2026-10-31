@@ -1,0 +1,243 @@
+"""Bills: hand the file to billx, store its result, and decide which values ergPLAN may use.
+
+Invariant 7: billx is the only reader. A bill is usable when billx accepted it (`accepted: true`)
+or when the client has confirmed, one click per field, every value ergPLAN takes from it that billx
+did not verify (`bill_confirmations`). A confirmation may also correct a value; the corrected value
+is what ergPLAN uses, and its source_ref says who confirmed it.
+"""
+
+from __future__ import annotations
+
+import hashlib
+from dataclasses import dataclass
+from decimal import Decimal
+from typing import Any
+
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from ..core.settings import get_settings
+from ..core.sourced import RefKind, SourceRef
+from ..db.models import Bill, BillConfirmation
+from . import bill_fields
+from .billx_client import BillxClient
+
+# What intake takes from a bill; each must be verified by billx or confirmed by the client.
+# `energy` stands for energy.kwh or energy.kvah (one is enough).
+REQUIRED = ("period.bill_month", "energy", "demand.max_kva", "demand.contract_kva", "tariff.category")
+OPTIONAL = (
+    "energy.power_factor",
+    "totals.current_charges",
+    "consumer.account_number",
+    "consumer.name",
+    "utility.name",
+    "energy.billed_units",
+)
+
+
+class BillNotFound(LookupError):
+    pass
+
+
+class UnknownField(ValueError):
+    pass
+
+
+@dataclass
+class FieldReview:
+    path: str
+    value: str | None
+    unit: str | None
+    verification: str | None
+    page: int | None
+    required: bool
+    confirmed: bool
+    needs_confirmation: bool
+
+    def as_json(self) -> dict[str, Any]:
+        return self.__dict__.copy()
+
+
+def _confirmations(session: Session, bill_id: str) -> dict[str, BillConfirmation]:
+    out: dict[str, BillConfirmation] = {}
+    for c in session.scalars(
+        select(BillConfirmation).where(BillConfirmation.bill_id == bill_id).order_by(BillConfirmation.at)
+    ):
+        out[c.path] = c  # the latest confirmation of a path wins
+    return out
+
+
+def _bill_facts(bill: Bill) -> bill_fields.BillFacts:
+    bills = bill_fields.from_result(bill.billx_result)
+    match = [b for b in bills if b.index == bill.bill_index]
+    if not match:
+        raise BillNotFound(f"bill index {bill.bill_index} not in the stored billx result")
+    return match[0]
+
+
+def _paths(f: bill_fields.BillFacts) -> list[str]:
+    paths = [
+        "period.bill_month",
+        "energy.kwh",
+        "energy.kvah",
+        "demand.max_kva",
+        "demand.contract_kva",
+        "tariff.category",
+        *OPTIONAL,
+    ]
+    paths += [f"energy.tod.{i}.kwh" for i in range(len(f.tod))]
+    return list(dict.fromkeys(paths))
+
+
+def _tod_field(f: bill_fields.BillFacts, path: str) -> bill_fields.FieldValue:
+    i = int(path.split(".")[2])
+    row = f.tod[i]
+    return bill_fields.FieldValue(
+        path,
+        None if row["kwh"] is None else str(row["kwh"]),
+        row.get("unit") or "kWh",
+        row.get("verification"),
+        row.get("page"),
+    )
+
+
+def _field(f: bill_fields.BillFacts, path: str) -> bill_fields.FieldValue | None:
+    if path.startswith("energy.tod."):
+        return _tod_field(f, path)
+    return f.fields.get(path)
+
+
+def review(session: Session, bill: Bill) -> list[FieldReview]:
+    """Every value intake takes from this bill, whether billx verified it, and whether it still
+    needs the client's confirmation before the bill can be used."""
+    f = _bill_facts(bill)
+    conf = _confirmations(session, bill.id)
+    has_kwh = (
+        f.fields.get("energy.kwh") and f.fields["energy.kwh"].value is not None
+    ) or "energy.kwh" in conf
+    energy_path = "energy.kwh" if has_kwh else "energy.kvah"
+    out = []
+    for p in _paths(f):
+        fv = _field(f, p)
+        c = conf.get(p)
+        required = p in REQUIRED or p == energy_path or p.startswith("energy.tod.")
+        trusted = bool(fv and fv.trusted)
+        value = c.value if c else (None if fv is None or fv.value is None else str(fv.value))
+        out.append(
+            FieldReview(
+                path=p,
+                value=value,
+                unit=fv.unit if fv else None,
+                verification=("confirmed" if c else fv.verification if fv else None),
+                page=fv.page if fv else None,
+                required=required,
+                confirmed=c is not None,
+                needs_confirmation=required and not bill.accepted and not trusted and c is None,
+            )
+        )
+    return out
+
+
+def outstanding(session: Session, bill: Bill) -> list[str]:
+    return [r.path for r in review(session, bill) if r.needs_confirmation]
+
+
+def store_file(data: bytes) -> str:
+    sha = hashlib.sha256(data).hexdigest()
+    d = get_settings().bill_files_dir
+    d.mkdir(parents=True, exist_ok=True)
+    p = d / f"{sha}.pdf"
+    if not p.exists():
+        p.write_bytes(data)
+    return sha
+
+
+def ingest(
+    session: Session,
+    data: bytes,
+    filename: str,
+    client: BillxClient | None = None,
+    connection_id: str | None = None,
+) -> list[Bill]:
+    """Read a bill file through billx (or reuse the stored result for the same file) and store one
+    row per bill in it."""
+    sha = store_file(data)
+    existing = list(session.scalars(select(Bill).where(Bill.file_sha256 == sha).order_by(Bill.bill_index)))
+    if existing:
+        for b in existing:
+            if connection_id and b.connection_id is None:
+                b.connection_id = connection_id
+        return existing
+    result = (client or BillxClient()).read(data, filename, account_ref=connection_id)
+    rows = []
+    for f in bill_fields.from_result(result):
+        b = Bill(
+            connection_id=connection_id,
+            file_sha256=sha,
+            filename=filename,
+            billx_job_id=str(result.get("job_id") or "") or None,
+            bill_index=f.index,
+            bill_month=f.bill_month,
+            status=f.status,
+            accepted=f.accepted,
+            accepted_by=f.accepted_by or ("engine" if f.accepted else None),
+            billx_result=result,
+        )
+        session.add(b)
+        rows.append(b)
+    session.flush()
+    return rows
+
+
+def confirm(session: Session, bill_id: str, path: str, value: str | None, actor: str) -> Bill:
+    bill = session.get(Bill, bill_id)
+    if bill is None:
+        raise BillNotFound(bill_id)
+    if path not in {r.path for r in review(session, bill)}:
+        raise UnknownField(path)
+    session.add(BillConfirmation(bill_id=bill_id, path=path, value=value, confirmed_by=actor))
+    session.flush()
+    if path == "period.bill_month" and value:
+        bill.bill_month = bill_fields.parse_month(value) or bill.bill_month
+    if not bill.accepted and not outstanding(session, bill):
+        bill.accepted = True
+        bill.accepted_by = "bill_confirmations"
+    return bill
+
+
+@dataclass(frozen=True)
+class BillValue:
+    value: str | None
+    unit: str | None
+    ref: SourceRef
+
+    @property
+    def dec(self) -> Decimal | None:
+        return bill_fields.to_dec(self.value)
+
+
+def values(session: Session, bill: Bill) -> dict[str, BillValue]:
+    """The values intake may use from an accepted bill, each with its bill source_ref."""
+    if not bill.accepted:
+        raise ValueError("bill is not accepted: confirm its outstanding fields first")
+    conf = _confirmations(session, bill.id)
+    out = {}
+    for r in review(session, bill):
+        if r.value is None:
+            continue
+        c = conf.get(r.path)
+        note = f"confirmed by {c.confirmed_by}" if c else f"billx: {r.verification or 'accepted bill'}"
+        out[r.path] = BillValue(
+            r.value,
+            r.unit,
+            SourceRef(kind=RefKind.BILL, bill_id=bill.id, field_path=r.path, page=r.page, note=note),
+        )
+    return out
+
+
+def tod_slots(bill: Bill) -> list[str | None]:
+    return [row["slot"] for row in _bill_facts(bill).tod]
+
+
+def profile_id(bill: Bill) -> str | None:
+    return _bill_facts(bill).profile_id

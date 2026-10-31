@@ -44,6 +44,11 @@ class Settings(BaseSettings):
         return self.ergplan_data_dir / "documents"
 
     @property
+    def bill_files_dir(self) -> Path:
+        """The client's bill PDFs as uploaded (gitignored), so a bill value links to its page."""
+        return self.ergplan_data_dir / "bill_files"
+
+    @property
     def schemas_dir(self) -> Path:
         return REPO_ROOT / "packages" / "rulebooks" / "schemas"
 

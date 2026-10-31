@@ -16,7 +16,8 @@
         "client_stated",
         "assumption",
         "measured",
-        "derived"
+        "derived",
+        "bill"
       ]
     },
     "document_id": {
@@ -55,6 +56,14 @@
     "printed_page": {
       "type": "string",
       "description": "The page number printed on the page, when it differs from the PDF index"
+    },
+    "bill_id": {
+      "type": "string",
+      "description": "bills.id, for a value billx read from the client's bill"
+    },
+    "field_path": {
+      "type": "string",
+      "description": "the billx contract path of that value (e.g. demand.max_kva)"
     }
   },
   "allOf": [
@@ -74,6 +83,21 @@
           "document_id",
           "page",
           "quote"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "bill"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "bill_id",
+          "field_path"
         ]
       }
     }

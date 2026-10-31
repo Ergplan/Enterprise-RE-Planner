@@ -1,0 +1,7 @@
+id: continuous_process
+name: Continuous process (24x7)
+note: Plants that run round the clock all week (chemicals, glass, paper, cement grinding). Near-flat load with small dips at shift changes.
+base: 92
+working: [{days: [0,1,2,3,4,5,6], start: "00:00", end: "24:00", level: 100}]
+dips: [{days: [0,1,2,3,4,5,6], start: "06:00", end: "06:30", level: 94}, {days: [0,1,2,3,4,5,6], start: "14:00", end: "14:30", level: 94}, {days: [0,1,2,3,4,5,6], start: "22:00", end: "22:30", level: 94}]
+ramp_minutes: 0

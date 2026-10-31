@@ -1,0 +1,7 @@
+id: food_processing
+name: Food processing
+note: Two shifts 07:00–23:00 all week with lower Sunday output; refrigeration and utilities run at night.
+base: 35
+working: [{days: [0,1,2,3,4,5], start: "07:00", end: "23:00", level: 100}, {days: [6], start: "07:00", end: "23:00", level: 70}]
+dips: [{days: [0,1,2,3,4,5,6], start: "13:00", end: "13:30", level: 88}]
+ramp_minutes: 30

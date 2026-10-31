@@ -1,0 +1,7 @@
+id: steel_induction
+name: Steel induction furnace
+note: Induction furnaces melt round the clock but cut load in the evening peak ToD window to avoid the surcharge.
+base: 35
+working: [{days: [0,1,2,3,4,5,6], start: "22:00", end: "24:00", level: 100}, {days: [0,1,2,3,4,5,6], start: "00:00", end: "17:00", level: 100}]
+dips: []
+ramp_minutes: 15

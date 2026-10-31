@@ -1,0 +1,7 @@
+id: textile_spinning
+name: Textile spinning
+note: Spinning mills run three shifts all week; humidification and ring frames keep load nearly flat.
+base: 95
+working: [{days: [0,1,2,3,4,5,6], start: "00:00", end: "24:00", level: 100}]
+dips: [{days: [0,1,2,3,4,5,6], start: "07:00", end: "07:30", level: 92}, {days: [0,1,2,3,4,5,6], start: "15:00", end: "15:30", level: 92}, {days: [0,1,2,3,4,5,6], start: "23:00", end: "23:30", level: 92}]
+ramp_minutes: 0

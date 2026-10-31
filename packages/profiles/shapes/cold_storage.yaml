@@ -1,0 +1,7 @@
+id: cold_storage
+name: Cold storage
+note: Refrigeration all week; compressor load follows ambient temperature, highest in the afternoon.
+base: 70
+working: [{days: [0,1,2,3,4,5,6], start: "10:00", end: "19:00", level: 100}, {days: [0,1,2,3,4,5,6], start: "19:00", end: "23:00", level: 85}]
+dips: []
+ramp_minutes: 60

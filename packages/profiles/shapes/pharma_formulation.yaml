@@ -1,0 +1,7 @@
+id: pharma_formulation
+name: Pharma formulation
+note: HVAC for clean rooms runs all week; production two shifts 08:00–20:00 Monday to Saturday.
+base: 55
+working: [{days: [0,1,2,3,4,5], start: "08:00", end: "20:00", level: 100}]
+dips: [{days: [0,1,2,3,4,5], start: "13:00", end: "13:30", level: 90}]
+ramp_minutes: 30

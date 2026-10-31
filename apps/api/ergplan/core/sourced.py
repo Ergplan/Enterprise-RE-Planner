@@ -28,6 +28,7 @@ class RefKind(StrEnum):
     ASSUMPTION = "assumption"
     MEASURED = "measured"
     DERIVED = "derived"
+    BILL = "bill"  # read by billx from the client's own bill (invariant 7); links to the stored bill page
 
 
 DOCUMENT_KINDS = {RefKind.REGULATION, RefKind.ORDER}
@@ -45,11 +46,15 @@ class SourceRef(BaseModel):
     effective_to: date | None = None
     note: str | None = Field(default=None, max_length=500)
     rule_id: str | None = None  # the rule row this value came from, when it came from one
+    bill_id: str | None = None  # kind bill: bills.id
+    field_path: str | None = None  # kind bill: the billx contract path (demand.max_kva)
 
     @model_validator(mode="after")
     def _document_refs_are_complete(self) -> SourceRef:
         if self.kind in DOCUMENT_KINDS and not (self.document_id and self.page and self.quote):
             raise ValueError("a regulation or order ref needs document_id, page and quote")
+        if self.kind == RefKind.BILL and not (self.bill_id and self.field_path):
+            raise ValueError("a bill ref needs bill_id and field_path")
         return self
 
     @property
@@ -57,6 +62,8 @@ class SourceRef(BaseModel):
         """The link that opens the stored PDF at the cited page."""
         if self.document_id and self.page:
             return f"/documents/{self.document_id}#page={self.page}"
+        if self.kind == RefKind.BILL and self.bill_id:
+            return f"/bills/{self.bill_id}/file" + (f"#page={self.page}" if self.page else "")
         return None
 
     def to_json(self) -> dict[str, Any]:
@@ -85,8 +92,10 @@ class SourcedValue(BaseModel):
 
     @property
     def is_sourced(self) -> bool:
-        """True when every ref points at a document (not stated, not assumed)."""
-        return all(r.kind in DOCUMENT_KINDS or r.kind == RefKind.DERIVED for r in self.source_refs)
+        """True when every ref points at a document or the client's bill (not stated, not assumed)."""
+        return all(
+            r.kind in DOCUMENT_KINDS or r.kind in (RefKind.DERIVED, RefKind.BILL) for r in self.source_refs
+        )
 
 
 def derive(

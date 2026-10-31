@@ -1,0 +1,7 @@
+id: two_shift
+name: Two-shift manufacturing
+note: Two shifts 06:00–22:00 Monday to Saturday, Sunday weekly off with utilities running. The default for engineering and auto-component plants.
+base: 25
+working: [{days: [0,1,2,3,4,5], start: "06:00", end: "22:00", level: 100}]
+dips: [{days: [0,1,2,3,4,5], start: "13:00", end: "13:30", level: 85}, {days: [0,1,2,3,4,5], start: "14:00", end: "14:15", level: 90}]
+ramp_minutes: 30

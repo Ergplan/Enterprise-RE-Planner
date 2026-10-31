@@ -1,0 +1,2560 @@
+{
+ "contract_version": "1.1",
+ "engine_version": "0.2.1",
+ "schema_version": "2.0",
+ "file": {
+  "sha256": "6b05f2a2a439c409218667e63a4ed658e144d3803b6512286f65b8324facac5b",
+  "pages": 1,
+  "media_type": "application/pdf"
+ },
+ "bills": [
+  {
+   "index": 0,
+   "pages": [
+    1
+   ],
+   "bill_type": "electricity",
+   "utility": {
+    "id": "pvvnl",
+    "name_as_printed": "PVVNL",
+    "state": "Uttar Pradesh"
+   },
+   "profile": {
+    "id": "pvvnl",
+    "version": "2025-01",
+    "status": "draft"
+   },
+   "route": "cloud_model",
+   "fields": {
+    "utility": {
+     "name": {
+      "value": "PVVNL",
+      "unit": null,
+      "printed": "PVVNL",
+      "page": null,
+      "region": null,
+      "source": "model",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "model_a",
+       "model_b"
+      ]
+     }
+    },
+    "consumer": {
+     "account_number": {
+      "value": "9986364691",
+      "unit": null,
+      "printed": "9986364691",
+      "page": 1,
+      "region": {
+       "x": "0.1781",
+       "y": "0.1616",
+       "w": "0.0773",
+       "h": "0.0060"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     },
+     "name": {
+      "value": "FICTIONAL CEMENT WORKS PVT LTD",
+      "unit": null,
+      "printed": "Fictional Cement Works Pvt Ltd",
+      "page": 1,
+      "region": {
+       "x": "0.1531",
+       "y": "0.2054",
+       "w": "0.2406",
+       "h": "0.0062"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     }
+    },
+    "meter": {
+     "number": {
+      "value": "SYNM8749105",
+      "unit": null,
+      "printed": "SYNM8749105",
+      "page": 1,
+      "region": {
+       "x": "0.7193",
+       "y": "0.1093",
+       "w": "0.0861",
+       "h": "0.0061"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     }
+    },
+    "connection": {
+     "tariff_category": {
+      "value": "HV-2",
+      "unit": null,
+      "printed": "HV-2",
+      "page": 1,
+      "region": {
+       "x": "0.1770",
+       "y": "0.1877",
+       "w": "0.0299",
+       "h": "0.0059"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     }
+    },
+    "period": {
+     "from": {
+      "value": "2026-08-01",
+      "unit": null,
+      "printed": "01-AUG-2026",
+      "page": 1,
+      "region": {
+       "x": "0.2100",
+       "y": "0.2388",
+       "w": "0.0860",
+       "h": "0.0061"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     },
+     "to": {
+      "value": "2026-08-31",
+      "unit": null,
+      "printed": "31-AUG-2026",
+      "page": 1,
+      "region": {
+       "x": "0.3308",
+       "y": "0.2388",
+       "w": "0.0862",
+       "h": "0.0061"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     },
+     "bill_date": {
+      "value": "2026-09-03",
+      "unit": null,
+      "printed": "03-SEP-2026",
+      "page": 1,
+      "region": {
+       "x": "0.1778",
+       "y": "0.1224",
+       "w": "0.0860",
+       "h": "0.0060"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     },
+     "bill_month": {
+      "value": "2026-09",
+      "unit": null,
+      "printed": "09/2026",
+      "page": 1,
+      "region": {
+       "x": "0.1778",
+       "y": "0.1741",
+       "w": "0.0537",
+       "h": "0.0073"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     },
+     "due_date": {
+      "value": "2026-09-18",
+      "unit": null,
+      "printed": "18-SEP-2026",
+      "page": 1,
+      "region": {
+       "x": "0.1778",
+       "y": "0.1354",
+       "w": "0.0860",
+       "h": "0.0061"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     }
+    },
+    "readings": [
+     {
+      "register": "KWH",
+      "tod_slot": "Tod-1",
+      "current": {
+       "value": "41771.56",
+       "unit": null,
+       "printed": "41771.56",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "previous": {
+       "value": "41731.27",
+       "unit": null,
+       "printed": "41731.27",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "multiplying_factor": {
+       "value": "18000",
+       "unit": null,
+       "printed": "18000",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      }
+     },
+     {
+      "register": "KWH",
+      "tod_slot": "Tod-2",
+      "current": {
+       "value": "15335.97",
+       "unit": null,
+       "printed": "15335.97",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "previous": {
+       "value": "15293.01",
+       "unit": null,
+       "printed": "15293.01",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "multiplying_factor": {
+       "value": "18000",
+       "unit": null,
+       "printed": "18000",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      }
+     },
+     {
+      "register": "KWH",
+      "tod_slot": "Tod-3",
+      "current": {
+       "value": "9475.73",
+       "unit": null,
+       "printed": "9475.73",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "previous": {
+       "value": "9449.39",
+       "unit": null,
+       "printed": "9449.39",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "multiplying_factor": {
+       "value": "18000",
+       "unit": null,
+       "printed": "18000",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      }
+     },
+     {
+      "register": "KWH",
+      "tod_slot": null,
+      "current": {
+       "value": "861911.27",
+       "unit": null,
+       "printed": "861911.27",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "previous": {
+       "value": "861801.68",
+       "unit": null,
+       "printed": "861801.68",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "multiplying_factor": {
+       "value": "18000",
+       "unit": null,
+       "printed": "18000",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      }
+     },
+     {
+      "register": "KVAH",
+      "tod_slot": "Tod-1",
+      "current": {
+       "value": "15275.23",
+       "unit": null,
+       "printed": "15275.23",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "previous": {
+       "value": "15232.23",
+       "unit": null,
+       "printed": "15232.23",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "multiplying_factor": {
+       "value": "18000",
+       "unit": null,
+       "printed": "18000",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      }
+     },
+     {
+      "register": "KVAH",
+      "tod_slot": "Tod-2",
+      "current": {
+       "value": "29950.74",
+       "unit": null,
+       "printed": "29950.74",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "previous": {
+       "value": "29906.85",
+       "unit": null,
+       "printed": "29906.85",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "multiplying_factor": {
+       "value": "18000",
+       "unit": null,
+       "printed": "18000",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      }
+     },
+     {
+      "register": "KVAH",
+      "tod_slot": "Tod-3",
+      "current": {
+       "value": "46295.58",
+       "unit": null,
+       "printed": "46295.58",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "previous": {
+       "value": "46268.08",
+       "unit": null,
+       "printed": "46268.08",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "multiplying_factor": {
+       "value": "18000",
+       "unit": null,
+       "printed": "18000",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      }
+     },
+     {
+      "register": "KVAH",
+      "tod_slot": null,
+      "current": {
+       "value": "258594.27",
+       "unit": null,
+       "printed": "258594.27",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "previous": {
+       "value": "258479.88",
+       "unit": null,
+       "printed": "258479.88",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      },
+      "multiplying_factor": {
+       "value": "18000",
+       "unit": null,
+       "printed": "18000",
+       "page": null,
+       "region": null,
+       "source": "ocr",
+       "verification": "verified",
+       "proof": [
+        "consensus"
+       ],
+       "readers": [
+        "text_layer",
+        "local_ocr",
+        "model_a",
+        "model_b"
+       ]
+      }
+     }
+    ],
+    "energy": {
+     "kwh": {
+      "value": "1972620",
+      "unit": "kWh",
+      "printed": "1972620.00",
+      "page": 1,
+      "region": {
+       "x": "0.0720",
+       "y": "0.3290",
+       "w": "0.6269",
+       "h": "0.0061"
+      },
+      "source": "ocr",
+      "verification": "disputed",
+      "proof": [
+       "consensus",
+       "arithmetic"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     },
+     "kvah": {
+      "value": "2059020",
+      "unit": "kVAh",
+      "printed": "2059020.00",
+      "page": 1,
+      "region": {
+       "x": "0.0720",
+       "y": "0.3967",
+       "w": "0.6269",
+       "h": "0.0061"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus",
+       "arithmetic"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     },
+     "billed_units": {
+      "value": null,
+      "unit": "kVAh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "tod": [
+      {
+       "slot": "Tod-1",
+       "kwh": {
+        "value": "725220",
+        "unit": null,
+        "printed": "725220.00",
+        "page": null,
+        "region": null,
+        "source": "ocr",
+        "verification": "unverified",
+        "proof": [
+         "consensus"
+        ],
+        "readers": [
+         "text_layer",
+         "local_ocr",
+         "model_a",
+         "model_b"
+        ]
+       }
+      },
+      {
+       "slot": "Tod-2",
+       "kwh": {
+        "value": "773280",
+        "unit": null,
+        "printed": "773280.00",
+        "page": null,
+        "region": null,
+        "source": "ocr",
+        "verification": "verified",
+        "proof": [
+         "consensus"
+        ],
+        "readers": [
+         "text_layer",
+         "local_ocr",
+         "model_a",
+         "model_b"
+        ]
+       }
+      },
+      {
+       "slot": "Tod-3",
+       "kwh": {
+        "value": "474120",
+        "unit": null,
+        "printed": "474120.00",
+        "page": null,
+        "region": null,
+        "source": "ocr",
+        "verification": "verified",
+        "proof": [
+         "consensus"
+        ],
+        "readers": [
+         "text_layer",
+         "local_ocr",
+         "model_a",
+         "model_b"
+        ]
+       }
+      }
+     ],
+     "power_factor": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "demand": {
+     "max_kva": {
+      "value": "3250",
+      "unit": "kVA",
+      "printed": "3250.00",
+      "page": 1,
+      "region": {
+       "x": "0.7194",
+       "y": "0.1877",
+       "w": "0.0537",
+       "h": "0.0061"
+      },
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     },
+     "contract_kva": {
+      "value": "5000",
+      "unit": "kVA",
+      "printed": "5000",
+      "page": 1,
+      "region": {
+       "x": "0.7194",
+       "y": "0.1616",
+       "w": "0.0294",
+       "h": "0.0060"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     }
+    },
+    "net_metering": {
+     "export_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "import_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "charges": {
+     "energy": {
+      "value": "14619042",
+      "unit": "INR",
+      "printed": "14619042.00",
+      "page": null,
+      "region": null,
+      "source": "model",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "model_a",
+       "model_b"
+      ]
+     },
+     "demand": {
+      "value": "1125000",
+      "unit": "INR",
+      "printed": "1125000.00",
+      "page": null,
+      "region": null,
+      "source": "model",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "model_a",
+       "model_b"
+      ]
+     },
+     "by_code": [
+      {
+       "code": "demand_charge",
+       "amount": {
+        "value": "1125000",
+        "unit": "INR",
+        "printed": "1125000.00",
+        "page": null,
+        "region": null,
+        "source": "ocr",
+        "verification": "verified",
+        "proof": [
+         "consensus"
+        ],
+        "readers": [
+         "text_layer",
+         "local_ocr",
+         "model_a",
+         "model_b"
+        ]
+       }
+      },
+      {
+       "code": "energy_charge",
+       "amount": {
+        "value": "14619042",
+        "unit": "INR",
+        "printed": "14619042.00",
+        "page": null,
+        "region": null,
+        "source": "ocr",
+        "verification": "verified",
+        "proof": [
+         "consensus"
+        ],
+        "readers": [
+         "text_layer",
+         "local_ocr",
+         "model_a",
+         "model_b"
+        ]
+       }
+      },
+      {
+       "code": "tod_surcharge",
+       "amount": {
+        "value": "544500",
+        "unit": "INR",
+        "printed": "544500.00",
+        "page": null,
+        "region": null,
+        "source": "ocr",
+        "verification": "verified",
+        "proof": [
+         "consensus"
+        ],
+        "readers": [
+         "text_layer",
+         "local_ocr",
+         "model_a",
+         "model_b"
+        ]
+       }
+      },
+      {
+       "code": "tod_rebate",
+       "amount": {
+        "value": "-425700",
+        "unit": "INR",
+        "printed": "-425700.00",
+        "page": null,
+        "region": null,
+        "source": "ocr",
+        "verification": "verified",
+        "proof": [
+         "consensus"
+        ],
+        "readers": [
+         "text_layer",
+         "local_ocr",
+         "model_a",
+         "model_b"
+        ]
+       }
+      },
+      {
+       "code": "fppca",
+       "amount": {
+        "value": "370623.6",
+        "unit": "INR",
+        "printed": "370623.60",
+        "page": null,
+        "region": null,
+        "source": "ocr",
+        "verification": "verified",
+        "proof": [
+         "consensus"
+        ],
+        "readers": [
+         "text_layer",
+         "local_ocr",
+         "model_a",
+         "model_b"
+        ]
+       }
+      },
+      {
+       "code": "electricity_duty",
+       "amount": {
+        "value": "1029510",
+        "unit": "INR",
+        "printed": "1029510.00",
+        "page": null,
+        "region": null,
+        "source": "ocr",
+        "verification": "verified",
+        "proof": [
+         "consensus"
+        ],
+        "readers": [
+         "text_layer",
+         "local_ocr",
+         "model_a",
+         "model_b"
+        ]
+       }
+      }
+     ]
+    },
+    "totals": {
+     "net_payable": {
+      "value": "17830236",
+      "unit": "INR",
+      "printed": "1,78,30,236.00",
+      "page": 1,
+      "region": {
+       "x": "0.6170",
+       "y": "0.5549",
+       "w": "0.1245",
+       "h": "0.0087"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus",
+       "arithmetic"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     },
+     "current_charges": {
+      "value": "17262975.6",
+      "unit": "INR",
+      "printed": "17262975.60",
+      "page": 1,
+      "region": {
+       "x": "0.6442",
+       "y": "0.5240",
+       "w": "0.0973",
+       "h": "0.0071"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus",
+       "arithmetic"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     },
+     "due_date_rebate": {
+      "value": null,
+      "unit": "INR",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "arrears": {
+      "value": "567260.4",
+      "unit": "INR",
+      "printed": "567260.40",
+      "page": 1,
+      "region": {
+       "x": "0.6620",
+       "y": "0.5395",
+       "w": "0.0795",
+       "h": "0.0071"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus",
+       "arithmetic"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     }
+    },
+    "tariff": {
+     "category": {
+      "value": "HV-2",
+      "unit": null,
+      "printed": "HV-2",
+      "page": 1,
+      "region": {
+       "x": "0.1770",
+       "y": "0.1877",
+       "w": "0.0299",
+       "h": "0.0059"
+      },
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a"
+      ]
+     }
+    },
+    "open_access": {
+     "re_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "non_re_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "banked_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "green_tariff": {
+     "kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    }
+   },
+   "data": {
+    "schema_version": "2.0",
+    "bill_type": "electricity",
+    "discom": {
+     "name_as_printed": "PVVNL",
+     "short_code": null,
+     "state": null,
+     "office": null
+    },
+    "consumer": {
+     "name": "FICTIONAL CEMENT WORKS PVT LTD",
+     "address": null,
+     "account_number": "9986364691",
+     "service_connection_number": null,
+     "gstin": null,
+     "pan": null
+    },
+    "connection": {
+     "tariff_code": "HV-2",
+     "tariff_category": null,
+     "supply_kv": null,
+     "metering_side": null,
+     "meter_number": "SYNM8749105",
+     "contract_demand_kva": "5000",
+     "minimum_billable_kva": null,
+     "sanctioned_load": null,
+     "sanctioned_load_unit": null
+    },
+    "period": {
+     "bill_month": "2026-09",
+     "bill_number": null,
+     "bill_date": "2026-09-03",
+     "due_date": "2026-09-18",
+     "disconnection_date": null,
+     "reading_from": "2026-08-01",
+     "reading_to": "2026-08-31",
+     "billing_days": null,
+     "reading_type": null,
+     "bill_kind": null
+    },
+    "meters": [
+     {
+      "label": "kWh TOD-1",
+      "quantity": "kWh",
+      "tod_slot": "TOD-1",
+      "present": "41771.56",
+      "past": "41731.27",
+      "difference": "40.29",
+      "multiplying_factor": "18000",
+      "multiplying_factor_printed": null,
+      "gross_units": "725220",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kWh TOD-2",
+      "quantity": "kWh",
+      "tod_slot": "TOD-2",
+      "present": "15335.97",
+      "past": "15293.01",
+      "difference": "42.96",
+      "multiplying_factor": "18000",
+      "multiplying_factor_printed": null,
+      "gross_units": "773280",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kWh TOD-3",
+      "quantity": "kWh",
+      "tod_slot": "TOD-3",
+      "present": "9475.73",
+      "past": "9449.39",
+      "difference": "26.34",
+      "multiplying_factor": "18000",
+      "multiplying_factor_printed": null,
+      "gross_units": "474120",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kWh Total",
+      "quantity": "kWh",
+      "tod_slot": null,
+      "present": "861911.27",
+      "past": "861801.68",
+      "difference": "109.59",
+      "multiplying_factor": "18000",
+      "multiplying_factor_printed": null,
+      "gross_units": "1972620",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kVAh TOD-1",
+      "quantity": "kVAh",
+      "tod_slot": "TOD-1",
+      "present": "15275.23",
+      "past": "15232.23",
+      "difference": "43",
+      "multiplying_factor": "18000",
+      "multiplying_factor_printed": null,
+      "gross_units": "774000",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kVAh TOD-2",
+      "quantity": "kVAh",
+      "tod_slot": "TOD-2",
+      "present": "29950.74",
+      "past": "29906.85",
+      "difference": "43.89",
+      "multiplying_factor": "18000",
+      "multiplying_factor_printed": null,
+      "gross_units": "790020",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kVAh TOD-3",
+      "quantity": "kVAh",
+      "tod_slot": "TOD-3",
+      "present": "46295.58",
+      "past": "46268.08",
+      "difference": "27.5",
+      "multiplying_factor": "18000",
+      "multiplying_factor_printed": null,
+      "gross_units": "495000",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kVAh Total",
+      "quantity": "kVAh",
+      "tod_slot": null,
+      "present": "258594.27",
+      "past": "258479.88",
+      "difference": "114.39",
+      "multiplying_factor": "18000",
+      "multiplying_factor_printed": null,
+      "gross_units": "2059020",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     }
+    ],
+    "demand": {
+     "recorded_kva": "3250",
+     "billing_kva": null
+    },
+    "energy": {
+     "billed_units": null,
+     "billed_unit": null,
+     "gross_kwh": "1972620",
+     "gross_kvah": "2059020",
+     "open_access_kwh": null,
+     "open_access_re_kwh": null,
+     "open_access_non_re_kwh": null,
+     "open_access_banked_kwh": null,
+     "open_access_unit": null,
+     "green_tariff_kwh": null,
+     "net_metering_import_kwh": null,
+     "net_metering_export_kwh": null,
+     "off_peak_kwh": null,
+     "power_factor": null,
+     "load_factor": null,
+     "tod": []
+    },
+    "gas": {
+     "customer_id": null,
+     "volume_scm": null,
+     "gcv_kcal_per_scm": null,
+     "energy_mmbtu": null,
+     "correction_factor": null,
+     "reading_previous": null,
+     "reading_current": null
+    },
+    "line_items": [
+     {
+      "index": 0,
+      "group": null,
+      "label": "DEMAND CHARGE",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "3750",
+      "rate": "300",
+      "rate_unit": null,
+      "unit": "kVA",
+      "amount": "1125000",
+      "tod_slot": null,
+      "code": "demand_charge",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 1,
+      "group": null,
+      "label": "ENERGY CHARGE",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "2059020",
+      "rate": "7.1",
+      "rate_unit": null,
+      "unit": "kVAh",
+      "amount": "14619042",
+      "tod_slot": null,
+      "code": "energy_charge",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 2,
+      "group": null,
+      "label": "TOD SURCHARGE(TOD-3)",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "495000",
+      "rate": "1.1",
+      "rate_unit": null,
+      "unit": "kVAh",
+      "amount": "544500",
+      "tod_slot": null,
+      "code": "tod_surcharge",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 3,
+      "group": null,
+      "label": "TOD REBATE(TOD-1)",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "774000",
+      "rate": "-0.55",
+      "rate_unit": null,
+      "unit": "kVAh",
+      "amount": "-425700",
+      "tod_slot": null,
+      "code": "tod_rebate",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 4,
+      "group": null,
+      "label": "FPPCA",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "2059020",
+      "rate": "0.18",
+      "rate_unit": null,
+      "unit": "kVAh",
+      "amount": "370623.6",
+      "tod_slot": null,
+      "code": "fppca",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 5,
+      "group": null,
+      "label": "ELECTRICITY DUTY",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "2059020",
+      "rate": "0.5",
+      "rate_unit": null,
+      "unit": "kVAh",
+      "amount": "1029510",
+      "tod_slot": null,
+      "code": "electricity_duty",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 6,
+      "group": null,
+      "label": "CURRENT CHARGES(A)",
+      "kind": "subtotal",
+      "stage": "current",
+      "quantity": null,
+      "rate": null,
+      "rate_unit": null,
+      "unit": null,
+      "amount": "17262975.6",
+      "tod_slot": null,
+      "code": "other",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 7,
+      "group": null,
+      "label": "ARREARS(B)",
+      "kind": "item",
+      "stage": "arrear",
+      "quantity": null,
+      "rate": null,
+      "rate_unit": null,
+      "unit": null,
+      "amount": "567260.4",
+      "tod_slot": null,
+      "code": "arrears",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 8,
+      "group": null,
+      "label": "NET PAYABLE(A+B)",
+      "kind": "subtotal",
+      "stage": "current",
+      "quantity": null,
+      "rate": null,
+      "rate_unit": null,
+      "unit": null,
+      "amount": "17830236",
+      "tod_slot": null,
+      "code": "other",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     }
+    ],
+    "totals": {
+     "current_charges": "17262975.6",
+     "arrears_total": "567260.4",
+     "adjustments_total": null,
+     "net_payable": "17830236",
+     "due_date_rebate": null,
+     "payable_after_due": null
+    },
+    "payments": {
+     "previous_bill_amount": null,
+     "last_payment_amount": null,
+     "last_payment_date": null
+    },
+    "history": [],
+    "extra": [],
+    "extraction_notes": []
+   },
+   "checks": [
+    {
+     "id": "G01",
+     "description": "utility name, account number, bill month and net payable are present",
+     "status": "pass",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": [
+      "discom.name_as_printed",
+      "utility.name",
+      "consumer.account_number",
+      "period.bill_month",
+      "totals.net_payable"
+     ]
+    },
+    {
+     "id": "G02",
+     "description": "present - past = difference, per meter row",
+     "status": "pass",
+     "expected": "114.39",
+     "actual": "114.39",
+     "tolerance": "0.011",
+     "paths": [
+      "meters[0].present",
+      "meters[0].past",
+      "meters[0].difference",
+      "meters[1].present",
+      "meters[1].past",
+      "meters[1].difference",
+      "meters[2].present",
+      "meters[2].past",
+      "meters[2].difference",
+      "meters[3].present",
+      "meters[3].past",
+      "meters[3].difference",
+      "meters[4].present",
+      "meters[4].past",
+      "meters[4].difference",
+      "meters[5].present",
+      "meters[5].past",
+      "meters[5].difference",
+      "meters[6].present",
+      "meters[6].past",
+      "meters[6].difference",
+      "meters[7].present",
+      "meters[7].past",
+      "meters[7].difference"
+     ]
+    },
+    {
+     "id": "G03",
+     "description": "difference x MF = gross units, per meter row; the total register also equals the energy field",
+     "status": "pass",
+     "expected": "2059020",
+     "actual": "2059020",
+     "tolerance": "108",
+     "paths": [
+      "meters[0].difference",
+      "meters[0].multiplying_factor",
+      "meters[0].gross_units",
+      "meters[1].difference",
+      "meters[1].multiplying_factor",
+      "meters[1].gross_units",
+      "meters[2].difference",
+      "meters[2].multiplying_factor",
+      "meters[2].gross_units",
+      "meters[3].difference",
+      "meters[3].multiplying_factor",
+      "meters[3].gross_units",
+      "energy.gross_kwh",
+      "energy.kwh",
+      "meters[4].difference",
+      "meters[4].multiplying_factor",
+      "meters[4].gross_units",
+      "meters[5].difference",
+      "meters[5].multiplying_factor",
+      "meters[5].gross_units",
+      "meters[6].difference",
+      "meters[6].multiplying_factor",
+      "meters[6].gross_units",
+      "meters[7].difference",
+      "meters[7].multiplying_factor",
+      "meters[7].gross_units",
+      "energy.gross_kvah",
+      "energy.kvah"
+     ]
+    },
+    {
+     "id": "G04",
+     "description": "gross units - open access units = net units, per meter row",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G05",
+     "description": "|quantity x rate| = |amount| for every line that prints both (a % rate divided by 100)",
+     "status": "pass",
+     "expected": "1029510",
+     "actual": "1029510",
+     "tolerance": "1",
+     "paths": [
+      "line_items[0].quantity",
+      "line_items[0].rate",
+      "line_items[0].amount",
+      "line_items[1].quantity",
+      "line_items[1].rate",
+      "line_items[1].amount",
+      "line_items[2].quantity",
+      "line_items[2].rate",
+      "line_items[2].amount",
+      "line_items[3].quantity",
+      "line_items[3].rate",
+      "line_items[3].amount",
+      "line_items[4].quantity",
+      "line_items[4].rate",
+      "line_items[4].amount",
+      "line_items[5].quantity",
+      "line_items[5].rate",
+      "line_items[5].amount"
+     ]
+    },
+    {
+     "id": "G06",
+     "description": "items of a group = the group's printed subtotal",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G07",
+     "description": "current-stage items = totals.current_charges",
+     "status": "pass",
+     "expected": "17262975.6",
+     "actual": "17262975.6",
+     "tolerance": "1",
+     "paths": [
+      "line_items[0].amount",
+      "line_items[1].amount",
+      "line_items[2].amount",
+      "line_items[3].amount",
+      "line_items[4].amount",
+      "line_items[5].amount",
+      "totals.current_charges"
+     ]
+    },
+    {
+     "id": "G08",
+     "description": "arrear-stage items = totals.arrears_total",
+     "status": "pass",
+     "expected": "567260.4",
+     "actual": "567260.4",
+     "tolerance": "1",
+     "paths": [
+      "line_items[7].amount",
+      "totals.arrears_total",
+      "totals.arrears"
+     ]
+    },
+    {
+     "id": "G09",
+     "description": "current charges + arrears + adjustments - due-date rebate = net payable",
+     "status": "pass",
+     "expected": "17830236",
+     "actual": "17830236",
+     "tolerance": "1",
+     "paths": [
+      "totals.current_charges",
+      "totals.arrears_total",
+      "totals.arrears",
+      "totals.net_payable"
+     ]
+    },
+    {
+     "id": "G10",
+     "description": "billing demand >= minimum billable and = max(recorded MD, minimum billable)",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G11",
+     "description": "power factor = gross kWh / gross kVAh",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G12",
+     "description": "due date after bill date; billing days match the reading period",
+     "status": "pass",
+     "expected": null,
+     "actual": null,
+     "tolerance": "1",
+     "paths": [
+      "period.bill_date",
+      "period.due_date"
+     ]
+    },
+    {
+     "id": "G13",
+     "description": "billed units within 0.33 to 3 times the history median",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G14",
+     "description": "the model wrote extraction notes",
+     "status": "pass",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": [
+      "extraction_notes"
+     ]
+    },
+    {
+     "id": "G15",
+     "description": "TOD slot units add up to the total register of the same quantity",
+     "status": "pass",
+     "expected": "2059020",
+     "actual": "2059020",
+     "tolerance": "324",
+     "paths": [
+      "meters[0].gross_units",
+      "meters[1].gross_units",
+      "meters[2].gross_units",
+      "meters[3].gross_units",
+      "energy.gross_kwh",
+      "energy.kwh",
+      "meters[4].gross_units",
+      "meters[5].gross_units",
+      "meters[6].gross_units",
+      "meters[7].gross_units",
+      "energy.gross_kvah",
+      "energy.kvah"
+     ]
+    },
+    {
+     "id": "G16",
+     "description": "gross kVAh >= gross kWh (both printed, no net metering)",
+     "status": "pass",
+     "expected": "1972620",
+     "actual": "2059020",
+     "tolerance": "108",
+     "paths": [
+      "energy.gross_kwh",
+      "energy.kwh",
+      "energy.gross_kvah",
+      "energy.kvah"
+     ]
+    },
+    {
+     "id": "G17",
+     "description": "net metering: import - export = net units billed",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G18",
+     "description": "bill month in the reading period, or within bill_month_offset months after it",
+     "status": "pass",
+     "expected": "0..1 months after the period",
+     "actual": "2026-09",
+     "tolerance": null,
+     "paths": [
+      "period.bill_month",
+      "period.reading_from",
+      "period.from",
+      "period.reading_to",
+      "period.to"
+     ]
+    },
+    {
+     "id": "G19",
+     "description": "reading period start is before its end",
+     "status": "pass",
+     "expected": "2026-08-31",
+     "actual": "2026-08-01",
+     "tolerance": null,
+     "paths": [
+      "period.reading_from",
+      "period.from",
+      "period.reading_to",
+      "period.to"
+     ]
+    },
+    {
+     "id": "G20",
+     "description": "a negative amount sits on a credit, rebate, arrear or adjustment line, or a line the layout marks signed",
+     "status": "pass",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": [
+      "line_items[0].amount",
+      "line_items[1].amount",
+      "line_items[2].amount",
+      "line_items[3].amount",
+      "line_items[4].amount",
+      "line_items[5].amount",
+      "line_items[6].amount",
+      "line_items[7].amount",
+      "line_items[8].amount"
+     ]
+    },
+    {
+     "id": "G21",
+     "description": "lines that itemise another printed line add up to it (a calculation or details table against its summary line)",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G22",
+     "description": "total consumption - open-access units set off = units billed by the discom (grid units)",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "T01",
+     "description": "each printed energy and TOD rate equals the version's param",
+     "status": "pass",
+     "expected": "-0.55",
+     "actual": "-0.55",
+     "tolerance": "0.0001",
+     "paths": [
+      "line_items[1].rate",
+      "line_items[2].rate",
+      "line_items[3].rate"
+     ]
+    },
+    {
+     "id": "T02",
+     "description": "demand charge = billing demand x the version's demand rate",
+     "status": "pass",
+     "expected": "1125000",
+     "actual": "1125000",
+     "tolerance": "1",
+     "paths": [
+      "line_items[0].amount",
+      "line_items[0].rate",
+      "demand.billing_kva"
+     ]
+    },
+    {
+     "id": "T03",
+     "description": "electricity duty and cess rates equal the version's params",
+     "status": "pass",
+     "expected": "0.5",
+     "actual": "0.5",
+     "tolerance": "0.0001",
+     "paths": [
+      "line_items[5].rate"
+     ]
+    },
+    {
+     "id": "T04",
+     "description": "the PF incentive or penalty falls in the version's band for the printed power factor",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "T05",
+     "description": "the fixed or minimum charge equals the version's rate or amount",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "R:pvvnl.electricity_duty",
+     "description": "electricity duty = ED rate x total kVAh",
+     "status": "pass",
+     "expected": "1029510",
+     "actual": "1029510",
+     "tolerance": "1",
+     "paths": [
+      "line_items[5].amount",
+      "meters[7].gross_units"
+     ]
+    },
+    {
+     "id": "R:pvvnl.tod_surcharge",
+     "description": "TOD surcharge = rate x TOD-3 kVAh",
+     "status": "pass",
+     "expected": "544500",
+     "actual": "544500",
+     "tolerance": "1",
+     "paths": [
+      "line_items[2].amount",
+      "meters[6].gross_units"
+     ]
+    },
+    {
+     "id": "R:pvvnl.tod_rebate",
+     "description": "TOD rebate = rate x TOD-1 kVAh (negative)",
+     "status": "pass",
+     "expected": "-425700",
+     "actual": "-425700",
+     "tolerance": "1",
+     "paths": [
+      "line_items[3].amount",
+      "meters[4].gross_units"
+     ]
+    }
+   ],
+   "passed": false,
+   "unread_reason": null,
+   "notes": [],
+   "status": "needs_review",
+   "review_reasons": [
+    "disputed:energy.kwh",
+    "unverified:demand.max_kva",
+    "unverified:energy.tod"
+   ],
+   "flags": [],
+   "accepted": false,
+   "accepted_by": null,
+   "proof_rule_version": "2",
+   "routes_used": [
+    "text_layer",
+    "local_ocr",
+    "model_a",
+    "model_b"
+   ],
+   "document_type": "electricity_bill",
+   "audit_status": "not_audited",
+   "elements": [
+    {
+     "index": 0,
+     "label": "DEMAND CHARGE",
+     "group": null,
+     "kind": "item",
+     "stage": "current",
+     "code": "demand_charge",
+     "quantity": "3750",
+     "rate": "300",
+     "unit": "kVA",
+     "tod_slot": null,
+     "amount": {
+      "value": "1125000",
+      "unit": "INR",
+      "printed": "1125000.00",
+      "page": null,
+      "region": null,
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a",
+       "model_b"
+      ]
+     },
+     "formula_recheck": {
+      "status": "match",
+      "computed": "1125000",
+      "billed": "1125000",
+      "difference": "0",
+      "reason": null,
+      "formula": "quantity x rate"
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    },
+    {
+     "index": 1,
+     "label": "ENERGY CHARGE",
+     "group": null,
+     "kind": "item",
+     "stage": "current",
+     "code": "energy_charge",
+     "quantity": "2059020",
+     "rate": "7.1",
+     "unit": "kVAh",
+     "tod_slot": null,
+     "amount": {
+      "value": "14619042",
+      "unit": "INR",
+      "printed": "14619042.00",
+      "page": null,
+      "region": null,
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a",
+       "model_b"
+      ]
+     },
+     "formula_recheck": {
+      "status": "match",
+      "computed": "14619042",
+      "billed": "14619042",
+      "difference": "0",
+      "reason": null,
+      "formula": "quantity x rate"
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    },
+    {
+     "index": 2,
+     "label": "TOD SURCHARGE(TOD-3)",
+     "group": null,
+     "kind": "item",
+     "stage": "current",
+     "code": "tod_surcharge",
+     "quantity": "495000",
+     "rate": "1.1",
+     "unit": "kVAh",
+     "tod_slot": null,
+     "amount": {
+      "value": "544500",
+      "unit": "INR",
+      "printed": "544500.00",
+      "page": null,
+      "region": null,
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a",
+       "model_b"
+      ]
+     },
+     "formula_recheck": {
+      "status": "match",
+      "computed": "544500",
+      "billed": "544500",
+      "difference": "0",
+      "reason": null,
+      "formula": "quantity x rate"
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    },
+    {
+     "index": 3,
+     "label": "TOD REBATE(TOD-1)",
+     "group": null,
+     "kind": "item",
+     "stage": "current",
+     "code": "tod_rebate",
+     "quantity": "774000",
+     "rate": "-0.55",
+     "unit": "kVAh",
+     "tod_slot": null,
+     "amount": {
+      "value": "-425700",
+      "unit": "INR",
+      "printed": "-425700.00",
+      "page": null,
+      "region": null,
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a",
+       "model_b"
+      ]
+     },
+     "formula_recheck": {
+      "status": "match",
+      "computed": "425700",
+      "billed": "425700",
+      "difference": "0",
+      "reason": null,
+      "formula": "quantity x rate"
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    },
+    {
+     "index": 4,
+     "label": "FPPCA",
+     "group": null,
+     "kind": "item",
+     "stage": "current",
+     "code": "fppca",
+     "quantity": "2059020",
+     "rate": "0.18",
+     "unit": "kVAh",
+     "tod_slot": null,
+     "amount": {
+      "value": "370623.6",
+      "unit": "INR",
+      "printed": "370623.60",
+      "page": null,
+      "region": null,
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a",
+       "model_b"
+      ]
+     },
+     "formula_recheck": {
+      "status": "match",
+      "computed": "370623.6",
+      "billed": "370623.6",
+      "difference": "0",
+      "reason": null,
+      "formula": "quantity x rate"
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    },
+    {
+     "index": 5,
+     "label": "ELECTRICITY DUTY",
+     "group": null,
+     "kind": "item",
+     "stage": "current",
+     "code": "electricity_duty",
+     "quantity": "2059020",
+     "rate": "0.5",
+     "unit": "kVAh",
+     "tod_slot": null,
+     "amount": {
+      "value": "1029510",
+      "unit": "INR",
+      "printed": "1029510.00",
+      "page": null,
+      "region": null,
+      "source": "ocr",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr",
+       "model_a",
+       "model_b"
+      ]
+     },
+     "formula_recheck": {
+      "status": "match",
+      "computed": "1029510",
+      "billed": "1029510",
+      "difference": "0",
+      "reason": null,
+      "formula": "quantity x rate"
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    },
+    {
+     "index": 6,
+     "label": "CURRENT CHARGES(A)",
+     "group": null,
+     "kind": "subtotal",
+     "stage": "current",
+     "code": "other",
+     "quantity": null,
+     "rate": null,
+     "unit": null,
+     "tod_slot": null,
+     "amount": {
+      "value": "17262975.6",
+      "unit": "INR",
+      "printed": "17262975.60",
+      "page": null,
+      "region": null,
+      "source": "model",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "model_a",
+       "model_b"
+      ]
+     },
+     "formula_recheck": {
+      "status": "not_computable",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "reason": "subtotal",
+      "formula": null
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    },
+    {
+     "index": 7,
+     "label": "ARREARS(B)",
+     "group": null,
+     "kind": "item",
+     "stage": "arrear",
+     "code": "arrears",
+     "quantity": null,
+     "rate": null,
+     "unit": null,
+     "tod_slot": null,
+     "amount": {
+      "value": "567260.4",
+      "unit": "INR",
+      "printed": "567260.40",
+      "page": null,
+      "region": null,
+      "source": "model",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "model_a",
+       "model_b"
+      ]
+     },
+     "formula_recheck": {
+      "status": "not_computable",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "reason": "no_quantity_or_rate",
+      "formula": null
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    },
+    {
+     "index": 8,
+     "label": "NET PAYABLE(A+B)",
+     "group": null,
+     "kind": "subtotal",
+     "stage": "current",
+     "code": "other",
+     "quantity": null,
+     "rate": null,
+     "unit": null,
+     "tod_slot": null,
+     "amount": {
+      "value": "17830236",
+      "unit": "INR",
+      "printed": "1,78,30,236.00",
+      "page": null,
+      "region": null,
+      "source": "model",
+      "verification": "verified",
+      "proof": [
+       "consensus"
+      ],
+      "readers": [
+       "model_a",
+       "model_b"
+      ]
+     },
+     "formula_recheck": {
+      "status": "not_computable",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "reason": "subtotal",
+      "formula": null
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    }
+   ],
+   "tariff_recheck": {
+    "status": "not_computable",
+    "reason": "tariff_engine_pending",
+    "elements": [
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     },
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     },
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     },
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     },
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     },
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     },
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     },
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     },
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    ]
+   },
+   "insights": []
+  }
+ ],
+ "usage": [
+  {
+   "provider": "openai",
+   "model": "openai:replay",
+   "purpose": "bill_read",
+   "input_tokens": 10,
+   "output_tokens": 5,
+   "cost_usd": "0.01"
+  },
+  {
+   "provider": "anthropic",
+   "model": "anthropic:replay",
+   "purpose": "bill_read",
+   "input_tokens": 10,
+   "output_tokens": 5,
+   "cost_usd": "0.01"
+  }
+ ],
+ "seconds": "0.147"
+}

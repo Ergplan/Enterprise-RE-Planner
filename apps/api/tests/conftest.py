@@ -17,6 +17,15 @@ from sqlalchemy import text
 from ergplan.db.base import get_engine
 
 APP_TABLES = [
+    "bill_confirmations",
+    "load_profiles",
+    "assets",
+    "bills",
+    "connections",
+    "sites",
+    "clients",
+    "price_series",
+    "price_vintages",
     "model_calls",
     "source_documents",
     "rule_test_runs",
