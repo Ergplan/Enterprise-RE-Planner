@@ -32,6 +32,9 @@ class Unit(StrEnum):
     HOURS = "hours"
     RATIO = "ratio"
     COUNT = "count"
+    YEARS = "years"
+    TCO2 = "tCO2"
+    TCO2_PER_MWH = "tCO2/MWh"
 
 
 class IncompatibleUnits(ValueError):

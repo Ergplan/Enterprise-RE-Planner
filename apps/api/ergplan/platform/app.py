@@ -10,7 +10,7 @@ from sqlalchemy import text
 
 from ..core.settings import get_settings
 from ..db.base import session_scope
-from .routers import cost, documents, intake, landed, prices, regreader, rulebooks, settle
+from .routers import cost, documents, intake, landed, prices, regreader, rulebooks, runs, settle
 
 
 def create_app() -> FastAPI:
@@ -37,6 +37,7 @@ def create_app() -> FastAPI:
     app.include_router(prices.router)
     app.include_router(cost.router)
     app.include_router(settle.router)
+    app.include_router(runs.router)
     return app
 
 

@@ -29,5 +29,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: All watcher checks
         run: python3 tools/watch/watch.py --once
+      - name: 15-minute site solves (Stage 6)
+        working-directory: apps/api
+        run: .venv/bin/pytest -m slow -q
       - if: always()
         run: cat tools/watch/status.json || true

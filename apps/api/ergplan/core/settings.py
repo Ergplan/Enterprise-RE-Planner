@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     ergplan_data_dir: Path = Field(default=REPO_ROOT / "data")
     ergplan_public_url: str = "http://localhost:3000"
     ergplan_resettle_tolerance_kwh: Decimal = Decimal("1")
+    ergplan_optimizer_time_limit_s: float = 110.0
+    ergplan_optimizer_mip_gap: float = 0.001
     ergplan_secret: str = "dev-secret-change-me"
 
     billx_url: str = "http://localhost:8080"

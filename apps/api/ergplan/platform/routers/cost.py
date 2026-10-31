@@ -24,6 +24,7 @@ from ...engine.gaps import GAPS
 from ...intake import bills as bill_store
 from ...intake import profile_synthesis
 from ...rulebook import repository
+from ...rulebook.models import RuleView
 from ...rulebook.service import jurisdiction_chain
 
 router = APIRouter(tags=["cost"])
@@ -114,7 +115,10 @@ def _facts(s: Session, conn: Connection) -> escope.ConnectionFacts:
 
 
 def _rules_for(
-    s: Session, facts: escope.ConnectionFacts, as_of: date | None = None
+    s: Session,
+    facts: escope.ConnectionFacts,
+    as_of: date | None = None,
+    reader: Callable[[Session, str, list[str], date], list[RuleView]] = repository.approved_rules,
 ) -> Callable[[date], avoided_cost.MonthRules]:
     """Rules for a month. With `as_of`, the versions in force on that date (the tariff a plan faces)
     with the month choosing seasonal and ToD rows; without, the versions in force on the date itself
@@ -126,8 +130,8 @@ def _rules_for(
         if on not in cache:
             ctx = escope.context(facts, on)
             when = as_of or on
-            ts = repository.approved_rules(s, "tariff_schedule", chain, when)
-            td = repository.approved_rules(s, "tod_slots", chain, when)
+            ts = reader(s, "tariff_schedule", chain, when)
+            td = reader(s, "tod_slots", chain, when)
             cache[on] = avoided_cost.MonthRules(escope.first(ts, ctx, chain), escope.first(td, ctx, chain))
         return cache[on]
 

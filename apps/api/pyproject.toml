@@ -54,8 +54,9 @@ testpaths = ["tests"]
 markers = [
   "external: calls billx, OpenAI or Anthropic over the network; excluded from the watcher",
   "db: needs the Postgres test database",
+  "slow: 15-minute site solves (minutes); run by CI's site step and the stage end-to-end, not the watcher",
 ]
-addopts = "-m 'not external' -q"
+addopts = "-m 'not external and not slow' -q"
 asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff.lint.per-file-ignores]

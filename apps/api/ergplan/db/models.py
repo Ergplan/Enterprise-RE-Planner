@@ -343,3 +343,67 @@ class PricePoint(Base):
     segment: Mapped[str] = mapped_column(String(8), index=True)
     mcp_inr_per_mwh: Mapped[Decimal] = mapped_column(Numeric(12, 2))
     mcv_mw: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+
+
+# ---------------------------------------------------------------- Stage 6: scenarios and runs
+
+
+class Scenario(Base):
+    """What to size for a connection: candidate sources, price assumptions, sensitivity ranges."""
+
+    __tablename__ = "scenarios"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    site_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("sites.id", name="scenarios_site_fk"), index=True
+    )
+    connection_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("connections.id", name="scenarios_connection_fk"), index=True
+    )
+    name: Mapped[str] = mapped_column(Text)
+    spec: Mapped[dict[str, Any]] = mapped_column(JSONType)
+    created_by: Mapped[str] = mapped_column(String(128))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Run(Base):
+    """One solve of a scenario, with every pin needed to replay it (invariant 5). Audited."""
+
+    __tablename__ = "runs"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    scenario_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("scenarios.id", name="runs_scenario_fk"), index=True
+    )
+    status: Mapped[str] = mapped_column(String(16), default="queued")
+    resolution_min: Mapped[int] = mapped_column(Integer, default=15)
+    spec: Mapped[dict[str, Any]] = mapped_column(JSONType)  # the scenario spec as run
+    pins: Mapped[dict[str, Any]] = mapped_column(JSONType, default=dict)
+    solver: Mapped[dict[str, Any]] = mapped_column(JSONType, default=dict)
+    error: Mapped[str | None] = mapped_column(Text)
+    replay_of: Mapped[str | None] = mapped_column(String(36), ForeignKey("runs.id", name="runs_replay_fk"))
+    created_by: Mapped[str] = mapped_column(String(128))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        CheckConstraint(
+            "status in ('queued','running','done','failed','failed_resettle')", name="runs_status"
+        ),
+    )
+
+
+class RunResult(Base):
+    """A run's outputs: the client-facing summary (SourcedValues), the re-settlement check and the
+    settled dispatch (zlib-compressed JSON)."""
+
+    __tablename__ = "run_results"
+
+    run_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("runs.id", name="run_results_run_fk", ondelete="CASCADE"), primary_key=True
+    )
+    summary: Mapped[dict[str, Any]] = mapped_column(JSONType)
+    resettle: Mapped[dict[str, Any]] = mapped_column(JSONType)
+    dispatch: Mapped[bytes] = mapped_column(LargeBinary)
+    digest: Mapped[str] = mapped_column(String(64))  # sha256 of the canonical summary, for replay
