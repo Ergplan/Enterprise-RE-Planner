@@ -76,6 +76,17 @@ def test_logged_out_visitor_reads_the_plan(plan: dict[str, str]) -> None:
     assert client.post(f"/connections/{plan['conn']}/share", headers=CL).json()["token"] == plan["token"]
 
 
+def test_cached_plan_answers_under_a_second(plan: dict[str, str]) -> None:
+    """Stage 8 performance: a settled plan reads from stored results (no solve) in well under 1 s."""
+    import time
+
+    client.get(plan["path"])  # warm the approved-rule cache
+    t0 = time.perf_counter()
+    for _ in range(5):
+        assert client.get(plan["path"]).status_code == 200
+    assert (time.perf_counter() - t0) / 5 < 1.0
+
+
 def test_jouleWise_view_is_for_analysts_only(plan: dict[str, str]) -> None:
     assert client.get(plan["path"], params={"view": "analyst"}).status_code == 403
     assert client.get(plan["path"], params={"view": "analyst"}, headers=CL).status_code == 403

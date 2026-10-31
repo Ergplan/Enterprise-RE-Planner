@@ -42,11 +42,11 @@ discoms:
   - {id: aeml, name: Adani Electricity Mumbai Limited (Distribution), state: MH}
   - {id: tpcd, name: Tata Power Company Limited (Distribution), state: MH}
   - {id: best, name: BEST Undertaking, state: MH}
-  - {id: bescom, name: Bangalore Electricity Supply Company, state: KA}
-  - {id: mescom, name: Mangalore Electricity Supply Company, state: KA}
-  - {id: cesc, name: Chamundeshwari Electricity Supply Corporation, state: KA}
-  - {id: hescom, name: Hubli Electricity Supply Company, state: KA}
-  - {id: gescom, name: Gulbarga Electricity Supply Company, state: KA}
+  - {id: bescom, name: Bangalore Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
+  - {id: mescom, name: Mangalore Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
+  - {id: cesc, name: Chamundeshwari Electricity Supply Corporation Ltd., state: KA, parent: ka_escoms}
+  - {id: hescom, name: Hubli Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
+  - {id: gescom, name: Gulbarga Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
   - {id: mgvcl, name: Madhya Gujarat Vij Company Limited, state: GJ}
   - {id: ugvcl, name: Uttar Gujarat Vij Company Limited, state: GJ}
   - {id: dgvcl, name: Dakshin Gujarat Vij Company Limited, state: GJ}
@@ -54,27 +54,12 @@ discoms:
   - {id: jvvnl, name: Jaipur Vidyut Vitran Nigam Limited, state: RJ}
   - {id: avvnl, name: Ajmer Vidyut Vitran Nigam Limited, state: RJ}
   - {id: jdvvnl, name: Jodhpur Vidyut Vitran Nigam Limited, state: RJ}
-  - {id: tangedco, name: Tamil Nadu Power Distribution Corporation (TNPDCL), state: TN}
-  - {id: tgspdcl, name: Telangana Southern Power Distribution Company, state: TS}
-  - {id: apcpdcl, name: Andhra Pradesh Central Power Distribution Corporation, state: AP}
+  - {id: tgspdcl, name: Southern Power Distribution Company of Telangana Ltd., state: TS, parent: tg_discoms}
+  - {id: apcpdcl, name: A.P. Central Power Distribution Corporation Ltd., state: AP, parent: ap_discoms}
   - {id: pspcl, name: Punjab State Power Corporation Limited, state: PB}
   - {id: dhbvn, name: Dakshin Haryana Bijli Vitran Nigam, state: HR}
   - {id: uhbvn, name: Uttar Haryana Bijli Vitran Nigam, state: HR}
-  - {id: bescom, name: Bangalore Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
-  - {id: mescom, name: Mangalore Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
-  - {id: cesc, name: Chamundeshwari Electricity Supply Corporation Ltd., state: KA, parent: ka_escoms}
-  - {id: hescom, name: Hubli Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
-  - {id: gescom, name: Gulbarga Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
-  - {id: tgspdcl, name: Southern Power Distribution Company of Telangana Ltd., state: TS, parent: tg_discoms}
   - {id: tgnpdcl, name: Northern Power Distribution Company of Telangana Ltd., state: TS, parent: tg_discoms}
   - {id: apspdcl, name: Southern Power Distribution Company of A.P. Ltd., state: AP, parent: ap_discoms}
-  - {id: apcpdcl, name: A.P. Central Power Distribution Corporation Ltd., state: AP, parent: ap_discoms}
   - {id: apepdcl, name: Eastern Power Distribution Company of A.P. Ltd., state: AP, parent: ap_discoms}
   - {id: tnpdcl, name: Tamil Nadu Power Distribution Corporation Ltd., state: TN}
-  - {id: pspcl, name: Punjab State Power Corporation Ltd., state: PB}
-  - {id: mgvcl, name: Madhya Gujarat Vij Company Ltd., state: GJ}
-  - {id: uhbvn, name: Uttar Haryana Bijli Vitran Nigam Ltd., state: HR}
-  - {id: dhbvn, name: Dakshin Haryana Bijli Vitran Nigam Ltd., state: HR}
-  - {id: jvvnl, name: Jaipur Vidyut Vitran Nigam Ltd., state: RJ}
-  - {id: avvnl, name: Ajmer Vidyut Vitran Nigam Ltd., state: RJ}
-  - {id: jdvvnl, name: Jodhpur Vidyut Vitran Nigam Ltd., state: RJ}

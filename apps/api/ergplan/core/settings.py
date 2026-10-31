@@ -24,18 +24,15 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://ergplan:ergplan@localhost:5432/ergplan"
     ergplan_data_dir: Path = Field(default=REPO_ROOT / "data")
     ergplan_public_url: str = "http://localhost:3000"
-    ergplan_web_internal_url: str = "http://localhost:3000"
+    ergplan_web_internal_url: str = "http://localhost:3000"  # where the API reaches the web app (PDF)
     ergplan_analyst_domain: str = "joulewise.in"  # emails here sign in as analysts
     ergplan_analyst_emails: str = ""  # comma-separated, also analysts
     ergplan_smtp_url: str = ""  # smtp[s]://user:password@host:port; empty: links go to the log
-    ergplan_mail_from: str = (
-        "ergPLAN <no-reply@joulewise.in>"  # where the API reaches the web app (PDF export)
-    )
+    ergplan_mail_from: str = "ergPLAN <no-reply@joulewise.in>"
     ergplan_resettle_tolerance_kwh: Decimal = Decimal("1")
     ergplan_optimizer_time_limit_s: float = 110.0
     ergplan_optimizer_mip_gap: float = 0.001
     ergplan_worker_concurrency: int = 1  # runs solved at once by `python -m ergplan.platform.worker`
-    ergplan_secret: str = "dev-secret-change-me"
 
     billx_url: str = "http://localhost:8080"
     billx_token: str = ""

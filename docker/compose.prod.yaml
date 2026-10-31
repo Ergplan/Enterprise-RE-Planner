@@ -1,6 +1,6 @@
 # The VM (Stage 8): docker compose -f docker/compose.yaml -f docker/compose.prod.yaml up -d --build
 # Needs in .env: SITE_ADDRESS (the jouleWise hostname), ERGPLAN_PUBLIC_URL=https://<hostname>,
-# POSTGRES_PASSWORD, ERGPLAN_SECRET, OPENAI_API_KEY, BILLX_TOKEN, ERGPLAN_SMTP_URL, ERGPLAN_MAIL_FROM.
+# POSTGRES_PASSWORD, OPENAI_API_KEY, BILLX_TOKEN, ERGPLAN_SMTP_URL, ERGPLAN_MAIL_FROM.
 # Only Caddy is reachable from outside (80/443); everything else talks on the compose network.
 services:
   postgres:
