@@ -1,0 +1,26 @@
+{
+  "name": "ergplan-web",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "gen:api": "openapi-typescript ${API_OPENAPI:-http://localhost:8000/openapi.json} -o lib/api-types.ts"
+  },
+  "dependencies": {
+    "next": "15.5.4",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.18.6",
+    "@types/react": "19.1.13",
+    "@types/react-dom": "19.1.9",
+    "openapi-typescript": "7.9.1",
+    "typescript": "5.9.2",
+    "vitest": "3.2.4"
+  }
+}

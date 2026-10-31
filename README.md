@@ -27,6 +27,23 @@ See section 5.1 of `docs/MASTER-PROMPT.md`. In short: `apps/web` (Next.js, ergOS
 
 `packages/rulebooks/schemas/` holds the seven rule families (`tod_slots`, `tariff_schedule`, `oa_charge`, `settlement`, `regulatory_limit`, `ists_waiver`, `net_metering`) and `source_ref.schema.json`. `packages/rulebooks/golden/up/example-settlement.yaml` shows a rule row as an analyst sees it. Values in that file are illustrative, not a state's actual rule.
 
+## Run it on the Mac mini
+
+```bash
+git clone https://github.com/Ergplan/Enterprise-RE-Planner.git && cd Enterprise-RE-Planner
+cp .env.example .env                       # add OPENAI_API_KEY and BILLX_TOKEN
+BILLX_REPO=~/billx docker compose -f docker/compose.yaml up --build
+# register the regulation corpus (PDFs from ~/Downloads/India_DISCOM_Tariff_Orders_Final_2026)
+mkdir -p data/corpus && cp -R ~/Downloads/India_DISCOM_Tariff_Orders_Final_2026 data/corpus/
+docker compose -f docker/compose.yaml exec api python -m ergplan.documents.corpus --root /data/corpus/India_DISCOM_Tariff_Orders_Final_2026
+```
+
+Web http://localhost:3000 · API http://localhost:8000/docs.
+
+Without Docker: Postgres 16 on :5432 with role/db `ergplan`, then `cd apps/api && python3.12 -m venv .venv && .venv/bin/pip install -e ".[dev]" && .venv/bin/alembic upgrade head && .venv/bin/uvicorn ergplan.platform.app:app`, and `cd apps/web && pnpm install && pnpm dev`.
+
+Checks: `python3 tools/watch/watch.py` (watch) or `--once`. Review: `tools/review/run.sh N`.
+
 ## Status
 
-Stage 0 not yet run. Nothing deployable yet.
+Stage 0 done (see `docs/stage-reports/stage-0.md`).

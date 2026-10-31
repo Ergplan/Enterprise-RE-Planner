@@ -1,0 +1,10 @@
+# Local: http://localhost. On the VM (Stage 8) replace :80 with the jouleWise hostname for automatic TLS.
+:80 {
+	handle /api/* {
+		uri strip_prefix /api
+		reverse_proxy api:8000
+	}
+	handle {
+		reverse_proxy web:3000
+	}
+}

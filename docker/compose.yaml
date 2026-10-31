@@ -1,0 +1,62 @@
+# ergPLAN on the Mac mini (Docker Desktop, Apple silicon) or the VM.
+#   cp .env.example .env            # fill keys
+#   docker compose -f docker/compose.yaml up --build
+# Web http://localhost:3000 · API http://localhost:8000 · through Caddy http://localhost:8080
+# billx is built from your billx checkout: BILLX_REPO (default ../../billx, i.e. a sibling of this repo).
+name: ergplan
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ergplan}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ergplan}
+      POSTGRES_DB: ${POSTGRES_DB:-ergplan}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    ports: ["${POSTGRES_PORT:-5432}:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ergplan}"]
+      interval: 5s
+      retries: 20
+
+  api:
+    build: { context: .., dockerfile: docker/api.Dockerfile }
+    env_file: ../.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-ergplan}:${POSTGRES_PASSWORD:-ergplan}@postgres:5432/${POSTGRES_DB:-ergplan}
+      ERGPLAN_DATA_DIR: /data
+      BILLX_URL: http://billx:8080
+    volumes: ["../data:/data"]
+    ports: ["${API_PORT:-8000}:8000"]
+    depends_on: { postgres: { condition: service_healthy } }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      retries: 12
+
+  web:
+    build: { context: .., dockerfile: docker/web.Dockerfile }
+    environment:
+      API_URL: http://api:8000
+    ports: ["${WEB_PORT:-3000}:3000"]
+    depends_on: { api: { condition: service_healthy } }
+
+  billx:
+    build: { context: "${BILLX_REPO:-../../billx}", dockerfile: docker/engine.Dockerfile }
+    environment:
+      BILLX_TOKEN: ${BILLX_TOKEN}
+      BILLX_API_MODE: esgos-1.1
+      BILLX_DATA_DIR: /data
+      BILLX_OPENAI_API_KEY: ${BILLX_OPENAI_API_KEY:-}
+    ports: ["${BILLX_PORT:-8081}:8080"]
+    volumes: [billxdata:/data]
+
+  caddy:
+    image: caddy:2
+    volumes: ["./caddy/Caddyfile:/etc/caddy/Caddyfile:ro"]
+    ports: ["${CADDY_PORT:-8080}:80"]
+    depends_on: [web, api]
+
+volumes:
+  pgdata:
+  billxdata:

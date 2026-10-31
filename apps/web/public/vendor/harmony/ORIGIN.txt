@@ -1,0 +1,2 @@
+Vendored from github.com/Ergplan/designsystem @ d00bc9a (design-system/tokens/tokens.css, harmony.css, harmony.js, harmony.d.ts; assets/logo/*).
+Do not edit here: change the design system upstream and re-copy with tools/dev/sync-harmony.sh.

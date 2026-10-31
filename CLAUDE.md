@@ -54,13 +54,16 @@ Not reopened unless analysis of the codebase shows something materially better, 
 | Rule authoring | Form editor in the analyst UI + YAML import/export of a whole jurisdiction; the regulation reader proposes drafts from PDFs with page citations | Analysts work in forms or files; the LLM never approves |
 | Bill reading | billx container (its `docker/engine.Dockerfile`, image tag pinned in compose), API mode `esgos-1.1`, `wait: true` | Already built; ergPLAN is its second consumer |
 | Voice | OpenAI Realtime API (WebRTC from the browser with an ephemeral token minted by the API); the voice calls typed tools that fill `SiteIntake` or run a what-if | Voice is a mouth, not a mind |
-| Regulation reading | Anthropic model through `providers/`, prompt-versioned, output is draft rule rows each with `page` and `quote` | Different family from the voice; reviewed by a person |
+| Model provider for the app | OpenAI only (regulation reader, explanations, voice, reviewer), keys in `.env`. No Anthropic API key is used; Claude is the builder on the subscription only | Decision of 31 Oct 2026 |
+| Tariff-order extraction | `Ergplan/tariff-oder` is the upstream pipeline for tariff orders (retail schedule, wheeling, OA loss, CSS, additional surcharge, banking, green tariff). `regreader/tariff_oder.py` imports its published facts (API `/explorer/sources/{id}/tariff` and `/network`, or its `export.zip`) and maps them to draft rule rows; its evidence (PDF page, printed page, excerpt) becomes the `source_ref`. Documents are matched by SHA-256 | Reviewed extraction already exists; ergPLAN does not rebuild it |
+| Regulation reading (fallback) | `regreader/direct.py` reads pages tariff-oder does not cover (OA and banking regulations, GEOA rules, CERC sharing and waiver orders) with an OpenAI model through `providers/`, prompt-versioned; every proposed row's `quote` must be found verbatim (whitespace-normalised) in that page's text layer or the row is rejected (grounding check). Page ranges come from `packages/rulebooks/corpus/tariff-library.json` | Reviewed by a person; never approves |
+| Document corpus | The regulation PDFs on the Mac mini (`~/Downloads/India_DISCOM_Tariff_Orders_Final_2026`, `~/Downloads/Tariff Orders`, `Banking Rule - Uttar Pradesh.pdf`) are registered into `source_documents` with their regulator URL (`url_public`) from the library index; the app stores and serves the PDF itself | The client sees both the stored page and the regulator's link |
 | Prices | IEX CSVs uploaded by an analyst in the app; parsed by `intake/iex_loader.py` into `price_series` with a `vintage` | jouleWise has the CSVs |
 | Load profiles | Synthesised from 12 bills using `packages/profiles/` shapes, exactly matching monthly kWh, ToD split and recorded MD; measured 15-minute upload when it exists | Most clients have only bills |
 | Reports | Live shareable plan link `/p/{token}` with voice what-if; jouleWise analyst view toggle; PDF export via headless Chromium of the same page | One page, three audiences |
 | Deployment | Docker Compose: `web`, `api`, `worker`, `postgres`, `billx`, `caddy`; laptop until Stage 5, then a Google Cloud VM in `asia-south2` | Same shape as houseoframa |
 | Access (until Stage 8) | Email magic link; roles `analyst` and `client`; share links by token | Speed now, security at launch |
-| Builder and reviewer | Claude Code builds; `tools/review/run.sh` reviews with an OpenAI model | Different families, different blind spots |
+| Builder and reviewer | Claude Code builds (subscription); `tools/review/run.sh` reviews with an OpenAI model (`REVIEWER_MODEL`) | Different families, different blind spots |
 | Test data | Synthetic bills from billx's `contract/examples`; two real anonymised bills per DISCOM supplied by the person into `data/bills/` (gitignored) | Real layouts without real names in git |
 | Tie-break | Regulatory traceability beats speed | Rule 13 |
 
@@ -94,7 +97,7 @@ Enterprise-RE-Planner/
         db/                      engine, session, models (SQLAlchemy), views, triggers (SQL files)
         documents/               source PDFs: storage, sha256, page serving at /documents/{id}#page=N
         rulebook/                schemas loader, models, repository (approved_rules), service (propose/approve), sandbox, yaml_io, golden
-        regreader/               regulation PDF → draft rule rows with page + quote (uses providers/)
+        regreader/               tariff_oder.py (import published facts), direct.py (OpenAI reader + grounding check) → draft rule rows
         providers/               THE ONLY package importing model SDKs; prompts/ versioned; model_calls log
         intake/                  billx_client, site_intake, profile_synthesis, iex_loader, measured_upload
         engine/                  tariff_eval (bill replay, avoided cost), landed_cost, waterfall, scope (applicability) — pure
@@ -109,6 +112,7 @@ Enterprise-RE-Planner/
       schemas/                   JSON Schema per rule family + source_ref.schema.json (committed in this repo at Stage 0)
       states/<state>/<family>/<version>.yaml   exported approved rulebooks (regenerated by yaml_io; CI checks drift)
       golden/<state>/*.yaml      golden test cases per jurisdiction
+      corpus/                    tariff-library.json: the regulation corpus index (path, regulator URL, schedule page ranges)
     profiles/
       shapes/                    industry load shapes (15-min, normalised) with provenance notes
       cuf/                       solar and wind hourly CUF curves by state and technology

@@ -1,0 +1,219 @@
+/* ergOS Harmony — generated from tokens.json by tools/build-design-system.mjs. Do not edit. */
+
+:root, [data-theme="dark"] {
+  --charcoal: #000B1A;
+  --harmony: #68E78E;
+  --white: #FFFFFF;
+  --canvas: #000B1A;
+  --surface: #0B1722;
+  --surface-2: #13202B;
+  --glass: rgba(255,255,255,0.055);
+  --glass-strong: rgba(255,255,255,0.10);
+  --line: rgba(255,255,255,0.09);
+  --line-strong: rgba(255,255,255,0.20);
+  --ink: #F2F6F3;
+  --ink-muted: #9DABA6;
+  --ink-faint: #5E6C68;
+  --accent: #68E78E;
+  --accent-soft: rgba(104,231,142,0.13);
+  --on-accent: #03200E;
+  --folder-hi: #418F59;
+  --folder: #2B7445;
+  --folder-deep: #1F5A35;
+  --on-folder: #FFFFFF;
+  --on-folder-muted: #E0F1E5;
+  --glow: rgba(104,231,142,0.32);
+  --positive: #68E78E;
+  --negative: #FF8F7E;
+  --warning: #F2C46B;
+  --negative-soft: rgba(255,143,126,0.13);
+  --warning-soft: rgba(242,196,107,0.13);
+  --series-grid: #E9B872;
+  --series-iex: #68E78E;
+  --series-solar: #F3E37C;
+  --series-battery: #7CC8F0;
+  --series-gov: #B9A8F2;
+  --series-wind: #8FE3D2;
+  --series-hydro: #6E9CF7;
+  --volt-hydro: #5F7F5B;
+  --volt-wind: #93A88A;
+  --volt-solar: #F2E48A;
+  --volt-iex: #DDF24B;
+  --volt-grid: #C9D1BC;
+  --volt-battery: #A8C26A;
+  --volt-gov: #E6EFC4;
+  --verdant-hydro: #1F5A35;
+  --verdant-wind: #2E7A49;
+  --verdant-solar: #46A064;
+  --verdant-iex: #68E78E;
+  --verdant-grid: #B5E6C3;
+  --verdant-battery: #3FBF7A;
+  --verdant-gov: #D7F5E0;
+  --aurora-hydro: #5A8DF0;
+  --aurora-wind: #7FE3E0;
+  --aurora-solar: #FFD37A;
+  --aurora-iex: #68E78E;
+  --aurora-grid: #A3AECB;
+  --aurora-battery: #B9A8F2;
+  --aurora-gov: #F29CC6;
+  --series-demand: #F2F6F3;
+  --focus-ring: #68E78E;
+  --shadow-edge: inset 0 1px 0 rgba(255,255,255,0.10);
+  --shadow-float: 0 24px 60px -20px rgba(0,0,0,0.65);
+  --shadow-glow: 0 10px 40px -8px rgba(104,231,142,0.45);
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --charcoal: #000B1A;
+  --harmony: #68E78E;
+  --white: #FFFFFF;
+  --canvas: #EEF2EC;
+  --surface: #FFFFFF;
+  --surface-2: #F5F8F3;
+  --glass: rgba(255,255,255,0.72);
+  --glass-strong: rgba(255,255,255,0.92);
+  --line: rgba(0,11,26,0.09);
+  --line-strong: rgba(0,11,26,0.22);
+  --ink: #000B1A;
+  --ink-muted: #4A5955;
+  --ink-faint: #8C9894;
+  --accent: #12723A;
+  --accent-soft: #DCF3E2;
+  --on-accent: #FFFFFF;
+  --folder-hi: #418F59;
+  --folder: #2B7445;
+  --folder-deep: #1F5A35;
+  --on-folder: #FFFFFF;
+  --on-folder-muted: #E0F1E5;
+  --glow: rgba(46,160,90,0.22);
+  --positive: #12723A;
+  --negative: #B8392A;
+  --warning: #94600A;
+  --negative-soft: #FBE4DF;
+  --warning-soft: #F8EDD4;
+  --series-grid: #A35F0A;
+  --series-iex: #178A44;
+  --series-solar: #8A7400;
+  --series-battery: #1C78AE;
+  --series-gov: #6E55C4;
+  --series-wind: #0E7F72;
+  --series-hydro: #2457B8;
+  --volt-hydro: #3E5A3A;
+  --volt-wind: #5E6E55;
+  --volt-solar: #857100;
+  --volt-iex: #5F7000;
+  --volt-grid: #4C5544;
+  --volt-battery: #56702A;
+  --volt-gov: #6F7752;
+  --verdant-hydro: #0E3D22;
+  --verdant-wind: #1B5A33;
+  --verdant-solar: #2B7445;
+  --verdant-iex: #178A44;
+  --verdant-grid: #7FB892;
+  --verdant-battery: #34A060;
+  --verdant-gov: #A9D4B5;
+  --aurora-hydro: #1F5FB8;
+  --aurora-wind: #0F7F7B;
+  --aurora-solar: #946500;
+  --aurora-iex: #178A44;
+  --aurora-grid: #56617D;
+  --aurora-battery: #6E55C4;
+  --aurora-gov: #B23F7A;
+  --series-demand: #000B1A;
+  --focus-ring: #12723A;
+  --shadow-edge: inset 0 1px 0 rgba(255,255,255,0.9);
+  --shadow-float: 0 24px 60px -24px rgba(0,40,20,0.22);
+  --shadow-glow: 0 10px 36px -10px rgba(30,138,69,0.40);
+  color-scheme: light;
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-14: 56px;
+  --radius-xs: 8px;
+  --radius-sm: 14px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-xl: 36px;
+  --radius-pill: 999px;
+  --blur-glass: blur(22px) saturate(140%);
+  --blur-sheet: blur(2px);
+  --font-display: Urbanist, "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-sans: Urbanist, "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* Type styles: class="eg-type-<style>" */
+.eg-type-display-xl {
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 64px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+.eg-type-display {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 48px;
+  font-weight: 300;
+  letter-spacing: -0.015em;
+}
+.eg-type-metric {
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 36px;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+.eg-type-title {
+  font-family: var(--font-sans);
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: 400;
+}
+.eg-type-heading {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 500;
+}
+.eg-type-body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 400;
+}
+.eg-type-label {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+}
+.eg-type-caption {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+}
+.eg-type-overline {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.eg-type-code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}

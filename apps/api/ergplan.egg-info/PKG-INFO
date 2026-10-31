@@ -1,0 +1,28 @@
+Metadata-Version: 2.4
+Name: ergplan
+Version: 0.0.0
+Summary: jouleWise | ergPLAN — RE sizing and landed cost engine for Indian industrial consumers
+Requires-Python: >=3.12
+Requires-Dist: fastapi==0.162.0
+Requires-Dist: uvicorn[standard]>=0.34
+Requires-Dist: pydantic==2.14.2
+Requires-Dist: pydantic-settings>=2.6
+Requires-Dist: sqlalchemy==2.1.6
+Requires-Dist: alembic==1.20.1
+Requires-Dist: psycopg[binary]==3.3.6
+Requires-Dist: python-multipart>=0.0.20
+Requires-Dist: pypdfium2==5.14.0
+Requires-Dist: pdfplumber==0.11.10
+Requires-Dist: jsonschema>=4.23
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: httpx>=0.28
+Requires-Dist: pyomo==6.10.1
+Requires-Dist: highspy==1.15.1
+Requires-Dist: anthropic==2.3.0
+Requires-Dist: openai==3.42.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.24; extra == "dev"
+Requires-Dist: ruff==0.17.3; extra == "dev"
+Requires-Dist: mypy==2.4.1; extra == "dev"
+Requires-Dist: types-PyYAML; extra == "dev"
