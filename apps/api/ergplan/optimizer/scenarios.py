@@ -94,3 +94,48 @@ def payback_years(capex: Decimal, yearly_cash: Decimal) -> Decimal | None:
 def reprice(lines: dict[str, Decimal], line: str, pct: Decimal) -> Decimal:
     """The year's total cost with one cost line scaled by pct (energy quantities held)."""
     return sum(lines.values(), Decimal(0)) + lines.get(line, Decimal(0)) * pct / 100
+
+
+def standard(as_of: date, resolution_min: int = 15) -> list[tuple[str, ScenarioSpec]]:
+    """The three scenarios a client gets without an analyst: captive solar; third-party hybrid with a
+    battery; rooftop, captive solar and a battery."""
+    base: dict[str, object] = {"as_of": as_of, "resolution_min": resolution_min}
+    return [
+        (
+            "Captive solar",
+            ScenarioSpec.model_validate(
+                {
+                    **base,
+                    "candidates": [{"kind": "oa_solar_intra", "ownership": "captive"}],
+                    "sensitivities": [{"kind": "price", "candidate": "oa_solar_intra"}],
+                }
+            ),
+        ),
+        (
+            "Hybrid + battery",
+            ScenarioSpec.model_validate(
+                {
+                    **base,
+                    "candidates": [
+                        {"kind": "oa_hybrid_intra", "ownership": "third_party"},
+                        {"kind": "btm_bess"},
+                    ],
+                    "sensitivities": [{"kind": "price", "candidate": "oa_hybrid_intra"}],
+                }
+            ),
+        ),
+        (
+            "Rooftop + solar + battery",
+            ScenarioSpec.model_validate(
+                {
+                    **base,
+                    "candidates": [
+                        {"kind": "rooftop_pv"},
+                        {"kind": "oa_solar_intra", "ownership": "captive"},
+                        {"kind": "btm_bess"},
+                    ],
+                    "sensitivities": [{"kind": "grid_rate", "pct": ["-5", "5"]}],
+                }
+            ),
+        ),
+    ]

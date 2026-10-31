@@ -17,6 +17,11 @@ from sqlalchemy import text
 from ergplan.db.base import get_engine
 
 APP_TABLES = [
+    "explanations",
+    "share_links",
+    "run_results",
+    "runs",
+    "scenarios",
     "bill_confirmations",
     "load_profiles",
     "assets",

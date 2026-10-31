@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://ergplan:ergplan@localhost:5432/ergplan"
     ergplan_data_dir: Path = Field(default=REPO_ROOT / "data")
     ergplan_public_url: str = "http://localhost:3000"
+    ergplan_web_internal_url: str = "http://localhost:3000"  # where the API reaches the web app (PDF export)
+    ergplan_chromium: str = ""  # path to Chromium for PDF export; found on PATH when empty
     ergplan_resettle_tolerance_kwh: Decimal = Decimal("1")
     ergplan_optimizer_time_limit_s: float = 110.0
     ergplan_optimizer_mip_gap: float = 0.001

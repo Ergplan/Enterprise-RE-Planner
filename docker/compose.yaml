@@ -25,6 +25,7 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-ergplan}:${POSTGRES_PASSWORD:-ergplan}@postgres:5432/${POSTGRES_DB:-ergplan}
       ERGPLAN_DATA_DIR: /data
+      ERGPLAN_WEB_INTERNAL_URL: http://web:3000
       BILLX_URL: http://billx:8080
     volumes: ["../data:/data"]
     ports: ["${API_PORT:-8000}:8000"]

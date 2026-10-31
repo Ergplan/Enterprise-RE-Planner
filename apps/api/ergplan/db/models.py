@@ -407,3 +407,32 @@ class RunResult(Base):
     resettle: Mapped[dict[str, Any]] = mapped_column(JSONType)
     dispatch: Mapped[bytes] = mapped_column(LargeBinary)
     digest: Mapped[str] = mapped_column(String(64))  # sha256 of the canonical summary, for replay
+
+
+# ---------------------------------------------------------------- Stage 7: live plan
+
+
+class ShareLink(Base):
+    """An unguessable token that opens a site's live plan (/p/{token}) without logging in (rule 12)."""
+
+    __tablename__ = "share_links"
+
+    token: Mapped[str] = mapped_column(String(64), primary_key=True)
+    connection_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("connections.id", name="share_links_connection_fk"), index=True
+    )
+    created_by: Mapped[str] = mapped_column(String(128))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class Explanation(Base):
+    """A short English explanation drafted by the model from SourcedValues only, cached by input."""
+
+    __tablename__ = "explanations"
+
+    key: Mapped[str] = mapped_column(String(64), primary_key=True)  # sha256 of prompt + input
+    prompt: Mapped[str] = mapped_column(String(64))
+    text: Mapped[str] = mapped_column(Text)
+    model_call_id: Mapped[str | None] = mapped_column(String(36))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
