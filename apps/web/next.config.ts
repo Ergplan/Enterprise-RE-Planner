@@ -6,6 +6,8 @@ const API_URL = process.env.API_URL ?? "http://localhost:8000";
 
 const config: NextConfig = {
   output: "standalone",
+  // A bill takes billx one to three minutes to read; the /api proxy must wait for it.
+  experimental: { proxyTimeout: 600_000 },
   async rewrites() {
     return [{ source: "/api/:path*", destination: `${API_URL}/:path*` }];
   },

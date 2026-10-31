@@ -294,6 +294,20 @@ def get_connection(connection_id: str) -> ConnectionOut:
         )
 
 
+@router.get("/connections/{connection_id}/intake", response_model=site_intake.SiteIntake)
+def get_intake(connection_id: str) -> site_intake.SiteIntake:
+    """The intake the latest synthesised profile was built from, for step 4 to edit and rebuild."""
+    with session_scope() as s:
+        p = s.scalars(
+            select(LoadProfile)
+            .where(LoadProfile.connection_id == connection_id, LoadProfile.provenance == "synthesised")
+            .order_by(LoadProfile.version.desc())
+        ).first()
+        if p is None or "intake" not in p.method:
+            raise HTTPException(404, "no intake recorded for this connection")
+        return site_intake.SiteIntake.model_validate(p.method["intake"])
+
+
 def _refs(entry: dict[str, Any] | None, fallback: str) -> tuple[SourceRef, ...]:
     if entry and entry.get("source_ref"):
         d = {k: v for k, v in entry["source_ref"].items() if k != "url"}
@@ -308,7 +322,7 @@ def _profile_out(p: LoadProfile) -> ProfileOut:
     inputs = {m["month"]: m for m in (p.method.get("inputs") or {}).get("months", [])}
     reports = {r["month"]: r for r in p.method.get("months", [])}
     i = 0
-    best: tuple[Decimal, int] = (Decimal(-1), 0)
+    best: tuple[bool, Decimal, int] = (False, Decimal(-1), 0)  # prefer a billed month for the chart
     for m in range(12):
         y, mo = p.year_start.year + (p.year_start.month - 1 + m) // 12, (p.year_start.month - 1 + m) % 12 + 1
         first = date(y, mo, 1)
@@ -316,8 +330,9 @@ def _profile_out(p: LoadProfile) -> ProfileOut:
         seg = kw[i : i + n]
         energy = (sum(seg, Decimal(0)) * Decimal("0.25")).quantize(Decimal("0.001"))
         peak = max(seg) if seg else Decimal(0)
-        if energy > best[0]:
-            best = (energy, i)
+        billed = p.provenance == "measured" or not reports.get(first.isoformat(), {}).get("extrapolated")
+        if (billed, energy) > best[:2]:
+            best = (billed, energy, i)
         rep = reports.get(first.isoformat(), {})
         if p.provenance == "measured":
             mref: tuple[SourceRef, ...] = (
@@ -355,7 +370,7 @@ def _profile_out(p: LoadProfile) -> ProfileOut:
             )
         )
         i += n
-    start = best[1]
+    start = best[2]
     week = [f"{v:.1f}" for v in kw[start : start + 7 * 96]]
     return ProfileOut(
         id=p.id,

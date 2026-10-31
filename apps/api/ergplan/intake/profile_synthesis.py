@@ -263,6 +263,8 @@ def synthesise_year(
     start = year_start or date(first.year if first.month >= 4 else first.year - 1, 4, 1)
     daily = [float(m.kwh) / calendar.monthrange(m.month.year, m.month.month)[1] for m in months]
     mean_daily = sum(daily) / len(daily)
+    mds = [m.max_kva * (m.power_factor or Decimal(1)) for m in months if m.max_kva is not None]
+    mean_peak = (sum(mds, Decimal(0)) / len(mds)).quantize(Decimal("0.001")) if mds else None
     parts, reports, targets = [], [], []
     offset = 0
     for i in range(12):
@@ -274,7 +276,9 @@ def synthesise_year(
             m = next((v for k, v in by_month.items() if k.month == mo), None)
         if m is None:
             n = calendar.monthrange(y, mo)[1]
-            mi = MonthInput(month=month, kwh=Decimal(str(round(mean_daily * n, 3))))
+            # no bill: the billed months' mean daily energy and mean peak (MD × PF), so an estimated
+            # month never shows a peak the plant has not recorded
+            mi = MonthInput(month=month, kwh=Decimal(str(round(mean_daily * n, 3))), max_kva=mean_peak)
             x, rep = synthesise_month(mi, week, base_level, weekly_off)
             rep["extrapolated"] = True
         else:

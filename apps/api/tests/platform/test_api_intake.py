@@ -136,6 +136,12 @@ def test_from_bills_site_connection_profile(billx: FakeBillx) -> None:
     assert (
         client.get(f"/connections/{out['connection_id']}/profile", params={"version": 9}).status_code == 404
     )
+    back = client.get(f"/connections/{out['connection_id']}/intake").json()
+    assert back["voltage_kv"]["value"] == "33" and len(back["months"]) == 2
+    back["industry_shape"] = {"value": "continuous_process"}
+    rebuilt = client.post("/sites", json={"intake": back, "connection_id": out["connection_id"]})
+    assert rebuilt.status_code == 201 and rebuilt.json()["load_profile_version"] == 2
+    assert client.get("/connections/missing/intake").status_code == 404
     assert client.get("/connections/missing").status_code == 404
     assert client.get("/connections/missing/profile").status_code == 404
     bad = dict(si, state={"value": "MH"})

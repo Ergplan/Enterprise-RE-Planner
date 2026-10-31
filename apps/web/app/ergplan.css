@@ -44,3 +44,39 @@ a.eg-btn { text-decoration: none; }
 .ep-json { width: 100%; box-sizing: border-box; font-family: var(--font-mono); font-size: 12px; color: var(--ink);
   background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-xs); padding: 12px; }
 @media (max-width: 900px) { .ep-rule__grid { grid-template-columns: 1fr; } }
+
+/* Stage 2: intake and site */
+.ep-lede { max-width: 72ch; margin: 6px 0 0; }
+.ep-panel { padding: var(--space-6); }
+.ep-drop { padding: var(--space-8, 48px) var(--space-6); display: grid; justify-items: center; gap: var(--space-3); text-align: center;
+  border: 1.5px dashed var(--line-strong); }
+.ep-drop--over { border-color: var(--accent); }
+.ep-bills { display: grid; gap: var(--space-4); }
+.ep-bill .ep-table td:first-child { color: var(--ink-muted); }
+.ep-attn td { background: var(--warning-soft); }
+.ep-note { font-size: 13px; margin: var(--space-3) 0 0; }
+.ep-error { color: var(--negative); font-size: 13px; }
+.ep-warn { color: var(--warning); font-size: 13px; margin: var(--space-4) 0 0; padding-left: 18px; }
+.ep-facts { display: grid; gap: 2px; }
+.ep-fact { display: grid; grid-template-columns: 200px 1fr max-content; gap: 6px 16px; align-items: center; padding: 10px 0;
+  border-bottom: 1px solid var(--line); }
+.ep-fact__label { color: var(--ink-muted); font-size: 13px; }
+.ep-fact__note { grid-column: 2 / -1; font-size: 12px; }
+.ep-fact__input { max-width: 260px; }
+.ep-day { display: inline-flex; gap: 4px; align-items: center; font-size: 13px; }
+.ep-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); }
+.ep-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+.ep-chart { width: 100%; height: auto; display: block; }
+.ep-chart__grid { stroke: var(--line); stroke-width: 1; }
+.ep-chart__tick { fill: var(--ink-muted); font-size: 11px; }
+.ep-chart__line { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+.ep-chart__md { stroke: var(--warning); stroke-dasharray: 4 4; }
+.ep-cal { display: grid; gap: 6px; }
+.ep-cal__row { display: grid; grid-template-columns: 72px repeat(31, 1fr); gap: 2px; align-items: center; font-size: 11px; }
+.ep-cal__cell { height: 14px; border-radius: 2px; background: var(--surface-2); }
+.ep-cal__cell[data-full="1"] { background: var(--accent); }
+.ep-cal__cell[data-full="0"] { background: var(--warning); }
+@media (max-width: 900px) { .ep-fact { grid-template-columns: 1fr; } }
+.ep-fact__value { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ep-bill td.num .ep-fact__input { display: inline-flex; width: 200px; vertical-align: middle; }
+.ep-bill td.num { white-space: nowrap; }

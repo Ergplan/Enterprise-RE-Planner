@@ -32,10 +32,16 @@ Upstream sources: `Ergplan/tariff-oder` (published, reviewed tariff-order facts,
 | `rule_tests`, `rule_test_runs` | Golden cases per jurisdiction and family; their runs per version | `rulebook.golden` | `ergplan_audit` on `rule_tests` | 1 |
 | `audit_log` | Every write to the audited tables: actor, action, before, after | triggers | — | 1 |
 | view `rules_approved` | Rules of approved versions: the only rows engines read (invariant 2) | — | — | 1 |
+| `clients`, `sites`, `connections` | Who, where, which supply (DISCOM, category, voltage, contract demand, kind); `provenance` JSONB per field (bill / client_stated / assumption with its source_ref) | `intake.site_intake.build` | — | 2 |
+| `bills` | billx's whole result per bill (`billx_result` JSONB with every field's proof and verification), status, `accepted`, `accepted_by` (engine / human / bill_confirmations), file SHA-256 (the PDF kept under `data/bill_files/`) | `intake.bills.ingest`, `intake.bills.confirm` | — | 2 |
+| `bill_confirmations` | One row per client confirmation or correction of a bill value: path, value, who, when (invariant 7) | `intake.bills.confirm` | append-only | 2 |
+| `assets` | Existing rooftop PV, captive thermal, waste heat, BESS, DG with params validated per kind | `intake.site_intake.build` | — | 2 |
+| `load_profiles` | Versioned 15-minute year per connection: provenance measured/synthesised/stated (check constraint), zlib-compressed Decimal kW, `method` JSONB (shape, per-month targets and achieved values, the intake it was built from) | `intake.site_intake.synthesise`, `intake.measured_upload.store` | — | 2 |
+| `price_vintages`, `price_series` | One vintage per uploaded IEX file (segment, SHA-256, rows, duplicates, dates, superseded_by); 15-minute MCP and MCV per (vintage, day, block) | `intake.iex_loader.store` | rows never deleted; a replaced vintage is marked superseded so pinned runs replay | 2 |
 
 ## Critical path
 
-bill → `intake.site_intake.build()` → `engine.tariff_eval.replay()` → `engine.landed_cost.evaluate()` → `settlement.simulate()` → `optimizer.solve()` → `optimizer.resettle()` → `report.plan.build()`. Stage 0 builds the citation end of it: `core.sourced.SourcedValue` (every client number) and `documents.service` (the page a citation opens).
+bill → `intake.bills.ingest()` → `intake.site_intake.build()` → `engine.tariff_eval.replay()` → `engine.landed_cost.evaluate()` → `settlement.simulate()` → `optimizer.solve()` → `optimizer.resettle()` → `report.plan.build()`. Stage 0 builds the citation end of it: `core.sourced.SourcedValue` (every client number) and `documents.service` (the page a citation opens).
 
 ## Packages (apps/api/ergplan)
 
@@ -48,8 +54,9 @@ bill → `intake.site_intake.build()` → `engine.tariff_eval.replay()` → `eng
 | `rulebook` | `schemas` (JSON Schemas with refs), `scope` (`matches`, `specificity`, `norm_code`), `service` (propose, revise, update_row, delete_row, duplicate, run_golden, approve, reject; jurisdictions and chain), `golden` (files → `rule_tests`, evaluation with `where` filters), `repository` (`approved_rules`, `applicable` — engines' only door), `sandbox` (drafts, analyst only), `yaml_io` (export approved → `packages/rulebooks/states`, import, restore keeping version and origin), `cli` | 1 |
 | `regreader` | `direct` (pages → OpenAI → grounded rows), `grounding` (quote on page, fragments, OCR word order, numbers printed, worded zero and waiver), `tariff_oder` (published facts → rows), `voltage` (band phrases), `locate` (topic pages) | 1 |
 | `providers` | `openai_client.call_json` (versioned prompt, retries, `model_calls` row), `prompts/regreader_<family>_v2.md`, `prices.yaml` | 1 |
-| `platform` | `app` (FastAPI, `/health`), `auth` (dev headers until Stage 8), `routers/documents`, `routers/rulebooks`, `routers/regreader` | 0–1 |
-| `intake`, `engine`, `settlement`, `optimizer`, `voice`, `report` | Empty, docstring names the stage | 2–7 |
+| `platform` | `app` (FastAPI, `/health`), `auth` (dev headers until Stage 8), `routers/documents`, `routers/rulebooks`, `routers/regreader`, `routers/intake`, `routers/prices` | 0–2 |
+| `intake` | `billx_client` (contract esgos-1.1 over HTTP, submit and poll), `bill_fields` (billx field objects → Decimals with verification), `bills` (ingest once per file, review, one-click confirm, values with `bill` source_refs), `defaults` (normative defaults as `assumption` refs; printed category → order category; billx profile → DISCOM), `site_intake` (`SiteIntake` of `Fact`s, `from_bills`, `build`, `synthesise`), `profile_synthesis` (shapes → a year, window energy exact, peak = MD × PF), `measured_upload` (meter CSV, gaps), `iex_loader` (xlsx/csv snapshots, vintages, coverage) | 2 |
+| `engine`, `settlement`, `optimizer`, `voice`, `report` | Empty, docstring names the stage | 3–7 |
 
 ## API surface
 
@@ -70,10 +77,21 @@ bill → `intake.site_intake.build()` → `engine.tariff_eval.replay()` → `eng
 | GET | `/regreader/locate/{document_id}?topic=` | Pages that print a topic |
 | POST | `/regreader/direct` | Read pages into a draft (analyst; OpenAI) |
 | POST | `/regreader/tariff-oder` | Import tariff-oder published facts into drafts (analyst) |
+| POST | `/bills` | Upload a bill PDF (multipart `file`, optional `connection_id`); billx reads it (once per file); returns each bill with its fields, verification and what still needs confirming |
+| GET | `/bills/{id}`, `/bills/{id}/file` | One bill; the stored PDF inline (a `bill` source_ref opens it at `#page=N`) |
+| POST | `/bills/{id}/confirm` | Confirm or correct one value (`path`, `value`); the bill becomes usable when nothing is outstanding |
+| GET | `/intake/shapes` | The eight industry shapes |
+| POST | `/intake/from-bills` | A `SiteIntake` prefilled from accepted bills (not saved), with `overrides` |
+| POST | `/sites` | Save a `SiteIntake` (new or `connection_id`) and synthesise a load profile version |
+| GET | `/connections/{id}`, `/connections/{id}/intake` | The connection with site, client, bills, profiles; the intake its latest profile was built from |
+| GET | `/connections/{id}/profile?version=`, `/connections/{id}/profile.csv` | Profile summary (months as `SourcedValue`s, a week for the chart); all 35,040 blocks |
+| POST | `/connections/{id}/profile/measured` | Upload a meter CSV as a measured profile version |
+| POST | `/prices` | Upload an IEX file (analyst; `segment`, `replace`); 409 on overlap |
+| GET | `/prices/vintages?segment=`, `/prices/coverage?segment=` | Vintages; blocks per day of live vintages |
 
 ## Web (apps/web)
 
-ergOS Harmony vendored at `public/vendor/harmony` (origin in `ORIGIN.txt`, re-copied by `tools/dev/sync-harmony.sh`); `app/ergplan.css` adds tables and the viewer using tokens only. `components/Shell.tsx` is the 264 px sidebar (six journey steps, disabled until their stage ships; jouleWise analyst links) and top bar with the theme switch. Pages: `/` (how it works), `/documents` (library), `/documents/[id]?page=N` (rendered page with previous/next, section links from `page_hints`, regulator's copy, open the PDF at this page).
+ergOS Harmony vendored at `public/vendor/harmony` (origin in `ORIGIN.txt`, re-copied by `tools/dev/sync-harmony.sh`); `app/ergplan.css` adds tables and the viewer using tokens only. `components/Shell.tsx` is the 264 px sidebar (six journey steps, disabled until their stage ships; jouleWise analyst links) and top bar with the theme switch. Pages: `/` (how it works), `/documents` (library), `/documents/[id]?page=N` (rendered page with previous/next, section links from `page_hints`, regulator's copy, open the PDF at this page). Stage 2: `/plan/intake` (journey step 1: drop bills, confirm values billx could not verify, or type the facts; then "what we understood" with a provenance chip on every value), `/plan/site?c=` (step 4: the profile with a week chart and months with their sources, the site description and existing assets, rebuild), `/prices` (analyst: upload, vintages, coverage calendar per segment). `components/intake/*`, `components/prices/*`, `lib/intake.ts`.
 
 ## Deployment
 
@@ -89,6 +107,8 @@ ergOS Harmony vendored at `public/vendor/harmony` (origin in `ORIGIN.txt`, re-co
 | `msedcl` | tariff_schedule (HT I(A), HT II; EHV and HT), tod_slots, oa_charge (CSS 2.11), settlement (monthly ToD-slot banking) | MERC Case 75/2025 post-remand order of 25 Mar 2026, pp. 77–106 | 25 |
 
 ## What changed
+
+- **Stage 2**: migration 0006 (clients, sites, connections, bills, bill_confirmations, assets, load_profiles, price_vintages, price_series); `SourceRef` kind `bill` (bill id and billx path, opens the stored bill at its page); intake package (billx client, bill review and confirmations, SiteIntake with sourced defaults, profile synthesis from eight shapes, meter upload, IEX loader); intake and prices API; journey steps 1 and 4 and the analyst prices page; billx contract fixtures in `apps/api/tests/fixtures/billx/` (synthetic, copied from billx `contract/examples`); real-bill end-to-end (NPCL and MSEDCL) through the running billx.
 
 - **Stage 1**: migration 0002 (rulebook tables, audit/frozen/approval triggers, `rules_approved` view); rulebook package; regulation reader (direct with grounding, tariff-oder import); OpenAI provider with versioned prompts; OCR fallback; document ids derived from SHA-256; rulebook and reader API; analyst UI; 12 approved rulebooks for UP and Maharashtra with 91 golden tests; committed rulebooks round-trip test.
 - **Stage 0**: skeleton, `SourcedValue`, documents store and corpus loader (5 real orders registered: UPERC NPCL and state DISCOMs FY 2026-27, MERC MSEDCL MYT and two Case 75/2025 orders), Harmony shell, documents library and page viewer, compose, watcher, CI, reviewer.

@@ -7,10 +7,10 @@ import { ErgOSMount } from "./ErgOSMount";
 
 // The client journey (plan section 1). Steps light up as their stage ships.
 const JOURNEY: { n: number; label: string; href: string; live: boolean }[] = [
-  { n: 1, label: "Drop a bill", href: "/plan/intake", live: false },
+  { n: 1, label: "Drop a bill", href: "/plan/intake", live: true },
   { n: 2, label: "Today's cost", href: "/plan/today", live: false },
   { n: 3, label: "Landed costs", href: "/plan/landed", live: false },
-  { n: 4, label: "Describe the site", href: "/plan/site", live: false },
+  { n: 4, label: "Describe the site", href: "/plan/site", live: true },
   { n: 5, label: "Optimise", href: "/plan/optimise", live: false },
   { n: 6, label: "Your plan", href: "/plan/report", live: false },
 ];
@@ -18,6 +18,7 @@ const JOURNEY: { n: number; label: string; href: string; live: boolean }[] = [
 const ANALYST: { label: string; href: string; icon: string }[] = [
   { label: "Rulebooks", href: "/rulebooks", icon: "layers" },
   { label: "Documents", href: "/documents", icon: "file" },
+  { label: "Market prices", href: "/prices", icon: "trend" },
 ];
 
 function toggleTheme() {

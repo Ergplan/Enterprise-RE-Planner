@@ -264,7 +264,7 @@ class SiteIntake(BaseModel):
                 out.append(
                     f"{m.month:%b %Y}: the bill's ToD slots {', '.join(m.unmapped_tod_slots)} "
                     "do not name their hours; "
-                    "the month's total is used — type the hours to use the split"
+                    "the month's total is used and the day's shape comes from the operating pattern"
                 )
         if len(self.months) < 12:
             out.append(f"{len(self.months)} of 12 months given; the other months are extrapolated from them")
@@ -455,6 +455,7 @@ def synthesise(session: Session, connection_id: str, intake: SiteIntake) -> Load
     prof = synthesise_year(
         month_inputs(intake), intake.industry_shape.value, weekly_off=tuple(intake.weekly_off.value)
     )
+    prof.method["intake"] = intake.model_dump(mode="json")  # what step 4 edits and rebuilds from
     prof.method["inputs"] = {
         "industry_shape": _prov(f=intake.industry_shape)["f"],
         "weekly_off": _prov(f=intake.weekly_off)["f"],
