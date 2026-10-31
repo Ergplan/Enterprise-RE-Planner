@@ -43,6 +43,10 @@ def family_schema(family: str) -> dict[str, Any]:
     return _registry()[1][f"{family}.schema.json"]
 
 
+def scope_schema() -> dict[str, Any]:
+    return _registry()[1]["scope.schema.json"]
+
+
 def validator(family: str) -> Draft202012Validator:
     reg, _ = _registry()
     return Draft202012Validator(family_schema(family), registry=reg)

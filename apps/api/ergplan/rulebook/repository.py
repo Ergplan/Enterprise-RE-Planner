@@ -1,5 +1,6 @@
 """What the engines read (invariant 2): approved rule rows only, through the `rules_approved` view,
-effective on the evaluation date. Drafts are visible only through `sandbox`."""
+which itself applies the evaluation date (session variable ergplan.on_date, set here per query).
+Drafts are visible only through `sandbox`."""
 
 from __future__ import annotations
 
@@ -19,14 +20,14 @@ _SQL = text(
            jurisdiction_id, effective_from, effective_to
     from rules_approved
     where family = :family and jurisdiction_id = any(:jids)
-      and effective_from <= :on and (effective_to is null or effective_to >= :on)
     order by jurisdiction_id, position
     """
 )
 
 
 def approved_rules(session: Session, family: str, jurisdiction_ids: list[str], on: date) -> list[RuleView]:
-    rows = session.execute(_SQL, {"family": family, "jids": jurisdiction_ids, "on": on}).mappings()
+    session.execute(text("select set_config('ergplan.on_date', :d, true)"), {"d": on.isoformat()})
+    rows = session.execute(_SQL, {"family": family, "jids": jurisdiction_ids}).mappings()
     return [
         RuleView(
             id=r["id"],

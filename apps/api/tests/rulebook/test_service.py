@@ -158,3 +158,15 @@ def test_jurisdiction_chain() -> None:
     with session_scope() as s:
         assert service.jurisdiction_chain(s, "pvvnl") == ["pvvnl", "uppcl", "UP", "CERC"]
         assert service.jurisdiction_chain(s, "npcl") == ["npcl", "UP", "CERC"]
+
+
+def test_view_itself_hides_rules_outside_their_dates() -> None:
+    """A raw query of rules_approved (not through the repository) still respects the evaluation date."""
+    _add_golden()
+    vid = _propose()
+    _approve(vid)
+    with session_scope() as s:
+        s.execute(text("select set_config('ergplan.on_date', '2026-07-01', true)"))
+        assert s.execute(text("select count(*) from rules_approved")).scalar_one() == 0
+        s.execute(text("select set_config('ergplan.on_date', '2026-08-01', true)"))
+        assert s.execute(text("select count(*) from rules_approved")).scalar_one() == 2

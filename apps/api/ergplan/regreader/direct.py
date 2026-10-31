@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 from ..db.models import SourceDocument
 from ..documents import service as documents
 from ..providers.openai_client import CallResult, call_json
-from ..rulebook.schemas import family_schema, validate_row
+from ..rulebook.schemas import family_schema, scope_schema, validate_row
 from .grounding import quote_on_page, semantic_numbers, ungrounded_numbers
 
 PAGES_PER_CALL = 4
@@ -38,11 +38,9 @@ class ReadResult:
 
 
 def _schemas_for_prompt(family: str) -> str:
-    fam = family_schema(family)
-    from ..rulebook.schemas import _registry
-
-    scope = _registry()[1]["scope.schema.json"]
-    return json.dumps({"scope": scope, "body": fam["properties"]["body"]}, indent=1)
+    return json.dumps(
+        {"scope": scope_schema(), "body": family_schema(family)["properties"]["body"]}, indent=1
+    )
 
 
 def build_user_prompt(
