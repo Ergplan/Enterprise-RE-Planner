@@ -212,6 +212,19 @@ def test_defaults_are_assumptions() -> None:
     assert defaults.power_factor().ref.kind == RefKind.ASSUMPTION
 
 
+# billx's DISCOM profiles (billx/profiles/, Nov 2026) and the state each must land in
+BILLX_PROFILES = {
+    "apcpdcl": "AP", "avvnl": "RJ", "dvvnl": "UP", "gescom": "KA", "msedcl": "MH", "mvvnl": "UP",
+    "npcl": "UP", "pspcl": "PB", "pvvnl": "UP", "tangedco": "TN", "tgspdcl": "TS",
+}  # fmt: skip
+
+
+def test_every_billx_profile_maps_to_a_discom_and_state() -> None:
+    for profile, state in BILLX_PROFILES.items():
+        discom = defaults.discom_from_profile(profile)
+        assert discom and defaults.state_of(discom) == state, profile
+
+
 @pytest.mark.parametrize(
     ("state", "printed", "code"),
     [

@@ -82,6 +82,11 @@ Five rounds; the last is in `docs/stage-reports/stage-8-review.md`.
 | 3 | Development sign-in untested; SMTP failure gave a 500 | Tests added; a refusing mail server answers 502 |
 | 3 | HSTS set by both the API and Caddy | By design (defence in depth); the Caddyfile says so, and Caddy replaces rather than duplicates |
 | 4 | `backup.sh` assumed `gsutil` | Checked before any work, with a clear message |
+| 5 | New DISCOM aliases may not match billx's profile ids | Checked against billx's 11 DISCOM profiles; a test pins each to its DISCOM and state |
+| 5 | Rule cache ignores the evaluation date | No defect: the date is part of the cache key `(family, jurisdictions, on)`; the stamp only says when the approved set changed. Unchanged |
+| 5 | Coverage lists group ids (e.g. `ka_escoms`), not each DISCOM | By design: the list names the jurisdictions that hold the approved rows; the DISCOMs under a group are in `/rulebooks/jurisdictions` |
+
+Round 5's other four "code defects" are confirmations that the auth and coverage endpoints are tested and that the worker is not an endpoint.
 
 Not changed, because a diff cannot prove them:
 - the approvals themselves (they are in the exported `packages/rulebooks/states/`, which the reviewer does not see, and are asserted by `tests/e2e/test_stage8_states.py`);
@@ -104,6 +109,6 @@ Not changed, because a diff cannot prove them:
 ## Cost
 
 - Regulation reader: 5 gpt-5.1 calls, 20,948 tokens in and 6,276 out, USD 0.089 (from `model_calls`).
-- Reviewer: four gpt-5.1 rounds of about 37,000–40,000 tokens in each, about USD 0.25 in all.
+- Reviewer: five gpt-5.1 rounds of about 37,000–40,000 tokens in each, about USD 0.30 in all.
 - No billx reads (stored readings were reused).
 - Builder: Claude subscription.
