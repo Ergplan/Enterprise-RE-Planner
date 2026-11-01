@@ -96,6 +96,10 @@ export function Shell({ children }: { children: ReactNode }) {
               {s.label}
             </Link>
           ))}
+          <Link className="eg-nav__item" href="/bills" aria-current={current("/bills")}>
+            <span data-icon="receipt" data-size="19"></span>
+            Your bills
+          </Link>
           <div className="eg-overline eg-nav__group">jouleWise</div>
           {ANALYST.map((a) => (
             <Link key={a.href} className="eg-nav__item" href={a.href} aria-current={current(a.href)}>

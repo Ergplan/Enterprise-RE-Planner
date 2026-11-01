@@ -14,7 +14,20 @@ from ..core.settings import get_settings
 from ..db.base import session_scope
 from .auth import guard, production
 from .routers import auth as auth_routes
-from .routers import cost, documents, intake, landed, plan, prices, regreader, rulebooks, runs, settle, voice
+from .routers import (
+    cost,
+    documents,
+    intake,
+    landed,
+    plan,
+    prices,
+    regreader,
+    rulebooks,
+    runs,
+    search,
+    settle,
+    voice,
+)
 
 log = logging.getLogger("ergplan.app")
 
@@ -59,6 +72,7 @@ def create_app() -> FastAPI:
     app.include_router(rulebooks.router)
     app.include_router(regreader.router)
     app.include_router(intake.router)
+    app.include_router(search.router)
     app.include_router(prices.router)
     app.include_router(cost.router)
     app.include_router(settle.router)

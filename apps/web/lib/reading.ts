@@ -143,3 +143,36 @@ export type BillReadOut = {
   finished_at: string | null;
   bills: BillOut[];
 };
+
+export type SearchHit = {
+  bill_id: string;
+  bill_month: string | null;
+  discom: string | null;
+  consumer: string | null;
+  account: string | null;
+  filename: string | null;
+  status: string;
+  score: number;
+  lines: string[];
+  reading_url: string;
+};
+export type SearchOut = { query: string; searched: number; hits: SearchHit[] };
+export type MonthSlot = { slot: string; consumption: Sourced | null; open_access: Sourced | null; billed: Sourced | null };
+export type MonthRow = {
+  bill_id: string;
+  month: string;
+  verified: boolean;
+  unit: string;
+  consumption: Sourced | null;
+  open_access: Sourced | null;
+  open_access_share: Sourced | null;
+  billed: Sourced | null;
+  max_kva: Sourced | null;
+  contract_kva: Sourced | null;
+  power_factor: Sourced | null;
+  energy_charges: Sourced | null;
+  current_charges: Sourced | null;
+  net_payable: Sourced | null;
+  slots: MonthSlot[];
+};
+export type AccountSeries = { account: string | null; consumer: string | null; discom: string | null; months: MonthRow[] };
