@@ -115,7 +115,16 @@ def review(session: Session, bill: Bill) -> list[FieldReview]:
     has_kwh = (
         f.fields.get("energy.kwh") and f.fields["energy.kwh"].value is not None
     ) or "energy.kwh" in conf
-    energy_path = "energy.kwh" if has_kwh else "energy.kvah"
+    kwh_ok = "energy.kwh" in conf or bool(f.fields.get("energy.kwh") and f.fields["energy.kwh"].trusted)
+    kvah_ok = "energy.kvah" in conf or bool(f.fields.get("energy.kvah") and f.fields["energy.kvah"].trusted)
+    billed = f.fields.get("energy.billed_units")
+    priced_in_kvah = (billed is not None and billed.value is not None and billed.unit == "kVAh") or any(
+        (row.get("unit") or "") == "kVAh" for row in f.tod
+    )
+    # the month's energy is needed once: kWh where printed, else kVAh; a bill priced in kVAh whose
+    # kVAh is verified and whose kWh only one reader read needs no confirmation of the kWh
+    use_kvah = not has_kwh or (priced_in_kvah and kvah_ok and not kwh_ok)
+    energy_path = "energy.kvah" if use_kvah else "energy.kwh"
     out = []
     for p in _paths(f):
         fv = _field(f, p)

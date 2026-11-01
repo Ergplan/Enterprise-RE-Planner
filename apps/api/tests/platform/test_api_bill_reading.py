@@ -230,3 +230,14 @@ def test_a_client_accepts_a_bill_whose_required_values_are_verified(billx: FakeB
     assert used["demand.max_kva"].ref.note == "confirmed by c@plant.in"
     nr = _upload(billx, "acc-nr", result("pvvnl_needs_review"))[0]
     assert client.post(f"/bills/{nr['id']}/accept").status_code == 409
+
+
+def test_a_verified_kvah_is_the_months_energy_when_the_kwh_is_read_once(billx: FakeBillx) -> None:
+    res = oa_result()
+    for b in res["bills"]:
+        b["status"], b["accepted"], b["passed"], b["accepted_by"] = "needs_review", False, False, None
+        b["fields"]["energy"]["kwh"] = _fo("1722132", "unverified")
+        b["fields"]["energy"]["kvah"] = _fo("1723860", "verified")
+        b["fields"]["energy"]["billed_units"] = {**_fo("1281974.753", "verified"), "unit": "kVAh"}
+    [b, _] = _upload(billx, "kvah-ok", res)
+    assert "energy.kwh" not in b["outstanding"] and b["outstanding"] == []
