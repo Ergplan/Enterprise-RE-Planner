@@ -22,3 +22,4 @@ Recorded by tools/dev/stage-tags.sh. `apply` recreates them as git tags.
 | stage-7-done | b5c91b36a52df6283d37f34e4d13f1cb64c7c074 |
 | stage-8-start | b7b2bded236d4b6b82ad02f47fec00224c75efed |
 | stage-8-done | 877255d62ef3520952e9b5506745ae7f2737a076 |
+| mini-server | 96a3c52e33b6509fa3da304197174727559833a1 |
