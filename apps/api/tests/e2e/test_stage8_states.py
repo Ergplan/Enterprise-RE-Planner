@@ -120,7 +120,11 @@ def test_coverage_names_what_is_not_yet_sourced() -> None:
         cov["KA"]["families"]["tod_slots"] == "approved"
         and cov["PB"]["families"]["tod_slots"] == "not yet sourced"
     )
-    assert cov["AP"]["families"]["tariff_schedule"] == "approved"
+    for st in ("GJ", "AP"):  # tariffs approved; open access and banking not yet sourced
+        assert cov[st]["families"]["tariff_schedule"] == "approved", st
+        assert cov[st]["families"]["tod_slots"] == "approved", st
+        assert cov[st]["families"]["oa_charge"] == "not yet sourced", st
+        assert cov[st]["families"]["settlement"] == "not yet sourced", st
     for st in ("RJ", "HR"):
         assert set(cov[st]["families"].values()) == {"not yet sourced"}, st
     assert cov["GJ"]["families"]["tariff_schedule"] == "approved"
@@ -174,5 +178,5 @@ def test_punjab_renewable_wheeling_in_kind_and_css() -> None:
     solar = _oa_solar("pspcl", "PB", "LS General Industry", "11")
     lines = {(ln["label"] or ""): ln for ln in solar["lines"]}
     assert next(ln for lbl, ln in lines.items() if lbl.startswith("CSS"))["value"] == "0.86"
-    loss = next(lbl for lbl in lines if lbl.startswith("Losses"))
+    loss = next(lbl for lbl in lines if lbl.startswith("Losses and charges in kind"))
     assert "2 %" in loss and "2.19" in loss and "4.00" in loss  # in-kind wheeling, transmission, 11 kV

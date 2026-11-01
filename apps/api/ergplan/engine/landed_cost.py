@@ -285,13 +285,14 @@ def evaluate(
     if loss_inputs:
         base = sum((x.value for x in [sc.price, *injection]), Decimal(0))
         gross = 1 / keep - 1
+        head = "Losses and charges in kind" if in_kind else "Losses"
         a = 1 / keep
         lines.append(
             derive(
                 base * gross,
                 Unit.INR_PER_KWH,
                 [sc.price, *injection, *loss_inputs],
-                label=f"Losses ({', '.join(str(x.label) for x in loss_inputs)})",
+                label=f"{head} ({', '.join(str(x.label) for x in loss_inputs)})",
             )
         )
 
