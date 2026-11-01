@@ -14,7 +14,9 @@ DL="$HOME/Downloads"
 DEST="${ERGPLAN_DIR:-$HOME/apps/ergplan}"
 BILLX_DIR="${BILLX_DIR:-$HOME/billx}"
 ANALYST="${ERGPLAN_ANALYST:-venture@aayuda.energy}"
-PORT="${HTTP_PORT:-80}"
+PORT="${HTTP_PORT:-}"
+if [ -z "$PORT" ] && [ -f "$DEST/.env" ]; then PORT="$(grep -E '^HTTP_PORT=' "$DEST/.env" | cut -d= -f2 || true)"; fi
+PORT="${PORT:-80}"
 say() { printf '\n== %s\n' "$*"; }
 die() { printf '\nSTOPPED: %s\n' "$*" >&2; exit 1; }
 export PATH="$PATH:/usr/local/bin:/opt/homebrew/bin:$HOME/.homebrew/bin:$HOME/.orbstack/bin"
@@ -26,6 +28,10 @@ docker info >/dev/null 2>&1 || die "Docker is installed but not running. Open Do
 docker compose version >/dev/null 2>&1 || die "Docker Compose v2 is missing: update Docker Desktop."
 [ -f "$BILLX_DIR/docker/engine.Dockerfile" ] || die "billx not found at $BILLX_DIR (run again with BILLX_DIR=/path/to/billx)."
 [ -f "$KIT/ergplan.bundle" ] || die "ergplan.bundle is missing beside this script."
+if command -v lsof >/dev/null; then
+  busy="$(lsof -nP -iTCP:"$PORT" -sTCP:LISTEN 2>/dev/null | awk 'NR>1 {print $1}' | grep -viE '^(com\.docke|docker|vpnkit|orbstack)' | sort -u | tr '\n' ' ' || true)"
+  [ -z "$busy" ] || die "port $PORT is already used by: $busy— run again with another port, e.g.  HTTP_PORT=8088 bash $0"
+fi
 
 say "2/8 Code → $DEST"
 if [ -d "$DEST/.git" ]; then
@@ -49,7 +55,7 @@ if [ ! -f .env ]; then
     read -r -s key; echo
   fi
   [ -n "$key" ] || die "an OpenAI API key is needed (voice, explanations, the regulation reader)."
-  umask 077
+  touch .env && chmod 600 .env  # only you can read it, before anything is written into it
   cat > .env <<ENV
 # ergPLAN on the Mac mini — written by tools/dev/mini-install.sh on $(date '+%Y-%m-%d %H:%M'). Never commit.
 ERGPLAN_ENV=prod
