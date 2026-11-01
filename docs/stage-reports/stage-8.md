@@ -176,3 +176,17 @@ States with approved tariffs: **7 of the 10** the plan names (UP, MH, KA, TS, PB
 
 **Model cost:** none this afternoon. Every rule was authored from the page text with verbatim quotes, without the reader. Reviewer: four gpt-5.1 rounds, about USD 0.20.
 
+
+## Addendum, 1 Nov 2026 evening — bill reading upgraded, the reading view, search
+
+**Asked:** make bill extraction as exact as possible with Docling, LlamaParse and Haystack; show the bill on the left and the extracted values on the right, placed exactly where they are printed; hand the useful values to the planning screens. The person chose to put the new readers in billx (invariant 7 unchanged).
+
+**Built in billx** (branch `readers-docling-llamaparse`, seven commits on `f84fa95`; `main` untouched): page sorting of multi-bill files; slot-wise open-access and net units (prompt `read_bill_v5`); the `docling` reader (docling-serve: tables, cells and boxes; a local layout reader, proof rule 3); the `llamaparse` reader (LlamaExtract v2 beside Model A, family `llamaindex`); every reader's reading in contract 1.1. billx's unit suite is green; its OCR-marked contract-example test fails on linux on `main` too and is regenerated on the Mac at merge (billx known gaps).
+
+**Built in ergPLAN:** `docling` compose service; background bill reads (`bill_reads`, migration 0011, the worker's bill thread); the reading view (`/plan/intake/bill/[id]`: page and read page side by side, values in their printed boxes, zoom with synced scrolling, replay of the stored reading reader by reader, slots, values to confirm with each reader's reading, the bill's checks); the hand-off (`/plan-inputs`, every figure a SourcedValue); accepting a bill whose planning values are verified; reading a file again; search and analytics with Haystack BM25 (`/bills`).
+
+**Measured on the person's PVVNL open-access file (live, on the server):** two bills found in the four pages; on each, all twelve slot figures (consumption, open access, billed for four slots) verified by Docling and Model A, each with its box; tariff category, demand, energy and billed totals, current charges, rebate and net payable verified; nothing outstanding for planning. Still for the client: the March power factor (both local readers dropped the decimal point), the names as printed, one due date. Model spend about US$0.24 per two-bill file. LlamaParse did not run: LlamaIndex refused the key (401, both regions).
+
+**Reviewer** (gpt-5.1, diff fc233eb..working tree): 12 findings, 0 code defects. Acted on: a test that the search path imports no model SDK and switches Haystack's telemetry off; a test for analytics with no bills. The API rows for search it asked for are present. By design or later: optional unverified values left out of planning (recorded in decisions); ownership of `bill-reads` pages follows the per-route pattern already in known gaps.
+
+**Open:** a working LlamaParse key; the billx team's merge of the branch (and a profile change for the PVVNL open-access G08/G09/G21 lines, measured on their golden set).

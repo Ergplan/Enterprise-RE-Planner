@@ -72,3 +72,23 @@ def test_analytics_give_each_month_with_its_slots_and_open_access_share(billx: F
     assert m["open_access"]["value"] == "3600.5"
     assert m["slots"][0]["consumption"]["source_refs"][0]["kind"] == "bill"
     assert m["max_kva"]["unit"] == "kVA"
+
+
+def test_search_imports_no_model_sdk_and_switches_haystack_telemetry_off() -> None:
+    import subprocess
+    import sys
+
+    code = (
+        "import sys, os; import ergplan.search.bills as b; from haystack import Document; "
+        "from haystack.components.retrievers.in_memory import InMemoryBM25Retriever; "
+        "b.search([], 'x'); "
+        "print(int('openai' in sys.modules), int('anthropic' in sys.modules), "
+        "os.environ.get('HAYSTACK_TELEMETRY_ENABLED'))"
+    )
+    out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
+    assert out.stdout.split() == ["0", "0", "False"]
+
+
+def test_analytics_of_nobody_is_empty() -> None:
+    r = client.get("/bill-analytics", headers=_as("nobody@nowhere.in"))
+    assert r.status_code == 200 and r.json() == {"accounts": []}
