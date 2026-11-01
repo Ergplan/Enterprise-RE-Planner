@@ -56,6 +56,18 @@ CASES = [
         28,
         Decimal("5.107"),
     ),  # 07:00: 4.30 (>2500 kVA) + 0.85 - 1 % of 4.30
+    (
+        "apspdcl",
+        "AP",
+        "HT-III(A)",
+        "33",
+        "3000",
+        0,
+        28,
+        Decimal("7.35"),
+    ),  # April 07:00, high grid demand peak
+    ("apspdcl", "AP", "HT-III(A)", "33", "3000", 2, 50, Decimal("5.10")),  # June 12:30, off-peak
+    ("apcpdcl", "AP", "HT-III(A)", "132", "3000", 2, 76, Decimal("6.40")),  # June 19:00, low grid demand peak
     ("mgvcl", "GJ", "HTP-I", "11", "3000", 0, 50, Decimal("3.657")),  # 12:30: 4.30 - 0.60 - 0.043
     ("ugvcl", "GJ", "HTP-I", "11", "600", 0, 28, Decimal("5.008")),  # billing ≥ 510 kVA: 4.20 + 0.85 - 0.042
     (
@@ -108,6 +120,7 @@ def test_coverage_names_what_is_not_yet_sourced() -> None:
         cov["KA"]["families"]["tod_slots"] == "approved"
         and cov["PB"]["families"]["tod_slots"] == "not yet sourced"
     )
+    assert cov["AP"]["families"]["tariff_schedule"] == "approved"
     for st in ("RJ", "HR"):
         assert set(cov[st]["families"].values()) == {"not yet sourced"}, st
     assert cov["GJ"]["families"]["tariff_schedule"] == "approved"

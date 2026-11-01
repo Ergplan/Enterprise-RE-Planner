@@ -78,6 +78,7 @@ CATEGORY_PATTERNS: dict[str, list[tuple[str, str]]] = {
     "TS": [(r"\bHT\s*[-–]?\s*(I|1)\s*\(?\s*A\s*\)?", "HT-I(A)")],
     "PB": [(r"\bLARGE\s+SUPPLY|\bLS\b", "LS General Industry")],
     "GJ": [(r"\bHTP\s*[-–]?\s*(I|1)\b(?!I)", "HTP-I")],
+    "AP": [(r"\bHT\s*[-–]?\s*(III|3)\s*\(?\s*A\s*\)?|CATEGORY\s*[-–]?\s*III\s*\(?\s*A\s*\)?", "HT-III(A)")],
 }
 
 # The usual supply voltage of a category, offered as the default chip (most bills do not print it).
@@ -93,6 +94,7 @@ USUAL_VOLTAGE_KV = {
     "HT-I(A)": Decimal("11"),
     "LS General Industry": Decimal("11"),
     "HTP-I": Decimal("11"),
+    "HT-III(A)": Decimal("11"),
 }
 
 

@@ -1,0 +1,14 @@
+# APERC Retail Supply Tariff Order FY 2026-27, Table 11 "Tariff for retail sale of electricity during
+# FY 2026-27" (applicable 01.04.2026 to 31.03.2027, APSPDCL, APCPDCL, APEPDCL; PDF pages 196-197):
+# Category III(A) Industry (General) HT, demand 475 Rs/kVA/month, kVAh, Normal-hours energy by voltage;
+# billing demand at least 80 % of contracted demand (PDF page 232).
+jurisdiction: ap_discoms
+family: tariff_schedule
+tests:
+  - {name: "demand 475", given: {context: {category: "HT-III(A)", voltage_kv: 11}, field: /demand_charge/value}, expect: {value: "475"}}
+  - {name: "11 kV normal 6.30", given: {context: {category: "HT-III(A)", voltage_kv: 11}, field: /energy_charge/base}, expect: {value: "6.30"}}
+  - {name: "33 kV normal 5.85", given: {context: {category: "HT-III(A)", voltage_kv: 33}, field: /energy_charge/base}, expect: {value: "5.85"}}
+  - {name: "132 kV normal 5.40", given: {context: {category: "HT-III(A)", voltage_kv: 132}, field: /energy_charge/base}, expect: {value: "5.40"}}
+  - {name: "220 kV normal 5.35", given: {context: {category: "HT-III(A)", voltage_kv: 220}, field: /energy_charge/base}, expect: {value: "5.35"}}
+  - {name: "billed in kVAh", given: {context: {category: "HT-III(A)", voltage_kv: 33}, field: /billing_basis}, expect: {value: kvah}}
+  - {name: "billing demand at least 80 %", given: {context: {category: "HT-III(A)", voltage_kv: 11}, field: /demand_charge/billing_demand_rule/min_pct_of_contract_demand}, expect: {value: "80"}}

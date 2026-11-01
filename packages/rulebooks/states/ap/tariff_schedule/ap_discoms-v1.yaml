@@ -1,0 +1,187 @@
+family: tariff_schedule
+jurisdiction: ap_discoms
+version: 1
+status: approved
+title: APERC Retail Supply Tariff Order FY 2026-27 · Table 11 p. 197 · Category III(A) Industry (General) HT
+effective_from: '2026-04-01'
+effective_to: '2027-03-31'
+origin: manual
+approved_by: build-agent@ergplan
+rows:
+- label: HT-III(A) Industry (General) · 11 kV
+  scope:
+    category:
+    - HT-III(A)
+    voltage_kv:
+      max: 11
+  body:
+    notes: The order prices every ToD slot directly; the Normal-hours rate is held as the energy charge and the other slots
+      as differences (tod_slots). Minimum energy (50 kVAh per kVA of billing demand) not seeded.
+    category: HT-III(A)
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month_billing_demand
+      value: '475'
+      billing_demand_rule:
+        min_pct_of_contract_demand: '80'
+    energy_charge:
+      base: '6.30'
+  source_ref:
+    kind: order
+    page: 197
+    quote: 'Normal (15-18) & (22-24) Hrs - - 6.30 | 5.85 | 5.40 | 5.35 #Time of Day tariff (TOD) (Low Grid Demand)'
+    document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+  field_refs:
+    /demand_charge/value:
+      kind: order
+      page: 197
+      quote: '(A): Industry (General) 75/kW 6.70 kWh/kVAh 475 - - - - #Time of Day tariff (TOD) (High Grid Demand) (Apr’26-
+        May''26), (Sep''26-Oct''26) & (Feb''27, Mar''27) Peak (06-10) & (18-22) Hrs - - 7.80 | 7.35 | 6.90 | 6.85 Off-Peak
+        (10 -15) & (00-06) Hrs - - 5.55 | 5.10 | 4.65 | 4.60'
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      page: 232
+      quote: The billing demand shall be the maximum demand recorded during the month or 80% of the contracted demand, whichever
+        is higher.
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'
+- label: HT-III(A) Industry (General) · 33 kV
+  scope:
+    category:
+    - HT-III(A)
+    voltage_kv:
+      max: 33
+      min: 11
+      min_exclusive: true
+  body:
+    notes: The order prices every ToD slot directly; the Normal-hours rate is held as the energy charge and the other slots
+      as differences (tod_slots). Minimum energy (50 kVAh per kVA of billing demand) not seeded.
+    category: HT-III(A)
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month_billing_demand
+      value: '475'
+      billing_demand_rule:
+        min_pct_of_contract_demand: '80'
+    energy_charge:
+      base: '5.85'
+  source_ref:
+    kind: order
+    page: 197
+    quote: 'Normal (15-18) & (22-24) Hrs - - 6.30 | 5.85 | 5.40 | 5.35 #Time of Day tariff (TOD) (Low Grid Demand)'
+    document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+  field_refs:
+    /demand_charge/value:
+      kind: order
+      page: 197
+      quote: '(A): Industry (General) 75/kW 6.70 kWh/kVAh 475 - - - - #Time of Day tariff (TOD) (High Grid Demand) (Apr’26-
+        May''26), (Sep''26-Oct''26) & (Feb''27, Mar''27) Peak (06-10) & (18-22) Hrs - - 7.80 | 7.35 | 6.90 | 6.85 Off-Peak
+        (10 -15) & (00-06) Hrs - - 5.55 | 5.10 | 4.65 | 4.60'
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      page: 232
+      quote: The billing demand shall be the maximum demand recorded during the month or 80% of the contracted demand, whichever
+        is higher.
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'
+- label: HT-III(A) Industry (General) · 132 kV
+  scope:
+    category:
+    - HT-III(A)
+    voltage_kv:
+      max: 132
+      min: 33
+      min_exclusive: true
+  body:
+    notes: The order prices every ToD slot directly; the Normal-hours rate is held as the energy charge and the other slots
+      as differences (tod_slots). Minimum energy (50 kVAh per kVA of billing demand) not seeded.
+    category: HT-III(A)
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month_billing_demand
+      value: '475'
+      billing_demand_rule:
+        min_pct_of_contract_demand: '80'
+    energy_charge:
+      base: '5.40'
+  source_ref:
+    kind: order
+    page: 197
+    quote: 'Normal (15-18) & (22-24) Hrs - - 6.30 | 5.85 | 5.40 | 5.35 #Time of Day tariff (TOD) (Low Grid Demand)'
+    document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+  field_refs:
+    /demand_charge/value:
+      kind: order
+      page: 197
+      quote: '(A): Industry (General) 75/kW 6.70 kWh/kVAh 475 - - - - #Time of Day tariff (TOD) (High Grid Demand) (Apr’26-
+        May''26), (Sep''26-Oct''26) & (Feb''27, Mar''27) Peak (06-10) & (18-22) Hrs - - 7.80 | 7.35 | 6.90 | 6.85 Off-Peak
+        (10 -15) & (00-06) Hrs - - 5.55 | 5.10 | 4.65 | 4.60'
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      page: 232
+      quote: The billing demand shall be the maximum demand recorded during the month or 80% of the contracted demand, whichever
+        is higher.
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'
+- label: HT-III(A) Industry (General) · 220 kV
+  scope:
+    category:
+    - HT-III(A)
+    voltage_kv:
+      min: 132
+      min_exclusive: true
+  body:
+    notes: The order prices every ToD slot directly; the Normal-hours rate is held as the energy charge and the other slots
+      as differences (tod_slots). Minimum energy (50 kVAh per kVA of billing demand) not seeded.
+    category: HT-III(A)
+    billing_basis: kvah
+    demand_charge:
+      basis: inr_per_kva_month_billing_demand
+      value: '475'
+      billing_demand_rule:
+        min_pct_of_contract_demand: '80'
+    energy_charge:
+      base: '5.35'
+  source_ref:
+    kind: order
+    page: 197
+    quote: 'Normal (15-18) & (22-24) Hrs - - 6.30 | 5.85 | 5.40 | 5.35 #Time of Day tariff (TOD) (Low Grid Demand)'
+    document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+  field_refs:
+    /demand_charge/value:
+      kind: order
+      page: 197
+      quote: '(A): Industry (General) 75/kW 6.70 kWh/kVAh 475 - - - - #Time of Day tariff (TOD) (High Grid Demand) (Apr’26-
+        May''26), (Sep''26-Oct''26) & (Feb''27, Mar''27) Peak (06-10) & (18-22) Hrs - - 7.80 | 7.35 | 6.90 | 6.85 Off-Peak
+        (10 -15) & (00-06) Hrs - - 5.55 | 5.10 | 4.65 | 4.60'
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      page: 232
+      quote: The billing demand shall be the maximum demand recorded during the month or 80% of the contracted demand, whichever
+        is higher.
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'

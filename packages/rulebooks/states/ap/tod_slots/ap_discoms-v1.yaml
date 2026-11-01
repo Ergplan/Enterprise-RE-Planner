@@ -1,0 +1,214 @@
+family: tod_slots
+jurisdiction: ap_discoms
+version: 1
+status: approved
+title: APERC Retail Supply Tariff Order FY 2026-27 · Table 11 p. 197 · Category III(A) HT time of day
+effective_from: '2026-04-01'
+effective_to: '2027-03-31'
+origin: manual
+approved_by: build-agent@ergplan
+rows:
+- label: HT-III(A) · ToD · high and low grid demand months
+  scope:
+    category:
+    - HT-III(A)
+  body:
+    slots:
+    - end: '10:00'
+      name: Peak 06-10 (high grid demand)
+      start: 06:00
+      months:
+      - 4
+      - 5
+      - 9
+      - 10
+      - 2
+      - 3
+      rate_delta_inr_per_kwh: '1.50'
+    - end: '15:00'
+      name: Off-peak 10-15 (high grid demand)
+      start: '10:00'
+      months:
+      - 4
+      - 5
+      - 9
+      - 10
+      - 2
+      - 3
+      rate_delta_inr_per_kwh: '-0.75'
+    - end: '18:00'
+      name: Normal 15-18 (high grid demand)
+      start: '15:00'
+      months:
+      - 4
+      - 5
+      - 9
+      - 10
+      - 2
+      - 3
+      rate_delta_inr_per_kwh: '0'
+    - end: '22:00'
+      name: Peak 18-22 (high grid demand)
+      start: '18:00'
+      months:
+      - 4
+      - 5
+      - 9
+      - 10
+      - 2
+      - 3
+      rate_delta_inr_per_kwh: '1.50'
+    - end: '24:00'
+      name: Normal 22-24 (high grid demand)
+      start: '22:00'
+      months:
+      - 4
+      - 5
+      - 9
+      - 10
+      - 2
+      - 3
+      rate_delta_inr_per_kwh: '0'
+    - end: 06:00
+      name: Off-peak 00-06 (high grid demand)
+      start: 00:00
+      months:
+      - 4
+      - 5
+      - 9
+      - 10
+      - 2
+      - 3
+      rate_delta_inr_per_kwh: '-0.75'
+    - end: '10:00'
+      name: Peak 06-10 (low grid demand)
+      start: 06:00
+      months:
+      - 6
+      - 7
+      - 8
+      - 11
+      - 12
+      - 1
+      rate_delta_inr_per_kwh: '1.00'
+    - end: '15:00'
+      name: Off-peak 10-15 (low grid demand)
+      start: '10:00'
+      months:
+      - 6
+      - 7
+      - 8
+      - 11
+      - 12
+      - 1
+      rate_delta_inr_per_kwh: '-0.75'
+    - end: '18:00'
+      name: Normal 15-18 (low grid demand)
+      start: '15:00'
+      months:
+      - 6
+      - 7
+      - 8
+      - 11
+      - 12
+      - 1
+      rate_delta_inr_per_kwh: '0'
+    - end: '22:00'
+      name: Peak 18-22 (low grid demand)
+      start: '18:00'
+      months:
+      - 6
+      - 7
+      - 8
+      - 11
+      - 12
+      - 1
+      rate_delta_inr_per_kwh: '1.00'
+    - end: '24:00'
+      name: Normal 22-24 (low grid demand)
+      start: '22:00'
+      months:
+      - 6
+      - 7
+      - 8
+      - 11
+      - 12
+      - 1
+      rate_delta_inr_per_kwh: '0'
+    - end: 06:00
+      name: Off-peak 00-06 (low grid demand)
+      start: 00:00
+      months:
+      - 6
+      - 7
+      - 8
+      - 11
+      - 12
+      - 1
+      rate_delta_inr_per_kwh: '-0.75'
+    season_note: 'High grid demand: Apr-May, Sep-Oct, Feb-Mar; low: Jun-Aug, Nov-Jan. Held as differences from the Normal-hours
+      rate, identical at 11, 33, 132 and 220 kV (e.g. 11 kV: 7.80 - 6.30 = 1.50; 5.55 - 6.30 = -0.75; 7.30 - 6.30 = 1.00).'
+  source_ref:
+    kind: order
+    page: 197
+    quote: '(A): Industry (General) 75/kW 6.70 kWh/kVAh 475 - - - - #Time of Day tariff (TOD) (High Grid Demand) (Apr’26-
+      May''26), (Sep''26-Oct''26) & (Feb''27, Mar''27) Peak (06-10) & (18-22) Hrs - - 7.80 | 7.35 | 6.90 | 6.85 Off-Peak (10
+      -15) & (00-06) Hrs - - 5.55 | 5.10 | 4.65 | 4.60'
+    document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+  field_refs:
+    /slots/6/rate_delta_inr_per_kwh:
+      kind: order
+      page: 197
+      quote: (Low Grid Demand) (Jun'26-Aug'26) & (Nov'26-Jan'27) Peak (06-10) & (18-22) Hrs - - 7.30 | 6.85 | 6.40 | 6.35
+        Off-Peak (10 -15) & (00-06) Hrs - - 5.55 | 5.10 | 4.65 | 4.60 Normal (15-18) & (22-24) Hrs - - 6.30 | 5.85 | 5.40
+        | 5.35
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'
+    /slots/7/rate_delta_inr_per_kwh:
+      kind: order
+      page: 197
+      quote: (Low Grid Demand) (Jun'26-Aug'26) & (Nov'26-Jan'27) Peak (06-10) & (18-22) Hrs - - 7.30 | 6.85 | 6.40 | 6.35
+        Off-Peak (10 -15) & (00-06) Hrs - - 5.55 | 5.10 | 4.65 | 4.60 Normal (15-18) & (22-24) Hrs - - 6.30 | 5.85 | 5.40
+        | 5.35
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'
+    /slots/8/rate_delta_inr_per_kwh:
+      kind: order
+      page: 197
+      quote: (Low Grid Demand) (Jun'26-Aug'26) & (Nov'26-Jan'27) Peak (06-10) & (18-22) Hrs - - 7.30 | 6.85 | 6.40 | 6.35
+        Off-Peak (10 -15) & (00-06) Hrs - - 5.55 | 5.10 | 4.65 | 4.60 Normal (15-18) & (22-24) Hrs - - 6.30 | 5.85 | 5.40
+        | 5.35
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'
+    /slots/9/rate_delta_inr_per_kwh:
+      kind: order
+      page: 197
+      quote: (Low Grid Demand) (Jun'26-Aug'26) & (Nov'26-Jan'27) Peak (06-10) & (18-22) Hrs - - 7.30 | 6.85 | 6.40 | 6.35
+        Off-Peak (10 -15) & (00-06) Hrs - - 5.55 | 5.10 | 4.65 | 4.60 Normal (15-18) & (22-24) Hrs - - 6.30 | 5.85 | 5.40
+        | 5.35
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'
+    /slots/10/rate_delta_inr_per_kwh:
+      kind: order
+      page: 197
+      quote: (Low Grid Demand) (Jun'26-Aug'26) & (Nov'26-Jan'27) Peak (06-10) & (18-22) Hrs - - 7.30 | 6.85 | 6.40 | 6.35
+        Off-Peak (10 -15) & (00-06) Hrs - - 5.55 | 5.10 | 4.65 | 4.60 Normal (15-18) & (22-24) Hrs - - 6.30 | 5.85 | 5.40
+        | 5.35
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'
+    /slots/11/rate_delta_inr_per_kwh:
+      kind: order
+      page: 197
+      quote: (Low Grid Demand) (Jun'26-Aug'26) & (Nov'26-Jan'27) Peak (06-10) & (18-22) Hrs - - 7.30 | 6.85 | 6.40 | 6.35
+        Off-Peak (10 -15) & (00-06) Hrs - - 5.55 | 5.10 | 4.65 | 4.60 Normal (15-18) & (22-24) Hrs - - 6.30 | 5.85 | 5.40
+        | 5.35
+      document_id: 93ee76bd-d67b-5ba7-9f3e-61a710c203d7
+      effective_to: '2027-03-31'
+      effective_from: '2026-04-01'

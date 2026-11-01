@@ -1,0 +1,11 @@
+# APERC FY 2026-27 Table 11 (PDF page 197), Category III(A) HT ToD: prices by slot and season, held as the
+# difference from the Normal-hours rate (the same at 11, 33, 132 and 220 kV): high grid demand months
+# peak +1.50, off-peak -0.75; low grid demand months peak +1.00, off-peak -0.75.
+jurisdiction: ap_discoms
+family: tod_slots
+tests:
+  - {name: "HGD morning peak +1.50", given: {context: {category: "HT-III(A)"}, field: /slots/0/rate_delta_inr_per_kwh}, expect: {value: "1.50"}}
+  - {name: "HGD off-peak -0.75", given: {context: {category: "HT-III(A)"}, field: /slots/1/rate_delta_inr_per_kwh}, expect: {value: "-0.75"}}
+  - {name: "LGD morning peak +1.00", given: {context: {category: "HT-III(A)"}, field: /slots/6/rate_delta_inr_per_kwh}, expect: {value: "1.00"}}
+  - {name: "LGD off-peak -0.75", given: {context: {category: "HT-III(A)"}, field: /slots/7/rate_delta_inr_per_kwh}, expect: {value: "-0.75"}}
+  - {name: "HGD months include April", given: {context: {category: "HT-III(A)"}, field: /slots/0/months/0}, expect: {value: "4"}}
