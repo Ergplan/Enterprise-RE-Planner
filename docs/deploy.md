@@ -48,6 +48,8 @@ firewall rule for TCP 80 and 443, a 50 GB boot disk, and (recommended) the exter
 static. The site is `https://<ip-with-dashes>.sslip.io` (no DNS needed; Caddy obtains the certificate)
 until a jouleWise hostname is pointed at the address.
 
+Sign-in mail: `sudo bash tools/dev/set-mail.sh venture@aayuda.energy` asks for a Google app password (not shown), checks it with Gmail, writes `ERGPLAN_SMTP_URL` to `.env` and restarts the API.
+
 On the VM, from `/opt/ergplan`: `sudo tools/dev/vm.sh ps`, `sudo tools/dev/vm.sh logs -f api`,
 `sudo tools/dev/vm.sh exec api python -m ergplan.platform.signin someone@company.in`. Backups: root's
 cron at 02:30 into `/var/backups/ergplan` (14 days). From a Mac with the Google Cloud CLI signed in,
