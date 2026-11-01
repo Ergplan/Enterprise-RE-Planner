@@ -71,7 +71,7 @@ These are dated in `docs/decisions.md` (1 Nov 2026, Stage 8):
 
 ## Reviewer findings and fixes
 
-Nine rounds; the last is in `docs/stage-reports/stage-8-review.md`.
+Nine rounds; the ninth reported no code defect (its by-design and unprovable items are the ones below). The last round is in `docs/stage-reports/stage-8-review.md` (kept locally, like earlier stages' reviews).
 
 | Round | Finding | Fix |
 | --- | --- | --- |
