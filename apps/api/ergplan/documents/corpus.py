@@ -98,7 +98,7 @@ def register_corpus(root: Path, actor: str = "corpus-loader", index: Path | None
             title=entry.title,
             regulator=entry.commission,
             jurisdiction=entry.state,
-            document_kind="order" if entry.kind == "order" else "supporting",
+            document_kind=entry.kind if entry.kind in {"order", "regulation"} else "supporting",
             utilities=entry.utilities,
             order_date=entry.order_date,
             url_public=entry.provenance_url,

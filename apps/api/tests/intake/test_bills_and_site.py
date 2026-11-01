@@ -3,6 +3,7 @@ build() from bills to a connection with a synthesised profile."""
 
 from __future__ import annotations
 
+import copy
 from datetime import date
 from decimal import Decimal
 from typing import Any
@@ -52,6 +53,21 @@ def test_same_file_is_not_read_twice(billx: FakeBillx) -> None:
     _ingest(billx, "a", result("pvvnl_passed"))
     _ingest(billx, "a", result("pvvnl_passed"))
     assert billx.calls == 1
+
+
+def test_an_unreadable_reading_is_read_again(billx: FakeBillx) -> None:
+    bad = copy.deepcopy(result("pvvnl_passed"))
+    bad["bills"][0]["status"] = "unreadable"
+    bad["bills"][0]["passed"] = False
+    bad["bills"][0]["accepted"] = False
+    [b] = _ingest(billx, "u", bad)
+    assert b.status == "unreadable" and billx.calls == 1
+    [b2] = _ingest(billx, "u", result("pvvnl_passed"))  # billx can read it now (say, a model key added)
+    assert billx.calls == 2 and b2.accepted and b2.id != b.id
+    with session_scope() as s:
+        assert s.get(Bill, b.id) is None
+    _ingest(billx, "u", result("pvvnl_passed"))
+    assert billx.calls == 2  # a readable reading is kept
 
 
 def test_needs_review_round_trips_through_confirmation(billx: FakeBillx) -> None:

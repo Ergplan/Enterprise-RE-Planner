@@ -23,8 +23,8 @@ def create_app() -> FastAPI:
     app = FastAPI(title="jouleWise | ergPLAN API", version="0.1.0", dependencies=[Depends(guard)])
     origins = [get_settings().ergplan_public_url]
     if production() and not origins[0].startswith("https://"):
-        # the session cookie is Secure in production: sign-in cannot work behind a plain-http origin
-        log.warning("ERGPLAN_PUBLIC_URL is not https in production: %s", origins[0])
+        # a LAN server: the session cookie cannot be Secure and travels unencrypted on the network
+        log.warning("ERGPLAN_PUBLIC_URL is not https in production (LAN use only): %s", origins[0])
     if not production():
         origins += ["http://localhost:3000", "http://127.0.0.1:3000"]
     app.add_middleware(

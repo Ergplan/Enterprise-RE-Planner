@@ -4,7 +4,6 @@ What is not yet right, and the stage that fixes it.
 
 | Gap | Fixed in |
 | --- | --- |
-| `docker/compose.yaml` has not been run (no Docker daemon in the build workspace); first run happens on the Mac mini | Before Stage 5 |
 | The independent reviewer is a tool script that imports `openai` directly (outside `ergplan/providers`); it is not app code and logs no `model_calls` row | By design |
 | Seeded rulebooks are approved by `build-agent@ergplan`; a jouleWise analyst should review each in `/rulebooks` and re-approve under their own name (duplicate → approve) | Before client use |
 | HV-2 **rural** schedule (7.5% rebate on the 11 kV urban base rate, no ToD) is not representable: `tariff_schedule` has no "rebate on base" field | Stage 3 |
@@ -75,6 +74,7 @@ A replayed bill line that differs from the approved tariff is "explained" only b
 | Rajasthan (the stored file is an HTML page), Haryana (a scanned 7-page notice), Andhra Pradesh (no usable text layer on the schedule pages) need the actual order PDFs | When supplied |
 | Tamil Nadu: FY 2026-27 rates are the FY 2025-26 rates indexed by CPI from 1 July 2026; the indexed schedule is not in the corpus | When TNERC publishes or jouleWise supplies it |
 | Punjab ToD (mid-month seasons, Rs 5.50/kVAh off-peak cap) cannot be expressed by `tod_slots`; PSPCL energy is priced flat | Schema change |
-| Production deployment not done: needs the Google Cloud VM, the hostname and SMTP settings from jouleWise (`docs/deploy.md`) | When supplied |
+| The Mac mini serves the LAN on plain http (`http://<the mini's address>`): no https, no public hostname, sign-in links issued by the operator until SMTP is set; the session cookie travels unencrypted on the office network | A public hostname (Cloudflare Tunnel or port forwarding) with TLS, and an SMTP account |
+| The mini's address comes from DHCP; if it changes, rerun `tools/dev/mini-install.sh` (it updates `ERGPLAN_PUBLIC_URL`) or reserve the address in the router | Router setting |
 | No rate limiting on sign-in requests beyond single-use 15-minute links | Before public launch |
 | Ownership of ids sent in a request body is checked by each route (`owned_bills`, `owned_connection`), not centrally; a new body-id route must call them | When body-id routes multiply |

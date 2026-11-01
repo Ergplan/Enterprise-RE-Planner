@@ -448,6 +448,22 @@
       "notes": [
         "Rate HTP-I (PDF pages 173-175) has demand charges in slabs of billing demand, which ergPLAN's tariff_schedule cannot hold yet: not seeded."
       ]
+    },
+    {
+      "commission": "UPERC",
+      "kind": "regulation",
+      "order_date": "2025-10-17",
+      "order_type": "regulation",
+      "path": "../Banking Rule - Uttar Pradesh.pdf",
+      "profile": "uperc-regulations",
+      "provenance_url": null,
+      "state": "UP",
+      "title": "UPERC (Captive and Renewable Energy Generating Plants) Regulations, 2024 (CRE Regulations 2024)",
+      "utilities": [],
+      "notes": [
+        "Scanned PDF from the Mac mini Downloads; page text from OCR (tesseract).",
+        "Dated 17/10/2025 (handwritten on p.1); applicable from the date of notification to 31.03.2029 (Reg. 1.II)."
+      ]
     }
   ]
 }

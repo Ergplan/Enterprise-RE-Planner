@@ -4,6 +4,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 WORKDIR /app/apps/api
 COPY apps/api/pyproject.toml ./
 COPY apps/api/ergplan ./ergplan
+# tesseract: OCR for scanned regulation pages (documents/ocr.py), e.g. the UPERC CRE Regulations 2024
+RUN apt-get update && apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-eng \
+    && rm -rf /var/lib/apt/lists/*
 RUN pip install --upgrade pip && pip install -e .
 # Chromium for printing the live plan to PDF (report/pdf.py, Stage 7)
 RUN python -m playwright install --with-deps chromium

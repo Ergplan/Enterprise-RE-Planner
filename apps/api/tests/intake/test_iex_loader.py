@@ -113,3 +113,21 @@ def test_real_file_per_segment(seg: str) -> None:
     assert len(p.rows) > 30000
     assert all(1 <= r.block <= 96 for r in p.rows)
     assert all(Decimal(0) <= r.mcp_inr_per_mwh <= Decimal(20000) for r in p.rows)
+
+
+def test_command_line_loads_files_once_and_skips_overlaps(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    rtm = tmp_path / "RTM_15min.csv"
+    rtm.write_text(RTM)
+    other = tmp_path / "RTM_15min_v2.csv"
+    other.write_text(RTM.replace("799.45", "801.00"))
+    bad = tmp_path / "dam.csv"
+    bad.write_text("a,b\n1,2\n")
+    assert iex_loader.main([str(rtm)]) == 0
+    assert iex_loader.main([str(rtm), str(other)]) == 0  # same file again: the same vintage
+    out = capsys.readouterr().out
+    assert "skipped, overlaps" in out and out.count("vintage ") >= 2
+    with session_scope() as s:
+        assert s.scalar(select(func.count()).select_from(PriceVintage)) == 1
+    assert iex_loader.main([str(bad)]) == 1

@@ -1,0 +1,18 @@
+# Build context for docker/api.Dockerfile and docker/web.Dockerfile (the repository root).
+.git
+.env
+.env.*
+!.env.example
+data
+**/.venv
+**/node_modules
+**/.next
+**/.next-*
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+apps/web/tests
+apps/api/tests
+tools/watch/watch.log
+tools/watch/status.json

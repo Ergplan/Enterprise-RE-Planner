@@ -47,14 +47,17 @@ class MeOut(BaseModel):
     required: bool = False  # production: sign-in needed outside the shared plan
 
 
-@router.post("/request", response_model=RequestOut)
-def request_link(body: RequestIn) -> RequestOut:
-    email = body.email.strip().lower()
-    if production() and not get_settings().ergplan_smtp_url:
-        # no way to deliver the link: say so rather than claim it was sent
-        raise HTTPException(503, "sign-in mail is not set up on this server (ERGPLAN_SMTP_URL)")
+def secure_cookie() -> bool:
+    """Secure whenever the site is served over https (a LAN server on plain http cannot set one)."""
+    return get_settings().ergplan_public_url.startswith("https://")
+
+
+def issue_link(email: str, next_path: str = "/plan/intake", actor: str | None = None) -> str:
+    """A one-time sign-in link for an email (15 minutes); only its SHA-256 is stored. Used by
+    /auth/request and by the server operator's `python -m ergplan.platform.signin`."""
+    email = email.strip().lower()
     token = secrets.token_urlsafe(32)
-    with session_scope(actor=email) as s:
+    with session_scope(actor=actor or email) as s:
         s.add(
             LoginToken(
                 token_sha256=sha(token),
@@ -62,7 +65,18 @@ def request_link(body: RequestIn) -> RequestOut:
                 expires_at=datetime.now(UTC) + timedelta(minutes=LINK_MINUTES),
             )
         )
-    link = f"{get_settings().ergplan_public_url.rstrip('/')}/login/verify?token={token}&next={body.next}"
+    return f"{get_settings().ergplan_public_url.rstrip('/')}/login/verify?token={token}&next={next_path}"
+
+
+@router.post("/request", response_model=RequestOut)
+def request_link(body: RequestIn) -> RequestOut:
+    email = body.email.strip().lower()
+    if production() and not get_settings().ergplan_smtp_url:
+        # no way to deliver the link: say so rather than claim it was sent
+        raise HTTPException(
+            503, "sign-in mail is not set up on this server (ERGPLAN_SMTP_URL); ask jouleWise for a link"
+        )
+    link = issue_link(email, body.next)
     try:
         sent = mail.send(
             email,
@@ -102,7 +116,7 @@ def verify(body: VerifyIn, response: Response) -> MeOut:
         cookie,
         max_age=SESSION_DAYS * 86400,
         httponly=True,
-        secure=production(),
+        secure=secure_cookie(),
         samesite="lax",
         path="/",
     )

@@ -302,3 +302,36 @@ def coverage(session: Any, segment: str | None = None) -> list[dict[str, Any]]:
         {"segment": s, "day": d.isoformat(), "blocks": n, "vintage_id": vid}
         for s, d, n, vid in session.execute(q)
     ]
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Load IEX files from the server's disk (first setup of a server; analysts upload in the app):
+    `python -m ergplan.intake.iex_loader FILE [FILE ...]`. The segment comes from each file name;
+    a file already loaded is reported, a file overlapping a live vintage is skipped (not replaced)."""
+    import argparse
+    from pathlib import Path
+
+    from ..db.base import session_scope
+
+    ap = argparse.ArgumentParser(prog="ergplan.intake.iex_loader")
+    ap.add_argument("files", nargs="+", type=Path)
+    ap.add_argument("--segment", default=None)
+    ap.add_argument("--actor", default="price-loader")
+    a = ap.parse_args(argv)
+    failed = 0
+    for f in a.files:
+        try:
+            parsed = parse(f.read_bytes(), f.name, a.segment)
+            with session_scope(actor=a.actor) as s:
+                v = store(s, parsed, f.name, a.actor)
+                print(f"{f.name}: vintage {v.id} ({parsed.segment})")
+        except OverlappingVintage as e:
+            print(f"{f.name}: skipped, overlaps live vintage(s) {', '.join(e.vintage_ids)}")
+        except PriceFileError as e:
+            failed += 1
+            print(f"{f.name}: refused: {e}")
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

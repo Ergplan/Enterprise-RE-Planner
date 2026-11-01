@@ -134,10 +134,12 @@ ergOS Harmony vendored at `public/vendor/harmony` (origin in `ORIGIN.txt`, re-co
 
 ## Deployment
 
+**Mac mini (1 Nov 2026, the server):** `docker/compose.mini.yaml` over `compose.yaml` and `compose.prod.yaml` — Caddy on LAN port 80, production mode, worker concurrency 4; `tools/dev/mini.sh` runs compose with `.env`; `tools/dev/mini-install.sh` installs and updates it from a git bundle; backups by launchd into `~/ergplan-backups`. `python -m ergplan.platform.signin EMAIL` issues a sign-in link; `python -m ergplan.intake.iex_loader FILE…` loads prices from disk.
+
 Stage 8: `docker/compose.prod.yaml` over `docker/compose.yaml` on the VM (only Caddy exposed; automatic TLS for `SITE_ADDRESS`; `ERGPLAN_ENV=prod`; worker concurrency); `tools/dev/backup.sh` nightly (pg_dump + data/ tarball, 14 days, optional bucket); `docs/deploy.md` is the runbook.
 
 
-`docker/compose.yaml`: postgres, api (migrates then serves), web (Next standalone), billx (built from `BILLX_REPO`, default a sibling `billx` checkout), caddy (`:8080`, `/api/*` → api). Mac mini first; Google Cloud VM later. The build workspace has no Docker daemon, so Stage 0 ran the same services natively (Postgres 16, uvicorn, next dev).
+`docker/compose.yaml`: postgres, api (migrates then serves), web (Next standalone), billx (built from `BILLX_REPO`, default a sibling `billx` checkout), caddy (`:8080`, `/api/*` → api). The images build from the repository root with `.dockerignore`; the whole stack was first built and run in Docker on 1 Nov 2026.
 
 ## Rulebooks seeded (Stages 1 and 8)
 

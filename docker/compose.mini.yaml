@@ -1,0 +1,13 @@
+# The Mac mini as the server (1 Nov 2026), on top of compose.yaml and compose.prod.yaml:
+#   tools/dev/mini.sh up -d --build        (the same as docker compose --env-file .env -f ... -f ...)
+# Production mode (sign-in, ownership, no development headers) served by Caddy on the LAN on plain
+# http (SITE_ADDRESS=:80; ERGPLAN_PUBLIC_URL=http://<the mini's address>). Only port 80 is published.
+# For https on a public hostname, set SITE_ADDRESS and ERGPLAN_PUBLIC_URL to it and publish 443 too.
+services:
+  caddy:
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    ports: !override ["${HTTP_PORT:-80}:80"]
+  worker:
+    environment:
+      ERGPLAN_WORKER_CONCURRENCY: ${ERGPLAN_WORKER_CONCURRENCY:-4}

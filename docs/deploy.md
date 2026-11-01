@@ -1,4 +1,40 @@
-# Deploying ergPLAN on the Google Cloud VM (Stage 8)
+# Deploying ergPLAN
+
+## The Mac mini (the server, from 1 Nov 2026)
+
+Prerequisites on the mini: Docker Desktop (or OrbStack) running, git, the billx checkout at `~/billx`,
+and in `~/Downloads`: `ergplan-server/` (this kit), `Keys.rtf` (the OpenAI key is read from it, never
+printed), `India_DISCOM_Tariff_Orders_Final_2026/`, `Tariff Orders/`, `Banking Rule - Uttar Pradesh.pdf`,
+and the IEX `DAM_15min_*.xlsx` / `RTM_15min_*.xlsx` files.
+
+```bash
+bash ~/Downloads/ergplan-server/install.sh
+```
+
+It installs the code at `~/apps/ergplan` and writes `.env` (mode 600), builds and starts the stack
+(first time 10–20 minutes), registers the regulations, restores the approved rulebooks, loads the IEX
+prices, schedules the nightly backup and prints the address (`http://<the mini's address>`) with a
+one-time sign-in link for the first analyst. Running it again updates the code from a newer kit and keeps
+`.env` and the database.
+
+Day to day, from `~/apps/ergplan`:
+
+| What | Command |
+| --- | --- |
+| Status, logs | `tools/dev/mini.sh ps` · `tools/dev/mini.sh logs -f api` |
+| A sign-in link for someone (no mail server yet) | `tools/dev/mini.sh exec api python -m ergplan.platform.signin someone@company.in` |
+| Stop, start | `tools/dev/mini.sh stop` · `tools/dev/mini.sh up -d` |
+| Update from GitHub instead of a kit | `git pull && tools/dev/mini.sh up -d --build` |
+| Backup now | `ERGPLAN_SERVER=mini BACKUP_DIR=~/ergplan-backups tools/dev/backup.sh` |
+
+Keep it up: Docker Desktop → Settings → General → "Start Docker Desktop when you sign in"; System
+Settings → Energy → prevent automatic sleeping. Sign-in mail: set `ERGPLAN_SMTP_URL`
+(`smtps://user:app-password@smtp.example.com:465`) in `.env`, then `tools/dev/mini.sh up -d`.
+To reach it from outside the office, put a hostname in front (Cloudflare Tunnel, or a router port
+forward with `SITE_ADDRESS=<hostname>`, `ERGPLAN_PUBLIC_URL=https://<hostname>` and port 443 published),
+so Caddy serves https.
+
+# The Google Cloud VM (Stage 8, for later)
 
 The stack is the same Compose file as on the laptop, with `docker/compose.prod.yaml` on top: only Caddy is
 reachable from outside (80/443, automatic TLS for the jouleWise hostname); the API runs with

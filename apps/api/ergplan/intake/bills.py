@@ -152,6 +152,16 @@ def store_file(data: bytes) -> str:
     return sha
 
 
+UNREADABLE = "unreadable"
+
+
+def _retry(session: Session, rows: list[Bill]) -> bool:
+    if not all(b.status == UNREADABLE for b in rows):
+        return False
+    ids = [b.id for b in rows]
+    return not session.scalar(select(BillConfirmation.id).where(BillConfirmation.bill_id.in_(ids)).limit(1))
+
+
 def ingest(
     session: Session,
     data: bytes,
@@ -171,12 +181,21 @@ def ingest(
             ).order_by(Bill.bill_index)
         )
     )
+    if mine and _retry(session, mine):
+        # every bill in the stored reading was unreadable and nobody confirmed anything on it: billx
+        # may read it now (a model key added, a profile fixed), so the file is read again
+        for b in mine:
+            session.delete(b)
+        session.flush()
+        mine = []
     if mine:
         for b in mine:
             if connection_id and b.connection_id is None:
                 b.connection_id = connection_id
         return mine
-    earlier = session.scalars(q.order_by(Bill.created_at)).first()
+    earlier = session.scalars(
+        q.where(Bill.status != UNREADABLE).order_by(Bill.created_at)
+    ).first()  # an unreadable reading is never reused for another uploader
     result = (
         earlier.billx_result
         if earlier is not None

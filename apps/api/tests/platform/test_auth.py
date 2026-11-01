@@ -189,3 +189,21 @@ def test_plain_http_public_url_is_warned_in_production(
     with caplog.at_level("WARNING", logger="ergplan.app"):
         create_app()
     assert "not https" in caplog.text
+
+
+def test_operator_issues_a_link_and_cookie_follows_the_scheme(
+    prod: list[tuple[str, str]], monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from ergplan.platform import signin
+
+    monkeypatch.setattr(get_settings(), "ergplan_public_url", "http://192.168.1.73")  # a LAN server
+    assert signin.main(["Ravi@Joulewise.in"]) == 0
+    link = capsys.readouterr().out.strip()
+    assert link.startswith("http://192.168.1.73/login/verify?token=")
+    c = TestClient(app, base_url="http://testserver")
+    v = c.post("/auth/verify", json={"token": link.split("token=")[1].split("&")[0]})
+    assert v.status_code == 200 and v.json()["role"] == "analyst"
+    assert "secure" not in v.headers["set-cookie"].lower()  # http: a Secure cookie would never come back
+    assert c.get("/rulebooks/versions").status_code == 200
+    with pytest.raises(SystemExit):
+        signin.main(["not-an-email"])
