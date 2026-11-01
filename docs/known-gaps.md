@@ -76,6 +76,7 @@ A replayed bill line that differs from the approved tariff is "explained" only b
 | Rajasthan (the stored file is an HTML page), Haryana (a scanned 7-page notice), Andhra Pradesh (no usable text layer on the schedule pages) need the actual order PDFs | When supplied |
 | Tamil Nadu: FY 2026-27 rates are the FY 2025-26 rates indexed by CPI from 1 July 2026; the indexed schedule is not in the corpus | When TNERC publishes or jouleWise supplies it |
 | Punjab ToD (mid-month seasons, Rs 5.50/kVAh off-peak cap) cannot be expressed by `tod_slots`; PSPCL energy is priced flat | Schema change |
+| The VM runs at `https://<ip>.sslip.io` until a jouleWise hostname is pointed at it; sign-in links are issued by the operator until SMTP is set | A hostname and an SMTP account |
 | The Mac mini serves the LAN on plain http (`http://<the mini's address>`): no https, no public hostname, sign-in links issued by the operator until SMTP is set; the session cookie travels unencrypted on the office network | A public hostname (Cloudflare Tunnel or port forwarding) with TLS, and an SMTP account |
 | The mini's address comes from DHCP; if it changes, rerun `tools/dev/mini-install.sh` (it updates `ERGPLAN_PUBLIC_URL`) or reserve the address in the router | Router setting |
 | No rate limiting on sign-in requests beyond single-use 15-minute links | Before public launch |

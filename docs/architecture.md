@@ -134,7 +134,9 @@ ergOS Harmony vendored at `public/vendor/harmony` (origin in `ORIGIN.txt`, re-co
 
 ## Deployment
 
-**Mac mini (1 Nov 2026, the server):** `docker/compose.mini.yaml` over `compose.yaml` and `compose.prod.yaml` — Caddy on LAN port 80, production mode, worker concurrency 4; `tools/dev/mini.sh` runs compose with `.env`; `tools/dev/mini-install.sh` installs and updates it from a git bundle; backups by launchd into `~/ergplan-backups`. `python -m ergplan.platform.signin EMAIL` issues a sign-in link; `python -m ergplan.intake.iex_loader FILE…` loads prices from disk.
+**Google Cloud VM `replanner` (1 Nov 2026, the server):** `docker/compose.prod.yaml` over `compose.yaml` (Caddy on 80/443, TLS for `SITE_ADDRESS`); `tools/dev/vm-install.sh` installs and updates from a git bundle over SSH (from the Mac mini); `tools/dev/vm.sh` runs compose with `.env`; `tools/dev/vm-push.sh` does the same from a Mac with the Google Cloud CLI; backups by root's cron.
+
+**Mac mini (1 Nov 2026, LAN alternative):** `docker/compose.mini.yaml` over `compose.yaml` and `compose.prod.yaml` — Caddy on LAN port 80, production mode, worker concurrency 4; `tools/dev/mini.sh` runs compose with `.env`; `tools/dev/mini-install.sh` installs and updates it from a git bundle; backups by launchd into `~/ergplan-backups`. `python -m ergplan.platform.signin EMAIL` issues a sign-in link; `python -m ergplan.intake.iex_loader FILE…` loads prices from disk.
 
 Stage 8: `docker/compose.prod.yaml` over `docker/compose.yaml` on the VM (only Caddy exposed; automatic TLS for `SITE_ADDRESS`; `ERGPLAN_ENV=prod`; worker concurrency); `tools/dev/backup.sh` nightly (pg_dump + data/ tarball, 14 days, optional bucket); `docs/deploy.md` is the runbook.
 
