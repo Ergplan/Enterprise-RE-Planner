@@ -143,6 +143,11 @@ def facts(bill: dict[str, Any]) -> BillFacts:
         for row in tod:
             slot = (row.get("slot") or {}) if isinstance(row, dict) else {}
             kwh = (row.get("kwh") or {}) if isinstance(row, dict) else {}
+            if isinstance(row, dict) and not (isinstance(kwh, dict) and kwh.get("value") is not None):
+                # contract 1.1: a bill priced in kVAh prints its slots in kVAh only
+                kvah = row.get("kvah") or {}
+                if isinstance(kvah, dict) and kvah.get("value") is not None:
+                    kwh = {**kvah, "unit": kvah.get("unit") or "kVAh"}
             out.tod.append(
                 {
                     "slot": slot.get("value") if isinstance(slot, dict) else slot,

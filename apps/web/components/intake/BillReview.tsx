@@ -45,6 +45,9 @@ export function BillReview({ bill, onChange }: { bill: BillOut; onChange: (b: Bi
           <span className={`eg-chip ${bill.accepted ? "eg-chip--accent" : "eg-chip--warning"}`}>
             {bill.accepted ? (bill.accepted_by === "bill_confirmations" ? "Confirmed by you" : STATUS[bill.status] ?? bill.status) : `${pending} to check`}
           </span>
+          <a className="eg-btn eg-btn--sm eg-btn--primary" href={`/plan/intake/bill/${bill.id}`}>
+            <span data-icon="eye" data-size="14"></span>Reading view
+          </a>
           <a className="ep-cite" href={`/api${bill.file_url}`} target="_blank" rel="noreferrer">
             <span data-icon="file" data-size="14"></span>Open the bill
           </a>
@@ -84,7 +87,7 @@ export function BillReview({ bill, onChange }: { bill: BillOut; onChange: (b: Bi
           ))}
         </tbody>
       </table>
-      {bill.tod_slots.length > 0 && bill.tod_slots.every((s) => !s || !/\d[:.]\d\d/.test(s)) && (
+      {bill.tod_slots.length > 0 && bill.tod_slots.every((s) => !s || !/\d{1,2}([:.]\d\d)?\s*(to|-|–)\s*\d{1,2}/i.test(s)) && (
         <p className="eg-muted ep-note">
           This bill names its time-of-day slots ({bill.tod_slots.join(", ")}) without their hours, so the month&apos;s total is used
           and the day&apos;s shape comes from your operating pattern.

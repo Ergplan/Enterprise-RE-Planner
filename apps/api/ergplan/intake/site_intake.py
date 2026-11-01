@@ -296,7 +296,9 @@ def window_of(slot: str | None) -> tuple[str, str] | None:
         return None
     m = _WINDOW.search(slot)
     if not m:
-        return None
+        from .bill_reading import slot_hours  # hours without minutes: 'TOD-1 (05 to 11)'
+
+        return slot_hours(slot)
     a, b = f"{int(m.group(1)):02d}:{m.group(2)}", f"{int(m.group(3)):02d}:{m.group(4)}"
     return (a, b) if _HHMM.match(a) and _HHMM.match(b) else None
 

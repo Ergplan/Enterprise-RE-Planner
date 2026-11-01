@@ -13,7 +13,7 @@ from decimal import Decimal
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
-from fastapi.responses import FileResponse, PlainTextResponse
+from fastapi.responses import FileResponse, PlainTextResponse, Response
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 
@@ -22,8 +22,8 @@ from ...core.sourced import RefKind, SourcedValue, SourceRef
 from ...core.units import Unit
 from ...db.base import session_scope
 from ...db.models import Bill, Client, Connection, LoadProfile, Site
+from ...intake import bill_reading, defaults, measured_upload, profile_synthesis, site_intake
 from ...intake import bills as bill_store
-from ...intake import defaults, measured_upload, profile_synthesis, site_intake
 from ...intake.billx_client import BillxError, BillxUnavailable
 from ..auth import Caller, caller, owned_bills, owned_connection
 
@@ -130,6 +130,42 @@ def bill_file(bill_id: str) -> FileResponse:
     if not p.exists():
         raise HTTPException(404, "the bill file is not stored")
     return FileResponse(p, media_type="application/pdf", headers={"Content-Disposition": "inline"})
+
+
+@router.get("/bills/{bill_id}/reading", response_model=bill_reading.BillReading)
+def bill_reading_view(bill_id: str, who: Annotated[Caller, Depends(caller)]) -> bill_reading.BillReading:
+    """The reading view: every value billx read with its page, box and readers, the slot table,
+    the charges and the bill's own checks (billx's stored result, arranged; invariant 7)."""
+    with session_scope() as s:
+        b = _get_bill(s, bill_id)
+        owned_bills(s, who, [bill_id])
+        return bill_reading.build(s, b)
+
+
+@router.get("/bills/{bill_id}/plan-inputs", response_model=bill_reading.PlanInputs)
+def bill_plan_inputs(bill_id: str, who: Annotated[Caller, Depends(caller)]) -> bill_reading.PlanInputs:
+    """What RE planning takes from this bill: the slot table with open access and billed units,
+    the slot rates, the demand, and the shares derived from them, each with its source_ref."""
+    with session_scope() as s:
+        b = _get_bill(s, bill_id)
+        owned_bills(s, who, [bill_id])
+        return bill_reading.plan_inputs(s, b)
+
+
+@router.get("/bills/{bill_id}/pages/{page}.png")
+def bill_page(bill_id: str, page: int, who: Annotated[Caller, Depends(caller)]) -> Response:
+    """A page of the stored bill as an image (1-based, the file's page numbers), for display only."""
+    with session_scope() as s:
+        b = _get_bill(s, bill_id)
+        owned_bills(s, who, [bill_id])
+        sha = b.file_sha256
+    try:
+        png = bill_store.page_png(sha, page)
+    except FileNotFoundError as e:
+        raise HTTPException(404, "the bill file is not stored") from e
+    except IndexError as e:
+        raise HTTPException(404, "no such page") from e
+    return Response(png, media_type="image/png", headers={"Cache-Control": "private, max-age=86400"})
 
 
 class ConfirmIn(BaseModel):

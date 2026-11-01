@@ -152,6 +152,38 @@ def store_file(data: bytes) -> str:
     return sha
 
 
+def page_png(sha: str, page: int, scale: float = 2.0) -> bytes:
+    """A page (1-based) of a stored bill file rendered for display, cached beside the file. This
+    draws the page; it reads nothing from it (invariant 7)."""
+    import io
+
+    import pypdfium2 as pdfium
+
+    d = get_settings().bill_files_dir
+    cached = d / "pages" / f"{sha}-{page}.png"
+    if cached.exists():
+        return cached.read_bytes()
+    src = d / f"{sha}.pdf"
+    if not src.exists():
+        raise FileNotFoundError(sha)
+    pdf = pdfium.PdfDocument(str(src))
+    try:
+        if page < 1 or page > len(pdf):
+            raise IndexError(page)
+        image = pdf[page - 1].render(scale=scale).to_pil()
+        # a scan's page can be very large: the view needs about 1,600 px on the long side
+        longest = max(image.size)
+        if longest > 1800:
+            image = image.resize((image.width * 1800 // longest, image.height * 1800 // longest))
+        buf = io.BytesIO()
+        image.save(buf, format="PNG", optimize=True)
+    finally:
+        pdf.close()
+    cached.parent.mkdir(parents=True, exist_ok=True)
+    cached.write_bytes(buf.getvalue())
+    return buf.getvalue()
+
+
 UNREADABLE = "unreadable"
 
 

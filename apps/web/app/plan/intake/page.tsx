@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BillReview } from "@/components/intake/BillReview";
 import { IntakeReview } from "@/components/intake/IntakeReview";
 import { TypeFacts } from "@/components/intake/TypeFacts";
@@ -19,6 +19,17 @@ export default function IntakePage() {
   const [drag, setDrag] = useState(false);
   const [spoken, setSpoken] = useState<Record<string, unknown> | null>(null);
   const input = useRef<HTMLInputElement>(null);
+
+  // back from the hand-off screen ("Use this bill for the plan"): review what was understood
+  useEffect(() => {
+    if (!new URLSearchParams(window.location.search).has("review")) return;
+    try {
+      const saved = sessionStorage.getItem("ergplan-intake");
+      if (saved) setIntake(JSON.parse(saved) as SiteIntake);
+    } catch {
+      /* storage may be unavailable */
+    }
+  }, []);
 
   async function upload(files: FileList | File[]) {
     setError("");
