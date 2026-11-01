@@ -24,6 +24,7 @@ from tests.platform.test_api_runs import msedcl_5mw
 @pytest.fixture
 def prod(monkeypatch: pytest.MonkeyPatch) -> list[tuple[str, str]]:
     monkeypatch.setattr(get_settings(), "ergplan_env", "prod")
+    monkeypatch.setattr(get_settings(), "ergplan_smtp_url", "smtp://mail.test:587")
     sent: list[tuple[str, str]] = []
 
     def fake_send(to: str, subject: str, body: str) -> bool:
@@ -128,3 +129,14 @@ def test_a_client_reaches_only_their_own_sites(
         ).status_code
         == 401
     )
+
+
+def test_production_without_mail_refuses_to_issue_a_link(prod: list[tuple[str, str]]) -> None:
+    get_settings().ergplan_smtp_url = ""  # restored by the fixture's monkeypatch
+    with session_scope() as s:
+        before = s.query(LoginToken).count()
+    r = TestClient(app).post("/auth/request", json={"email": "someone@acme.in"})
+    assert r.status_code == 503 and "ERGPLAN_SMTP_URL" in r.json()["detail"]
+    assert not prod
+    with session_scope() as s:
+        assert s.query(LoginToken).count() == before

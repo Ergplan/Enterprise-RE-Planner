@@ -31,7 +31,7 @@ cd /opt/ergplan && cp .env.example .env      # fill in: see the Stage 8 block
 
 Required in `.env`: `SITE_ADDRESS`, `ERGPLAN_ENV=prod`, `ERGPLAN_PUBLIC_URL=https://<hostname>`,
 `POSTGRES_PASSWORD`, `OPENAI_API_KEY`, `BILLX_TOKEN`, `BILLX_OPENAI_API_KEY`,
-`ERGPLAN_SMTP_URL` (for sign-in mail), `ERGPLAN_MAIL_FROM`. `tools/dev/secrets-check.py` refuses a
+`ERGPLAN_SMTP_URL` (mandatory: without it production refuses to issue sign-in links), `ERGPLAN_MAIL_FROM`. `tools/dev/secrets-check.py` refuses a
 committed `.env`.
 
 ## 3. Data

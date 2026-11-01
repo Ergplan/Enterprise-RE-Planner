@@ -49,6 +49,9 @@ class MeOut(BaseModel):
 @router.post("/request", response_model=RequestOut)
 def request_link(body: RequestIn) -> RequestOut:
     email = body.email.strip().lower()
+    if production() and not get_settings().ergplan_smtp_url:
+        # no way to deliver the link: say so rather than claim it was sent
+        raise HTTPException(503, "sign-in mail is not set up on this server (ERGPLAN_SMTP_URL)")
     token = secrets.token_urlsafe(32)
     with session_scope(actor=email) as s:
         s.add(

@@ -1,5 +1,6 @@
 """Sending the sign-in link. SMTP when ERGPLAN_SMTP_URL is set (smtp[s]://user:password@host:port);
-otherwise the link is written to the log (development)."""
+otherwise nothing is sent (a warning names the recipient, never the link): development returns the
+link in the response, and production refuses to issue one (`/auth/request` answers 503)."""
 
 from __future__ import annotations
 

@@ -14,7 +14,7 @@ export default function LoginPage() {
     const next = new URLSearchParams(window.location.search).get("next") ?? "/plan/intake";
     try {
       const r = await fetch("/api/auth/request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, next }) });
-      if (!r.ok) throw new Error(r.status === 422 ? "That does not look like an email address." : `${r.status}`);
+      if (!r.ok) throw new Error(r.status === 422 ? "That does not look like an email address." : r.status === 503 ? "Sign-in mail is not set up on this server yet. Please contact jouleWise." : `${r.status}`);
       const d = (await r.json()) as { sent: boolean; dev_link: string | null };
       setDev(d.dev_link);
       setState("sent");
