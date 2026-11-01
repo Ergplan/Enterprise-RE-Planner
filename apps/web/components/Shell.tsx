@@ -61,7 +61,7 @@ export function Shell({ children }: { children: ReactNode }) {
         } catch {
           /* storage may be unavailable */
         }
-        const open = path.startsWith("/login") || path.startsWith("/p/") || path.startsWith("/documents");
+        const open = path.startsWith("/login") || path.startsWith("/account") || path.startsWith("/p/") || path.startsWith("/documents");
         if (m.required && !m.signed_in && !open) window.location.replace(`/login?next=${encodeURIComponent(path + window.location.search)}`);
       })
       .catch(() => undefined);
@@ -118,6 +118,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <div className="eg-topbar__end">
             {me?.signed_in ? (
               <span className="ep-row ep-small"><span className="eg-muted">{me.email}{me.role === "analyst" ? " · jouleWise" : ""}</span>
+                <a className="eg-btn eg-btn--ghost eg-btn--sm" href="/account">Password</a>
                 <button className="eg-btn eg-btn--ghost eg-btn--sm" onClick={signOut}>Sign out</button></span>
             ) : me?.required ? <a className="eg-btn eg-btn--ghost eg-btn--sm" href="/login">Sign in</a> : null}
             <button className="eg-icon-btn eg-icon-btn--sm" aria-label="Switch theme" onClick={toggleTheme}>

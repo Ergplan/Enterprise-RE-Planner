@@ -443,12 +443,14 @@ class Explanation(Base):
 
 
 class User(Base):
-    """A person who signs in by email link. Role analyst (jouleWise) or client."""
+    """A person who signs in, by email and password or by email link. Role analyst (jouleWise) or
+    client. Only a scrypt hash of the password is stored (platform/passwords.py)."""
 
     __tablename__ = "users"
 
     email: Mapped[str] = mapped_column(String(254), primary_key=True)
     role: Mapped[str] = mapped_column(String(16))
+    password_hash: Mapped[str | None] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 

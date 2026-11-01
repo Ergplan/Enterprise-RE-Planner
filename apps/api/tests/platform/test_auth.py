@@ -13,7 +13,7 @@ from fastapi.testclient import TestClient
 
 from ergplan.core.settings import get_settings
 from ergplan.db.base import session_scope
-from ergplan.db.models import AuthSession, LoginToken
+from ergplan.db.models import AuthSession, LoginToken, User
 from ergplan.intake import bills as bill_store
 from ergplan.platform import mail
 from ergplan.platform.app import app
@@ -55,6 +55,7 @@ def test_sign_in_roles_and_logout(prod: list[tuple[str, str]]) -> None:
         "role": "analyst",
         "signed_in": True,
         "required": True,
+        "has_password": False,
     }
     c = sign_in("ops@acme.in", prod)
     assert c.get("/auth/me").json()["role"] == "client"
@@ -221,3 +222,64 @@ def test_every_public_template_is_a_real_route() -> None:
 
     paths = set(app.openapi()["paths"])  # routers are included lazily; the schema lists every route
     assert paths >= PUBLIC, sorted(PUBLIC - paths)
+
+
+def test_password_sign_in_set_change_and_analyst_adds_a_person(prod: list[tuple[str, str]]) -> None:
+    from ergplan.platform.routers import auth as auth_routes
+
+    auth_routes._failures.clear()
+    c = sign_in("owner@joulewise.in", prod)  # first time: the emailed or operator link
+    assert c.get("/auth/me").json()["has_password"] is False
+    assert c.post("/auth/password", json={"password": "short"}).status_code == 422
+    assert c.post("/auth/password", json={"password": "green-power-2026"}).json()["has_password"] is True
+    # changing it needs the current password
+    assert c.post("/auth/password", json={"password": "another-pass-1"}).status_code == 403
+    assert (
+        c.post(
+            "/auth/password", json={"password": "another-pass-1", "current": "green-power-2026"}
+        ).status_code
+        == 200
+    )
+    c.post("/auth/logout")
+    fresh = TestClient(app, base_url="https://testserver")
+    assert (
+        fresh.post("/auth/login", json={"email": "Owner@joulewise.in", "password": "nope-nope"}).status_code
+        == 401
+    )
+    ok = fresh.post("/auth/login", json={"email": "owner@joulewise.in", "password": "another-pass-1"})
+    assert ok.status_code == 200 and ok.json()["role"] == "analyst" and "ergplan_session" in fresh.cookies
+    assert fresh.get("/rulebooks/versions").status_code == 200
+    # an analyst adds a client with a first password; a client cannot add people
+    added = fresh.post("/auth/users", json={"email": "plant@acme.in", "password": "first-pass-9"})
+    assert added.status_code == 201 and added.json() == {"email": "plant@acme.in", "role": "client"}
+    cl = TestClient(app, base_url="https://testserver")
+    assert (
+        cl.post("/auth/login", json={"email": "plant@acme.in", "password": "first-pass-9"}).json()["role"]
+        == "client"
+    )
+    assert cl.post("/auth/users", json={"email": "x@acme.in", "password": "whatever-1"}).status_code == 403
+    with session_scope() as s:
+        u = s.get(User, "plant@acme.in")
+        assert u is not None and u.password_hash and "first-pass-9" not in u.password_hash
+
+
+def test_wrong_passwords_are_throttled(prod: list[tuple[str, str]]) -> None:
+    from ergplan.platform.routers import auth as auth_routes
+
+    auth_routes._failures.clear()
+    c = TestClient(app, base_url="https://testserver")
+    codes = [
+        c.post("/auth/login", json={"email": "who@acme.in", "password": f"guess-{i}"}).status_code
+        for i in range(11)
+    ]
+    assert codes[:10] == [401] * 10 and codes[10] == 429
+    auth_routes._failures.clear()
+
+
+def test_password_hashes_are_salted_and_checked_in_constant_time() -> None:
+    from ergplan.platform.passwords import hash_password, verify_password
+
+    a, b = hash_password("same-password"), hash_password("same-password")
+    assert a != b and a.startswith("scrypt$")
+    assert verify_password("same-password", a) and not verify_password("other", a)
+    assert not verify_password("x", None) and not verify_password("x", "garbage")

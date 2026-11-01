@@ -31,6 +31,7 @@ PUBLIC = {
     "/health",
     "/auth/request",
     "/auth/verify",
+    "/auth/login",
     "/auth/me",
     "/auth/logout",
     "/p/{token}",

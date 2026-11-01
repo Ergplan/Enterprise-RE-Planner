@@ -162,3 +162,8 @@ Dated entries. Every deviation from `docs/MASTER-PROMPT.md` is one.
 - **The API image installs its dependencies before copying the code**, so an update that changes only code rebuilds the last layers instead of reinstalling Python packages and downloading Chromium (the first SSH update to the VM spent most of its time on that).
 - **Andhra Pradesh is sourced from Table 11** ("Tariff for retail sale of electricity during FY 2026-27", applicable 01.04.2026 to 31.03.2027 for the three DISCOMs, PDF pages 196-197) instead of the Category III(A) schedule page, which has no text layer (page 230). The order prices every ToD slot directly by season and voltage; the rows hold the Normal-hours rate as the energy charge and the other slots as differences in `tod_slots`, which are the same at all four voltages (checked at each).
 
+## 1 Nov 2026 — email and password sign-in
+
+- **Sign-in by email and password, at the person's request** ("not so complex"): the email link alone needed a mail account on the server. A person signs in once by link (emailed, or issued by the operator), chooses a password on `/account`, and from then on signs in with email and password. An analyst can add a person, or reset a password, with a first password they pass on (`POST /auth/users`). Passwords are hashed with scrypt (standard library, random salt per password, constant-time check); only the hash is stored (`users.password_hash`, migration 0010). The email link stays for first sign-in and forgotten passwords.
+- **Wrong passwords are throttled per email in the API process** (ten in fifteen minutes, then 429). One API process serves the site, so this is enough for now; a shared limit belongs with the rate limiting listed in known gaps.
+

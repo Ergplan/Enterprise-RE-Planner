@@ -124,7 +124,8 @@ bill → `intake.bills.ingest()` → `intake.site_intake.build()` → `engine.ta
 | POST | `/voice/session` | Ephemeral OpenAI Realtime secret (intake or plan mode) with the session's tools |
 | POST | `/voice/tool`, GET `/voice/tools?mode=` | Run one tool on the browser-held state (the Realtime model's function calls are relayed here); the tool schemas |
 | POST | `/chat` | Text chat with the same tools (the model asks, the API runs, the model reads back) |
-| POST | `/auth/request`, `/auth/verify`, `/auth/logout`; GET `/auth/me` | Sign-in by email link; session cookie; who is signed in and whether sign-in is required |
+| POST | `/auth/request`, `/auth/verify`, `/auth/logout`; GET `/auth/me` | Sign-in by email link; session cookie; who is signed in, whether sign-in is required, whether they have a password |
+| POST | `/auth/login`, `/auth/password`, `/auth/users` | Sign-in by email and password (10 wrong tries in 15 minutes are refused); set or change one's password (the current one to change it); an analyst adds a person or resets a password |
 | GET | `/rulebooks/coverage?on=` | Per state: which rule families are approved on the date, else "not yet sourced" |
 | GET | `/connections/{id}/avoided-cost?as_of=&version=` | Avoided cost of a grid kWh: 12 × 96 matrix (INR/kWh), rate cards with cited components and the kVAh/kWh factor, annual energy and demand lines; `as_of` picks the tariff (default today) |
 

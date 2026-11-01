@@ -81,5 +81,5 @@ A replayed bill line that differs from the approved tariff is "explained" only b
 | The VM runs at `https://<ip>.sslip.io` until a jouleWise hostname is pointed at it; sign-in links are issued by the operator until SMTP is set | A hostname and an SMTP account |
 | The Mac mini serves the LAN on plain http (`http://<the mini's address>`): no https, no public hostname, sign-in links issued by the operator until SMTP is set; the session cookie travels unencrypted on the office network | A public hostname (Cloudflare Tunnel or port forwarding) with TLS, and an SMTP account |
 | The mini's address comes from DHCP; if it changes, rerun `tools/dev/mini-install.sh` (it updates `ERGPLAN_PUBLIC_URL`) or reserve the address in the router | Router setting |
-| No rate limiting on sign-in requests beyond single-use 15-minute links | Before public launch |
+| No rate limiting on sign-in-link requests; wrong-password throttling is per API process and in memory (resets on restart) | Before public launch |
 | Ownership of ids sent in a request body is checked by each route (`owned_bills`, `owned_connection`), not centrally; a new body-id route must call them | When body-id routes multiply |

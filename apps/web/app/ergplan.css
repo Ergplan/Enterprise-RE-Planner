@@ -163,3 +163,8 @@ a.eg-btn { text-decoration: none; }
   .ep-content .ep-table { display: block; overflow-x: auto; max-width: 100%; }
   .ep-form { grid-template-columns: 1fr !important; }
 }
+
+/* sign-in and password forms */
+.ep-form { display: flex; flex-direction: column; gap: var(--space-3, 12px); margin-top: var(--space-3, 12px); }
+.ep-field { display: flex; flex-direction: column; gap: 4px; }
+.ep-field .eg-input { width: 100%; }
