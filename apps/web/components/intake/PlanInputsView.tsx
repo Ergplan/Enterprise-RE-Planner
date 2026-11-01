@@ -60,6 +60,9 @@ export function PlanInputsView({ inputs }: { inputs: PlanInputs }) {
           <article key={f.key} className="eg-card ep-stat">
             <div className="ep-stat__label">{f.label}</div>
             <Figure v={f} big />
+            {f.verification && f.verification !== "verified" && f.verification !== "confirmed" && (
+              <small className="ep-tocheck">to check on the bill</small>
+            )}
           </article>
         ))}
         {inputs.derived.map((f) => (

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ReadingCard } from "@/components/intake/ReadingCard";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { clientFetch, monthLabel } from "@/lib/intake";
 import { READERS, VERIFICATION, indian, pct, type BillReadOut, type BillReading, type ReadValue } from "@/lib/reading";
 
@@ -40,6 +40,19 @@ export function BillTheatre({ initial }: { initial: BillReading }) {
   const [focus, setFocus] = useState<string | null>(null);
   const [step, setStep] = useState<number>(-1); // -1: everything shown
   const [playing, setPlaying] = useState(false);
+  const [aspect, setAspect] = useState(1.414); // page height ÷ width, from the drawn page
+  const [zoom, setZoom] = useState(1);
+  const left = useRef<HTMLDivElement>(null);
+  const right = useRef<HTMLDivElement>(null);
+  const syncing = useRef(false);
+  // the two pages scroll together, so a value and its print stay side by side when zoomed in
+  const sync = useCallback((from: HTMLDivElement | null, to: HTMLDivElement | null) => {
+    if (!from || !to || syncing.current) return;
+    syncing.current = true;
+    to.scrollTop = from.scrollTop;
+    to.scrollLeft = from.scrollLeft;
+    requestAnimationFrame(() => { syncing.current = false; });
+  }, []);
   const [busy, setBusy] = useState<string | null>(null);
   const [edits, setEdits] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
@@ -103,11 +116,12 @@ export function BillTheatre({ initial }: { initial: BillReading }) {
         const box = reading.box ?? v.box;
         const at = reading.box ? reading.page : v.page;
         if (!box || at !== page) continue;
-        chips.push({ id: `${v.path}:${current.reader}`, path: v.path, text: reading.printed, box, tone: "reading", label: v.label });
+        chips.push({ id: `${v.path}:${current.reader}`, path: v.path, text: reading.printed, box, tone: "reading", label: v.label });  // as this reader read it
         continue;
       }
       if (!v.box || v.page !== page) continue;
-      chips.push({ id: v.path, path: v.path, text: v.value ?? "", box: v.box, tone: tone(v), label: v.label });
+      // the decided value, written as the bill prints it where the readers agree with the print
+      chips.push({ id: v.path, path: v.path, text: v.confirmed ? v.value ?? "" : v.printed ?? v.value ?? "", box: v.box, tone: tone(v), label: v.label });
     }
     return chips;
   }, [current, values, page]);
@@ -188,20 +202,30 @@ export function BillTheatre({ initial }: { initial: BillReading }) {
         {current ? current.detail : `${values.filter((v) => v.verification === "verified" || v.confirmed).length} of ${values.length} values verified or confirmed · ${passedChecks} of ${r.checks.length} checks hold`}
       </p>
 
-      {r.pages.length > 1 && (
-        <div className="eg-seg ep-pages" role="group" aria-label="Page">
-          {r.pages.map((p) => (
-            <button key={p} aria-pressed={p === page} onClick={() => setPage(p)}>Page {p}</button>
+      <div className="ep-row ep-stagebar">
+        {r.pages.length > 1 && (
+          <div className="eg-seg ep-pages" role="group" aria-label="Page">
+            {r.pages.map((p) => (
+              <button key={p} aria-pressed={p === page} onClick={() => setPage(p)}>Page {p}</button>
+            ))}
+          </div>
+        )}
+        <div className="eg-seg" role="group" aria-label="Zoom">
+          {[1, 1.75, 2.5].map((z) => (
+            <button key={z} aria-pressed={zoom === z} onClick={() => setZoom(z)}>{z === 1 ? "Whole page" : `${z}×`}</button>
           ))}
         </div>
-      )}
+      </div>
 
-      <div className={`ep-stage${current ? ` ep-stage--${current.key.split(":")[0]}` : ""}`}>
+      <div className={`ep-stage${current ? ` ep-stage--${current.key.split(":")[0]}` : ""}${zoom > 1 ? " ep-stage--zoom" : ""}`}
+        style={{ ["--zoom" as string]: zoom }}>
         <figure className="ep-sheet ep-sheet--bill">
           <figcaption>The bill</figcaption>
+          <div className="ep-sheet__view" ref={left} onScroll={() => sync(left.current, right.current)}>
           <div className="ep-sheet__page">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/api${src}`} alt={`Page ${page} of the bill`} />
+            <img src={`/api${src}`} alt={`Page ${page} of the bill`}
+              onLoad={(e) => { const i = e.currentTarget; if (i.naturalWidth) setAspect(i.naturalHeight / i.naturalWidth); }} />
             {values.filter((v) => v.box && v.page === page).map((v) => (
               <span
                 key={v.path}
@@ -212,12 +236,14 @@ export function BillTheatre({ initial }: { initial: BillReading }) {
               />
             ))}
           </div>
+          </div>
         </figure>
 
         <figure className="ep-sheet ep-sheet--read" aria-live="polite">
           <figcaption>
             {current?.reader ? `What ${current.title} read` : current?.key === "pages" ? "Waiting for the readers" : "What we read"}
           </figcaption>
+          <div className="ep-sheet__view" ref={right} onScroll={() => sync(right.current, left.current)}>
           <div className="ep-sheet__page ep-sheet__page--ghost">
             {/* the same page, faint, so every value sits where it is printed */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -226,14 +252,20 @@ export function BillTheatre({ initial }: { initial: BillReading }) {
               <button
                 key={c.id}
                 className={`ep-val ep-val--${c.tone}${focus === c.path ? " is-focus" : ""}`}
-                style={{ left: pct(c.box, "x"), top: pct(c.box, "y"), minWidth: pct(c.box, "w"), animationDelay: `${Math.min(i * 18, 900)}ms` }}
+                style={{
+                  left: pct(c.box, "x"), top: pct(c.box, "y"), width: pct(c.box, "w"), height: pct(c.box, "h"),
+                  ["--h" as string]: c.box.h, ["--w" as string]: c.box.w, ["--n" as string]: Math.max(c.text.length, 1),
+                  ["--aspect" as string]: aspect,
+                  animationDelay: `${Math.min(i * 18, 900)}ms`,
+                }}
                 onMouseEnter={() => setFocus(c.path)}
                 onClick={() => setFocus(c.path)}
-                title={c.label}
+                title={`${c.label}: ${c.text}`}
               >
-                {indian(c.text)}
+                {c.text}
               </button>
             ))}
+          </div>
           </div>
         </figure>
       </div>

@@ -209,16 +209,21 @@ a.eg-btn { text-decoration: none; }
 .ep-mark--unverified { border-color: color-mix(in srgb, var(--warning) 50%, transparent); }
 .ep-mark.is-focus { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 22%, transparent);
   box-shadow: 0 0 0 4px var(--accent-soft), 0 0 24px var(--glow); }
-.ep-val { position: absolute; transform: translateY(-15%); padding: 1px 6px; border-radius: 5px; border: 1px solid var(--line-strong);
-  background: var(--surface-2); color: var(--ink); font: 600 clamp(9px, .72vw, 13px)/1.35 var(--font-mono); white-space: nowrap;
+.ep-sheet__page { container-type: inline-size; }
+/* a value sits on its own printed box: the box's width and height, type sized to the print */
+.ep-val { position: absolute; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-end; padding: 0 2px;
+  border-radius: 3px; border: 1px solid var(--line-strong); background: var(--surface-2); color: var(--ink);
+  font: 600 clamp(6px, min(calc(var(--h) * var(--aspect) * 100cqw * .8), calc(var(--w) * 100cqw / (var(--n) * .62))), 22px)/1 var(--font-mono);
+  white-space: nowrap; overflow: visible;
   cursor: pointer; animation: ep-val-in .45s cubic-bezier(.2,.9,.3,1.2) both; }
+.ep-val:hover, .ep-val.is-focus { z-index: 3; overflow: visible; }
 .ep-val--verified { border-color: color-mix(in srgb, var(--positive) 60%, transparent); background: color-mix(in srgb, var(--positive) 16%, var(--surface)); }
 .ep-val--confirmed { border-color: var(--accent); background: var(--accent-soft); }
 .ep-val--disputed { border-color: var(--warning); background: var(--warning-soft); }
 .ep-val--unverified { border-color: color-mix(in srgb, var(--warning) 50%, transparent); background: var(--surface-2); }
 .ep-val--reading { border-color: color-mix(in srgb, var(--aurora-wind) 60%, transparent); background: color-mix(in srgb, var(--aurora-wind) 14%, var(--surface)); }
 .ep-val.is-focus { z-index: 2; box-shadow: 0 0 0 3px var(--accent-soft), 0 6px 18px -6px var(--glow); border-color: var(--accent); }
-@keyframes ep-val-in { from { opacity: 0; transform: translateY(6px) scale(.86); } to { opacity: 1; transform: translateY(-15%) scale(1); } }
+@keyframes ep-val-in { from { opacity: 0; transform: translateY(6px) scale(.86); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
   .ep-val { animation: none; }
   .ep-sheet--read .ep-sheet__page { transition: none; }
@@ -296,3 +301,9 @@ a.eg-btn { text-decoration: none; }
 .ep-figlink { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--line-strong); }
 .ep-figlink:hover { color: var(--accent); border-bottom-color: var(--accent); }
 .ep-mini { margin-left: 6px; font-size: 10px; padding: 1px 6px; }
+
+.ep-stagebar { justify-content: space-between; }
+.ep-sheet__view { border-radius: var(--radius-sm); }
+.ep-stage--zoom .ep-sheet__view { max-height: 78vh; overflow: auto; overscroll-behavior: contain; }
+.ep-stage--zoom .ep-sheet__page { width: calc(var(--zoom) * 100%); }
+.ep-tocheck { color: var(--warning); font-size: 12px; }

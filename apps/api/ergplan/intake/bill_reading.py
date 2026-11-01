@@ -160,6 +160,14 @@ _HOURS = re.compile(
 )
 
 
+def slot_label(slot: str) -> str:
+    """A slot's label for display: 'Tod-1(05 To 11)' (billx's key, title-cased) → 'TOD-1 (05 to 11)'."""
+    s = re.sub(r"^\s*tod\b", "TOD", slot.strip(), flags=re.IGNORECASE)
+    s = re.sub(r"\s*\(\s*", " (", s)
+    s = re.sub(r"\b[Tt][Oo]\b", "to", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
 def slot_hours(slot: str | None) -> tuple[str, str] | None:
     """The hours a ToD slot's label prints: 'TOD-1 (05 to 11)', 'Peak 17:00-23:00', '05.00 to 10.00
     hrs' → ('05:00', '11:00'). None when the label prints no hours."""
@@ -253,7 +261,7 @@ def _tod(bill: Bill, fields: dict[str, Any]) -> list[TodRow]:
         if not isinstance(item, dict):
             continue
         slot_node = item.get("slot")
-        slot = str(slot_node.get("value") if isinstance(slot_node, dict) else slot_node or "")
+        slot = slot_label(str(slot_node.get("value") if isinstance(slot_node, dict) else slot_node or ""))
         kwh = read_value(bill, f"energy.tod.{i}.kwh", item.get("kwh"), f"{slot} · kWh")
         kvah = read_value(bill, f"energy.tod.{i}.kvah", item.get("kvah"), f"{slot} · kVAh")
         consumption = kwh if kwh is not None and kwh.value is not None else kvah
