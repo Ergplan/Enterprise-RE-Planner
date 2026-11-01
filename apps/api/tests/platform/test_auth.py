@@ -214,3 +214,10 @@ def test_operator_issues_a_link_and_cookie_follows_the_scheme(
     assert c.get("/rulebooks/versions").status_code == 200
     with pytest.raises(SystemExit):
         signin.main(["not-an-email"])
+
+
+def test_every_public_template_is_a_real_route() -> None:
+    from ergplan.platform.auth import PUBLIC
+
+    paths = set(app.openapi()["paths"])  # routers are included lazily; the schema lists every route
+    assert paths >= PUBLIC, sorted(PUBLIC - paths)
