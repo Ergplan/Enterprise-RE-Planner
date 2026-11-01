@@ -63,6 +63,9 @@ def test_sign_in_roles_and_logout(prod: list[tuple[str, str]]) -> None:
     assert private.headers["x-content-type-options"] == "nosniff"
     assert "max-age" in private.headers["strict-transport-security"]
     old_cookie = c.cookies["ergplan_session"]
+    bearer = TestClient(app, base_url="https://testserver")  # a non-browser client: same token as a bearer
+    me = bearer.get("/auth/me", headers={"Authorization": f"Bearer {old_cookie}"}).json()
+    assert me["signed_in"] is True and me["email"] == "ops@acme.in"
     assert c.post("/auth/logout").json()["signed_in"] is False
     assert c.get("/auth/me").json()["signed_in"] is False
     replay = TestClient(app, base_url="https://testserver", cookies={"ergplan_session": old_cookie})
@@ -170,3 +173,19 @@ def test_a_refusing_mail_server_is_reported(
     monkeypatch.setattr(mail, "send", refuse)
     r = TestClient(app).post("/auth/request", json={"email": "x@acme.in"})
     assert r.status_code == 502
+
+
+def test_plain_http_public_url_is_warned_in_production(
+    prod: list[tuple[str, str]], monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    import logging
+
+    from ergplan.platform.app import create_app
+
+    monkeypatch.setattr(get_settings(), "ergplan_public_url", "http://plan.example.in")
+    monkeypatch.setattr(
+        logging.getLogger("ergplan.app"), "disabled", False
+    )  # alembic's fileConfig in conftest
+    with caplog.at_level("WARNING", logger="ergplan.app"):
+        create_app()
+    assert "not https" in caplog.text

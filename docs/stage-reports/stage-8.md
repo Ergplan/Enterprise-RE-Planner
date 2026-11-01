@@ -71,7 +71,7 @@ These are dated in `docs/decisions.md` (1 Nov 2026, Stage 8):
 
 ## Reviewer findings and fixes
 
-Eight rounds; the last is in `docs/stage-reports/stage-8-review.md`.
+Nine rounds; the last is in `docs/stage-reports/stage-8-review.md`.
 
 | Round | Finding | Fix |
 | --- | --- | --- |
@@ -92,6 +92,8 @@ Eight rounds; the last is in `docs/stage-reports/stage-8-review.md`.
 | 6 | Public routes matched by template | No defect: the guard compares FastAPI's matched route template (`/p/{token}`), and the production tests reach the public routes logged out |
 | 6 | Fewer than eight states | Not resolvable by code; see the definition of done |
 | 7 | Logout revocation and headers on a private route untested | Tested: a revoked session's cookie replayed gets 401; a signed-in route carries the security headers |
+| 8 | Bearer use of the session token untested | Tested (a non-browser client sends the token as a bearer) |
+| 8 | A plain-http public URL in production breaks the Secure cookie silently | The API logs a warning at start (tested) |
 | 7 | An anonymous uploader could own a bill | No defect: `/bills` needs sign-in in production, and the router stores `uploaded_by` only for a signed-in caller |
 
 Round 5's other four "code defects" are confirmations that the auth and coverage endpoints are tested and that the worker is not an endpoint.
@@ -117,6 +119,6 @@ Not changed, because a diff cannot prove them:
 ## Cost
 
 - Regulation reader: 5 gpt-5.1 calls, 20,948 tokens in and 6,276 out, USD 0.089 (from `model_calls`).
-- Reviewer: eight gpt-5.1 rounds of about 37,000–40,000 tokens in each, about USD 0.45 in all.
+- Reviewer: nine gpt-5.1 rounds of about 37,000–40,000 tokens in each, about USD 0.50 in all.
 - No billx reads (stored readings were reused).
 - Builder: Claude subscription.
