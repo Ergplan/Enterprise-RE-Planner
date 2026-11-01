@@ -20,8 +20,11 @@ PATTERNS = {
     "Google API key": re.compile(r"\bAIza[0-9A-Za-z_-]{35}\b"),
     "private key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----"),
 }
-ASSIGN = re.compile(r"^(OPENAI_API_KEY|BILLX_TOKEN|ERGPLAN_SECRET|ERGPLAN_SMTP_URL|TARIFF_ODER_TOKEN|BILLX_OPENAI_API_KEY)=(.+)$")
-ALLOWED_VALUES = {"", "change-me-long-random", "dev-billx-token", "stub"}
+ASSIGN = re.compile(
+    r"^(OPENAI_API_KEY|BILLX_TOKEN|ERGPLAN_SMTP_URL|TARIFF_ODER_TOKEN|BILLX_OPENAI_API_KEY|POSTGRES_PASSWORD)=(.+)$"
+)
+ALLOWED_VALUES = {"", "change-me", "change-me-long-random", "dev-billx-token", "stub"}
+DB_URL = re.compile(r"^DATABASE_URL=\S+?://[^:/@]+:([^@]+)@")
 SKIP_SUFFIXES = {".pdf", ".png", ".jpg", ".jpeg", ".gif", ".ico", ".woff", ".woff2", ".zip"}
 
 
@@ -49,6 +52,9 @@ def main() -> int:
             for name, rx in PATTERNS.items():
                 if rx.search(line) and "secrets-check: allow" not in line:
                     bad.append(f"{rel}:{n}: looks like an {name}")
+            u = DB_URL.match(line.strip())
+            if u and u.group(1) not in ALLOWED_VALUES | {"ergplan"} and rel.name.startswith(".env"):
+                bad.append(f"{rel}:{n}: DATABASE_URL carries a password")
             m = ASSIGN.match(line.strip())
             if m and m.group(2).strip().strip('"') not in ALLOWED_VALUES and rel.name.startswith(".env"):
                 bad.append(f"{rel}:{n}: {m.group(1)} has a value")

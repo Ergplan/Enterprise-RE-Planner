@@ -71,7 +71,7 @@ These are dated in `docs/decisions.md` (1 Nov 2026, Stage 8):
 
 ## Reviewer findings and fixes
 
-Five rounds; the last is in `docs/stage-reports/stage-8-review.md`.
+Seven rounds; the last is in `docs/stage-reports/stage-8-review.md`.
 
 | Round | Finding | Fix |
 | --- | --- | --- |
@@ -85,6 +85,12 @@ Five rounds; the last is in `docs/stage-reports/stage-8-review.md`.
 | 5 | New DISCOM aliases may not match billx's profile ids | Checked against billx's 11 DISCOM profiles; a test pins each to its DISCOM and state |
 | 5 | Rule cache ignores the evaluation date | No defect: the date is part of the cache key `(family, jurisdictions, on)`; the stamp only says when the approved set changed. Unchanged |
 | 5 | Coverage lists group ids (e.g. `ka_escoms`), not each DISCOM | By design: the list names the jurisdictions that hold the approved rows; the DISCOMs under a group are in `/rulebooks/jurisdictions` |
+
+| 6 | Secrets check missed database passwords | `POSTGRES_PASSWORD` and a password inside `DATABASE_URL` in a committed env file now fail the check (probed with a throwaway file) |
+| 6 | `backup.sh` assumes the production compose | By design (VM only); the header says so |
+| 6 | Ownership of ids sent in a request body relies on each route calling `owned_bills` / `owned_connection` | By design for now: every current body-id route calls them and is tested; a central check would need a resource-kind map per body model. Listed in known gaps |
+| 6 | Public routes matched by template | No defect: the guard compares FastAPI's matched route template (`/p/{token}`), and the production tests reach the public routes logged out |
+| 6 | Fewer than eight states | Not resolvable by code; see the definition of done |
 
 Round 5's other four "code defects" are confirmations that the auth and coverage endpoints are tested and that the worker is not an endpoint.
 
@@ -109,6 +115,6 @@ Not changed, because a diff cannot prove them:
 ## Cost
 
 - Regulation reader: 5 gpt-5.1 calls, 20,948 tokens in and 6,276 out, USD 0.089 (from `model_calls`).
-- Reviewer: five gpt-5.1 rounds of about 37,000–40,000 tokens in each, about USD 0.30 in all.
+- Reviewer: seven gpt-5.1 rounds of about 37,000–40,000 tokens in each, about USD 0.40 in all.
 - No billx reads (stored readings were reused).
 - Builder: Claude subscription.

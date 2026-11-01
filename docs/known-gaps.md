@@ -77,3 +77,4 @@ A replayed bill line that differs from the approved tariff is "explained" only b
 | Punjab ToD (mid-month seasons, Rs 5.50/kVAh off-peak cap) cannot be expressed by `tod_slots`; PSPCL energy is priced flat | Schema change |
 | Production deployment not done: needs the Google Cloud VM, the hostname and SMTP settings from jouleWise (`docs/deploy.md`) | When supplied |
 | No rate limiting on sign-in requests beyond single-use 15-minute links | Before public launch |
+| Ownership of ids sent in a request body is checked by each route (`owned_bills`, `owned_connection`), not centrally; a new body-id route must call them | When body-id routes multiply |

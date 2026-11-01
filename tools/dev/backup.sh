@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Nightly backup on the VM (Stage 8): a compressed pg_dump of the database and an archive of data/
+# Nightly backup on the VM (Stage 8; production compose only, not for a laptop): a compressed pg_dump of the database and an archive of data/
 # (documents, bill files, IEX files), kept for BACKUP_KEEP_DAYS (default 14) under BACKUP_DIR, and
 # copied to a Cloud Storage bucket when BACKUP_BUCKET (gs://…) is set.
 #   crontab: 30 2 * * * cd /opt/ergplan && tools/dev/backup.sh >> /var/log/ergplan-backup.log 2>&1
