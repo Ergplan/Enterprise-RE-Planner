@@ -57,7 +57,7 @@ class BillxClient:
         filename: str,
         account_ref: str | None = None,
         allow_cloud_model: bool = True,
-        max_cost_usd: str = "0.50",
+        max_cost_usd: str | None = None,
         wait: bool = True,
     ) -> BillxJob:
         options: dict[str, Any] = {
@@ -65,7 +65,7 @@ class BillxClient:
             "product": "ergplan",
             "kind": "bill",
             "allow_cloud_model": allow_cloud_model,
-            "max_cost_usd": max_cost_usd,
+            "max_cost_usd": max_cost_usd or get_settings().billx_max_cost_usd,
             "wait": wait,
         }
         if account_ref:
@@ -95,11 +95,12 @@ class BillxClient:
         data: bytes,
         filename: str,
         account_ref: str | None = None,
-        timeout_s: float = 600,
+        timeout_s: float | None = None,
         poll_s: float = 3,
     ) -> dict[str, Any]:
         """Submit and wait for the finished result (polling past billx's 50-second wait)."""
         job = self.submit(data, filename, account_ref=account_ref)
+        timeout_s = timeout_s or float(get_settings().billx_timeout_s)
         deadline = time.monotonic() + timeout_s
         while job.status not in ("done", "failed"):
             if time.monotonic() > deadline:

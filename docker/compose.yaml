@@ -60,8 +60,20 @@ services:
       BILLX_API_MODE: esgos-1.1
       BILLX_DATA_DIR: /data
       BILLX_OPENAI_API_KEY: ${BILLX_OPENAI_API_KEY:-}
+      # billx's extra readers: Docling's tables (the docling service below) and LlamaParse
+      BILLX_DOCLING_URL: http://docling:5001
+      BILLX_DOCLING_TIMEOUT: "900"
+      LLAMA_CLOUD_API_KEY: ${LLAMA_CLOUD_API_KEY:-}
     ports: ["${BILLX_PORT:-8081}:8080"]
     volumes: [billxdata:/data]
+    depends_on: [docling]
+
+  docling:
+    # Docling (docling-serve, CPU) for billx's `docling` reader: page layout and table cells
+    image: ${DOCLING_IMAGE:-quay.io/docling-project/docling-serve-cpu:v1.38.2}
+    environment:
+      DOCLING_SERVE_MAX_SYNC_WAIT: "900"
+      DOCLING_SERVE_ENG_LOC_NUM_WORKERS: "1"
 
   caddy:
     image: caddy:2

@@ -36,6 +36,10 @@ class Settings(BaseSettings):
 
     billx_url: str = "http://localhost:8080"
     billx_token: str = ""
+    # what one file's reading may spend on model readers (Model A, LlamaParse), in US dollars,
+    # and how long ergPLAN waits for billx (Docling and two model readers take minutes)
+    billx_max_cost_usd: str = "2.00"
+    billx_timeout_s: int = 1500
 
     # Models: OpenAI only (decision 31 Oct 2026). Read by ergplan.providers and nothing else.
     openai_api_key: str = ""

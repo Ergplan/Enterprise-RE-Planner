@@ -142,7 +142,7 @@ ergOS Harmony vendored at `public/vendor/harmony` (origin in `ORIGIN.txt`, re-co
 Stage 8: `docker/compose.prod.yaml` over `docker/compose.yaml` on the VM (only Caddy exposed; automatic TLS for `SITE_ADDRESS`; `ERGPLAN_ENV=prod`; worker concurrency); `tools/dev/backup.sh` nightly (pg_dump + data/ tarball, 14 days, optional bucket); `docs/deploy.md` is the runbook.
 
 
-`docker/compose.yaml`: postgres, api (migrates then serves), web (Next standalone), billx (built from `BILLX_REPO`, default a sibling `billx` checkout), caddy (`:8080`, `/api/*` → api). The images build from the repository root with `.dockerignore`; the whole stack was first built and run in Docker on 1 Nov 2026.
+`docker/compose.yaml`: postgres, api (migrates then serves), web (Next standalone), billx (built from `BILLX_REPO`, default a sibling `billx` checkout), docling (docling-serve CPU, billx's `docling` reader; billx reaches it at `http://docling:5001`), caddy (`:8080`, `/api/*` → api). The images build from the repository root with `.dockerignore`; the whole stack was first built and run in Docker on 1 Nov 2026.
 
 ## Rulebooks seeded (Stages 1 and 8)
 
