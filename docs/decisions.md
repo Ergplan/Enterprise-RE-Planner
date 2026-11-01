@@ -144,3 +144,9 @@ Dated entries. Every deviation from `docs/MASTER-PROMPT.md` is one.
 - **An unreadable billx reading is read again** on the next upload of the same file when nothing was confirmed on it, and is never reused for another uploader: the first Docker run read a bill without billx's model key and the unreadable result would otherwise have stuck.
 - **The stack was built and run in Docker for the first time** in the build workspace (Docker daemon started there; base images through mirror.gcr.io because Docker Hub rate-limited the shared address): postgres, api, worker, web, billx, caddy all healthy; corpus registered with the same document ids as development; rulebooks restored; IEX loaded; sign-in through Caddy; a client built and shared a plan; the PDF printed. `.dockerignore` added (the context had carried `data/`, virtualenvs and `node_modules`); tesseract added to the API image (OCR of scanned regulations); pnpm pinned through `packageManager`.
 
+## 1 Nov 2026 — breadth, continued (open access from the tariff orders)
+
+- **Open-access charges are read from the retail tariff orders already in the corpus**, before any separate OA regulation arrives: the orders determine CSS by category and voltage and state the T&D charges they use. Telangana first (CSS per DISCOM, Tables 3-43/3-44; aggregate T&D charge "D", para 3.21.22) at DISCOM level (`tgspdcl`, `tgnpdcl`), since the two DISCOMs' figures differ.
+- **The aggregate T&D charge stands in for transmission plus wheeling** (component `wheeling`, Rs/kWh) because that is the figure the order states per voltage; the separate transmission and distribution MYT orders are not in the corpus. Its note says so on every row.
+- **A charge stated for part of the year is not seeded as the year's charge**: Telangana's additional surcharge (Rs 0.13/kWh) is stated for H1 FY 2026-27 only, so it stays "not yet sourced" rather than being applied to H2.
+

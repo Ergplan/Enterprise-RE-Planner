@@ -4,6 +4,7 @@ rules show "not yet sourced"."""
 
 from __future__ import annotations
 
+import json
 from decimal import Decimal
 from typing import Any
 
@@ -79,7 +80,9 @@ def test_coverage_names_what_is_not_yet_sourced() -> None:
     cov = {c["state"]: c for c in client.get("/rulebooks/coverage", params={"on": "2026-11-01"}).json()}
     for st in ("KA", "TS", "PB"):
         assert cov[st]["families"]["tariff_schedule"] == "approved", st
-        assert cov[st]["families"]["oa_charge"] == "not yet sourced", st
+    assert cov["TS"]["families"]["oa_charge"] == "approved"  # CSS and T&D charges per DISCOM
+    assert set(cov["TS"]["jurisdictions"]["oa_charge"]) == {"tgspdcl", "tgnpdcl"}
+    assert cov["TS"]["families"]["settlement"] == "not yet sourced"  # banking: TGERC OA regulations
     assert (
         cov["KA"]["families"]["tod_slots"] == "approved"
         and cov["PB"]["families"]["tod_slots"] == "not yet sourced"
@@ -87,3 +90,23 @@ def test_coverage_names_what_is_not_yet_sourced() -> None:
     for st in ("GJ", "RJ", "HR"):
         assert set(cov[st]["families"].values()) == {"not yet sourced"}, st
     assert cov["UP"]["families"]["settlement"] == "approved"
+
+
+@pytest.mark.parametrize(
+    ("discom", "kv", "css", "wheeling", "css_page"),
+    [("tgspdcl", "33", "1.73", "0.09", 152), ("tgnpdcl", "132", "1.69", "0.12", 154)],
+)
+def test_telangana_open_access_cites_css_and_td_charges(
+    discom: str, kv: str, css: str, wheeling: str, css_page: int
+) -> None:
+    restore_committed()
+    out = client.post("/sites", json={"intake": intake(discom, "TS", "HT-I(A)", kv, "3000")})
+    cid = out.json()["connection_id"]
+    sc = {"as_of": "2026-11-01", "month": 11, "sources": {"oa_solar_intra": {"ownership": "third_party"}}}
+    d = client.get(f"/connections/{cid}/landed-cost", params={"scenario": json.dumps(sc)}).json()
+    solar = next(s for s in d["sources"] if s["id"] == "oa_solar_intra")["by_slot"][0]
+    by_value = {(ln["label"] or ""): ln for ln in solar["lines"]}
+    css_line = next(ln for lbl, ln in by_value.items() if "CSS" in lbl)
+    assert css_line["value"] == css and css_line["source_refs"][0]["url"].endswith(f"#page={css_page}")
+    td = next(ln for lbl, ln in by_value.items() if "T&D" in lbl or "wheeling" in lbl.lower())
+    assert td["value"] == wheeling and td["source_refs"][0]["page"] == 152

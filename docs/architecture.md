@@ -151,6 +151,7 @@ Stage 8: `docker/compose.prod.yaml` over `docker/compose.yaml` on the VM (only C
 | `msedcl` | tariff_schedule (HT I(A), HT II; EHV and HT), tod_slots, oa_charge (CSS 2.11), settlement (monthly ToD-slot banking) | MERC Case 75/2025 post-remand order of 25 Mar 2026, pp. 77–106 | 25 |
 | `ka_escoms` (BESCOM, MESCOM, CESC, HESCOM, GESCOM) | tariff_schedule (HT-2(a)), tod_slots | KERC FY 2026-27 order | 12 |
 | `tg_discoms` (TGSPDCL, TGNPDCL) | tariff_schedule (HT-I(A), kVAh by voltage), tod_slots | TGERC FY 2026-27 order p. 281 | 11 |
+| `tgspdcl`, `tgnpdcl` | oa_charge (CSS HT-I(A) by voltage; aggregate T&D charge Rs/kWh by voltage) | TGERC FY 2026-27 order pp. 152–154 | 15 |
 | `pspcl` | tariff_schedule (LS general industry, two CD bands, 80 % floor) | PSERC FY 2026-27 order pp. 225–226 | 7 |
 
 GJ, RJ, HR, TN and AP are registered jurisdictions with no approved rules ("not yet sourced"; see `docs/known-gaps.md`).

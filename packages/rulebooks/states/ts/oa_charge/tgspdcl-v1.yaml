@@ -1,0 +1,156 @@
+family: oa_charge
+jurisdiction: tgspdcl
+version: 1
+status: approved
+title: TGERC Retail Supply Tariff Order FY 2026-27 · pp. 152–154 · TGSPDCL CSS and T&D charges
+effective_from: '2026-04-01'
+effective_to: '2027-03-31'
+origin: manual
+approved_by: build-agent@ergplan
+rows:
+- label: CSS · HT-I(A) Industry · 11 kV
+  scope:
+    category:
+    - HT-I(A)
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      max: 11
+  body:
+    basis: inr_per_kwh
+    notes: 'Table 3-43: CSS determined for TGSPDCL for FY 2026-27, row HT-I Industry, column ''Allowable CSS'' (the lower
+      of CSS and 20% of average realisation).'
+    value: '1.98'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 152
+    quote: 'Table 3-43: CSS determined for TGSPDCL for FY 2026-27 ... HT Category at 11 kV HT-I Industry 9.91 5.08 9.29% 0.50
+      0.00 3.80 1.98 1.98'
+    document_id: 0c84182f-4a13-5915-9fcb-b98639b59622
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: CSS · HT-I(A) Industry · 33 kV
+  scope:
+    category:
+    - HT-I(A)
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      max: 33
+      min: 11
+      min_exclusive: true
+  body:
+    basis: inr_per_kwh
+    notes: 'Table 3-43: CSS determined for TGSPDCL for FY 2026-27, row HT-I Industry, column ''Allowable CSS'' (the lower
+      of CSS and 20% of average realisation).'
+    value: '1.73'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 152
+    quote: 'Table 3-43: CSS determined for TGSPDCL for FY 2026-27 ... HT Category at 33 kV HT-I Industry 8.66 5.08 5.50% 0.21
+      0.00 3.07 1.73 1.73'
+    document_id: 0c84182f-4a13-5915-9fcb-b98639b59622
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: CSS · HT-I(A) Industry · 132 kV and above
+  scope:
+    category:
+    - HT-I(A)
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      min: 33
+      min_exclusive: true
+  body:
+    basis: inr_per_kwh
+    notes: 'Table 3-43: CSS determined for TGSPDCL for FY 2026-27, row HT-I Industry, column ''Allowable CSS'' (the lower
+      of CSS and 20% of average realisation).'
+    value: '1.62'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 153
+    quote: 'Table 3-43: CSS determined for TGSPDCL for FY 2026-27 ... HT-I Industry 8.11 5.08 2.44% 0.12 0.00 2.77 1.62 1.62'
+    document_id: 0c84182f-4a13-5915-9fcb-b98639b59622
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: Transmission and wheeling (aggregate T&D charge) · 11 kV
+  scope:
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      max: 11
+  body:
+    basis: inr_per_kwh
+    notes: The order's per-unit aggregate of transmission and voltage-wise distribution (wheeling) charges at this voltage
+      ('D', para 3.21.22; columns TGSPDCL then TGNPDCL, Rs/kVA/month and Rs/kWh). The separate TGTRANSCO and distribution
+      MYT orders that set the per-kVA charges are not in the corpus; open-access losses are not seeded (the order's 'L' includes
+      commercial losses).
+    value: '0.29'
+    component: wheeling
+  source_ref:
+    kind: order
+    page: 152
+    quote: The Commission has computed ‘D’ and ‘L’ i.e., per unit aggregate of transmission, distribution and wheeling charges
+      and commercial losses applicable for relevant voltage level ... Voltage Charge (Rs. /kVA/month) Rs. /kWh ... 11kV 207.11
+      0.29 336.85 0.47
+    document_id: 0c84182f-4a13-5915-9fcb-b98639b59622
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: Transmission and wheeling (aggregate T&D charge) · 33 kV
+  scope:
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      max: 33
+      min: 11
+      min_exclusive: true
+  body:
+    basis: inr_per_kwh
+    notes: The order's per-unit aggregate of transmission and voltage-wise distribution (wheeling) charges at this voltage
+      ('D', para 3.21.22; columns TGSPDCL then TGNPDCL, Rs/kVA/month and Rs/kWh). The separate TGTRANSCO and distribution
+      MYT orders that set the per-kVA charges are not in the corpus; open-access losses are not seeded (the order's 'L' includes
+      commercial losses).
+    value: '0.09'
+    component: wheeling
+  source_ref:
+    kind: order
+    page: 152
+    quote: The Commission has computed ‘D’ and ‘L’ i.e., per unit aggregate of transmission, distribution and wheeling charges
+      and commercial losses applicable for relevant voltage level ... Voltage Charge (Rs. /kVA/month) Rs. /kWh ... 33kV 63.75
+      0.09 100.23 0.14
+    document_id: 0c84182f-4a13-5915-9fcb-b98639b59622
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: Transmission and wheeling (aggregate T&D charge) · 132 kV and above
+  scope:
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      min: 33
+      min_exclusive: true
+  body:
+    basis: inr_per_kwh
+    notes: The order's per-unit aggregate of transmission and voltage-wise distribution (wheeling) charges at this voltage
+      ('D', para 3.21.22; columns TGSPDCL then TGNPDCL, Rs/kVA/month and Rs/kWh). The separate TGTRANSCO and distribution
+      MYT orders that set the per-kVA charges are not in the corpus; open-access losses are not seeded (the order's 'L' includes
+      commercial losses).
+    value: '0.12'
+    component: wheeling
+  source_ref:
+    kind: order
+    page: 152
+    quote: The Commission has computed ‘D’ and ‘L’ i.e., per unit aggregate of transmission, distribution and wheeling charges
+      and commercial losses applicable for relevant voltage level ... Voltage Charge (Rs. /kVA/month) Rs. /kWh ... >=132kV
+      81.81 0.12 81.81 0.12
+    document_id: 0c84182f-4a13-5915-9fcb-b98639b59622
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
