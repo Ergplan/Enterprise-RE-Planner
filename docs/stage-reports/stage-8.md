@@ -122,3 +122,24 @@ Not changed, because a diff cannot prove them:
 - Reviewer: nine gpt-5.1 rounds of about 37,000–40,000 tokens in each, about USD 0.50 in all.
 - No billx reads (stored readings were reused).
 - Builder: Claude subscription.
+
+## Addendum, 1 Nov 2026 — the Mac mini as the server
+
+You chose the mini as the server, so deployment now targets it instead of a VM.
+
+- **Built:** `docker/compose.mini.yaml` (production mode, Caddy on LAN port 80), `tools/dev/mini.sh`, and `tools/dev/mini-install.sh`, delivered with a git bundle to `~/Downloads/ergplan-server/`. The installer sets up the code, settings, documents, rulebooks, prices, nightly backup and the first sign-in link. Supporting changes: operator-issued sign-in links, an IEX loader that reads from disk, a session cookie that is Secure only on https, the UP CRE Regulations added to the corpus index, and unreadable bill readings retried.
+- **First real Docker run** (in the build workspace):
+  - postgres, api, worker, web, billx and caddy are all healthy;
+  - the 12 documents registered with the same ids as in development;
+  - the rulebooks restored and the DAM and RTM prices loaded;
+  - sign-in works through Caddy;
+  - a client built three settled scenarios, shared the plan (opens logged out in 30 ms for the data, 130 ms for the page) and printed the PDF (3 pages, 1.6 s);
+  - billx read the real NPCL bill (it needs its model key; without it the bill came back unreadable, which is now retried).
+- **Fixed on the way:** there was no `.dockerignore`, so the build context carried `data/`, the virtualenvs and `node_modules`; the API image had no tesseract; pnpm was unpinned.
+- **Not done by me:** the installer has to be run on the mini by you. I can only click in terminals there, not type, and the mini's sandbox shell cannot host a server. On Linux the script was dry-run with stand-ins for Docker and launchd; the macOS run itself is untested.
+- **Still open:**
+  - https and a public hostname (Cloudflare Tunnel, or a port forward);
+  - an SMTP account, so sign-in links are mailed instead of issued by hand;
+  - a DHCP reservation for the mini's address.
+- **Reviewer:** three more rounds on the deployment work. Fixed: a logout test that checks the database (revoked rows, cleared cookie), and a test that pins the public routes to real routes. The reviewer also said `/voice/tool` was not a route; it is, and the new test confirms it.
+
