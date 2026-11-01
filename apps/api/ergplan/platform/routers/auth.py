@@ -4,6 +4,7 @@ POST /auth/verify turns it into a session cookie (30 days, HttpOnly, Secure in p
 from __future__ import annotations
 
 import secrets
+import smtplib
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
@@ -62,12 +63,15 @@ def request_link(body: RequestIn) -> RequestOut:
             )
         )
     link = f"{get_settings().ergplan_public_url.rstrip('/')}/login/verify?token={token}&next={body.next}"
-    sent = mail.send(
-        email,
-        "Your ergPLAN sign-in link",
-        f"Open this link to sign in to ergPLAN (it works once, for {LINK_MINUTES} minutes):\n\n{link}\n\n"
-        "If you did not ask for it, ignore this message.\n\njouleWise",
-    )
+    try:
+        sent = mail.send(
+            email,
+            "Your ergPLAN sign-in link",
+            f"Open this link to sign in to ergPLAN (it works once, for {LINK_MINUTES} minutes):\n\n{link}\n\n"
+            "If you did not ask for it, ignore this message.\n\njouleWise",
+        )
+    except (OSError, smtplib.SMTPException) as e:  # the mail server refused or could not be reached
+        raise HTTPException(502, "the sign-in mail could not be sent; try again shortly") from e
     return RequestOut(sent=sent, dev_link=None if sent or production() else link)
 
 

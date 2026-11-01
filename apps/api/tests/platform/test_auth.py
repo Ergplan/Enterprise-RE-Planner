@@ -4,6 +4,7 @@ analysts reach everything; the shared plan opens logged out; security headers.""
 
 from __future__ import annotations
 
+import smtplib
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -140,3 +141,25 @@ def test_production_without_mail_refuses_to_issue_a_link(prod: list[tuple[str, s
     assert not prod
     with session_scope() as s:
         assert s.query(LoginToken).count() == before
+
+
+def test_development_link_and_headers(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(get_settings(), "ergplan_env", "dev")
+    monkeypatch.setattr(get_settings(), "ergplan_smtp_url", "")
+    c = TestClient(app)
+    r = c.post("/auth/request", json={"email": "dev@acme.in"})
+    assert r.status_code == 200 and r.json()["sent"] is False
+    assert "/login/verify?token=" in (r.json()["dev_link"] or "")
+    me = c.get("/auth/me", headers={"X-Ergplan-Actor": "a@joulewise.in", "X-Ergplan-Role": "analyst"}).json()
+    assert me["signed_in"] is True and me["role"] == "analyst" and me["required"] is False
+
+
+def test_a_refusing_mail_server_is_reported(
+    prod: list[tuple[str, str]], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def refuse(to: str, subject: str, body: str) -> bool:
+        raise smtplib.SMTPRecipientsRefused({to: (550, b"no")})
+
+    monkeypatch.setattr(mail, "send", refuse)
+    r = TestClient(app).post("/auth/request", json={"email": "x@acme.in"})
+    assert r.status_code == 502

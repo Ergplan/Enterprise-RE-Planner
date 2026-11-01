@@ -1,6 +1,8 @@
 # SITE_ADDRESS is the jouleWise hostname on the VM (automatic TLS by Let's Encrypt), ":80" locally.
 {$SITE_ADDRESS::80} {
 	encode zstd gzip
+	# The API sets the same three headers itself (defence in depth when reached without Caddy);
+	# Caddy's `header` replaces rather than duplicates them.
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options nosniff
