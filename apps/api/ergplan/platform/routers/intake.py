@@ -234,6 +234,21 @@ def bill_file(bill_id: str) -> FileResponse:
     return FileResponse(p, media_type="application/pdf", headers={"Content-Disposition": "inline"})
 
 
+@router.post("/bills/{bill_id}/accept", response_model=BillOut)
+def accept_bill(bill_id: str, who: Annotated[Caller, Depends(caller)]) -> BillOut:
+    """The client has checked the values ergPLAN takes against the bill: each required value is
+    confirmed in their name and the bill can be used. Refused while a value is still outstanding."""
+    with session_scope() as s:
+        _get_bill(s, bill_id)
+        try:
+            b = bill_store.accept(s, bill_id, who.actor)
+        except ValueError as e:
+            raise HTTPException(409, str(e)) from e
+        out = _bill_out(s, b)
+        s.commit()
+        return out
+
+
 @router.get("/bills/{bill_id}/reading", response_model=bill_reading.BillReading)
 def bill_reading_view(bill_id: str, who: Annotated[Caller, Depends(caller)]) -> bill_reading.BillReading:
     """The reading view: every value billx read with its page, box and readers, the slot table,

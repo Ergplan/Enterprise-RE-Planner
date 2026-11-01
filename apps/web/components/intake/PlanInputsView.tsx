@@ -34,6 +34,11 @@ export function PlanInputsView({ inputs }: { inputs: PlanInputs }) {
     setBusy(true);
     setError("");
     try {
+      if (!inputs.accepted) {
+        // the client has checked the figures above against the bill: each value ergPLAN takes is
+        // confirmed in their name (refused while a value is still to be confirmed on the bill)
+        await clientFetch(`/bills/${inputs.bill_id}/accept`, { method: "POST" });
+      }
       const intake = await clientFetch<SiteIntake>("/intake/from-bills", { method: "POST", body: JSON.stringify({ bill_ids: [inputs.bill_id] }) });
       sessionStorage.setItem("ergplan-intake", JSON.stringify(intake));
       router.push("/plan/intake?review=1");
@@ -109,9 +114,8 @@ export function PlanInputsView({ inputs }: { inputs: PlanInputs }) {
       {error && <p className="ep-error">{error}</p>}
       <div className="ep-row">
         <Link className="eg-btn eg-btn--ghost" href={`/plan/intake/bill/${inputs.bill_id}`}>Back to the bill</Link>
-        <button className="eg-btn eg-btn--primary" onClick={next} disabled={busy || !inputs.accepted}
-          title={inputs.accepted ? undefined : "Confirm the values marked for checking first"}>
-          {busy ? "Preparing…" : "Use this bill for the plan"}
+        <button className="eg-btn eg-btn--primary" onClick={next} disabled={busy}>
+          {busy ? "Preparing…" : inputs.accepted ? "Use this bill for the plan" : "These figures match my bill: use it"}
         </button>
       </div>
     </div>

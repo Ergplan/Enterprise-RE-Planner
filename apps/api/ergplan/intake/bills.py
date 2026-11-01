@@ -303,6 +303,28 @@ def confirm(session: Session, bill_id: str, path: str, value: str | None, actor:
     return bill
 
 
+def accept(session: Session, bill_id: str, actor: str) -> Bill:
+    """The client checked the values ergPLAN takes against the bill and accepts it: each required
+    value that billx verified (or that was corrected) is confirmed in their name, one recorded
+    confirmation per value (invariant 7). Values still outstanding must be confirmed first."""
+    bill = session.get(Bill, bill_id)
+    if bill is None:
+        raise BillNotFound(bill_id)
+    if bill.accepted:
+        return bill
+    rows = review(session, bill)
+    missing = [r.path for r in rows if r.needs_confirmation]
+    if missing:
+        raise ValueError("confirm these values first: " + ", ".join(missing))
+    for r in rows:
+        if r.required and r.value is not None and not r.confirmed:
+            session.add(BillConfirmation(bill_id=bill_id, path=r.path, value=r.value, confirmed_by=actor))
+    session.flush()
+    bill.accepted = True
+    bill.accepted_by = "bill_confirmations"
+    return bill
+
+
 @dataclass(frozen=True)
 class BillValue:
     value: str | None
@@ -324,6 +346,10 @@ def values(session: Session, bill: Bill) -> dict[str, BillValue]:
         if r.value is None:
             continue
         c = conf.get(r.path)
+        if c is None and not r.required and r.verification not in ("verified", None):
+            # an optional value billx did not verify (a power factor read two ways) and nobody
+            # confirmed is left out: the bill's acceptance covers what was checked, not this
+            continue
         note = f"confirmed by {c.confirmed_by}" if c else f"billx: {r.verification or 'accepted bill'}"
         out[r.path] = BillValue(
             r.value,

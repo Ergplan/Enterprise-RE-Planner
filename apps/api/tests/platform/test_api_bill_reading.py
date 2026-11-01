@@ -210,3 +210,23 @@ def test_an_analyst_reads_a_file_again_and_the_new_bills_replace_the_old(billx: 
     done = client.get(f"/bill-reads/{r.json()['id']}", headers=an).json()
     assert done["status"] == "done" and len(done["bills"]) == 2
     assert client.get(f"/bills/{b['id']}").status_code == 404  # neither accepted nor confirmed: replaced
+
+
+def test_a_client_accepts_a_bill_whose_required_values_are_verified(billx: FakeBillx) -> None:
+    res = oa_result()
+    for b in res["bills"]:
+        b["status"], b["accepted"], b["passed"], b["accepted_by"] = "needs_review", False, False, None
+    [b, _] = _upload(billx, "acc", res)
+    assert not b["accepted"] and b["outstanding"] == []
+    r = client.post(f"/bills/{b['id']}/accept", headers={"X-Ergplan-Actor": "c@plant.in"})
+    assert r.status_code == 200, r.text
+    assert r.json()["accepted"] and r.json()["accepted_by"] == "bill_confirmations"
+    from ergplan.db.base import session_scope
+    from ergplan.db.models import Bill
+
+    with session_scope() as s:
+        used = bill_store.values(s, s.get(Bill, b["id"]))
+    assert "energy.power_factor" not in used  # disputed, optional, unconfirmed: left out
+    assert used["demand.max_kva"].ref.note == "confirmed by c@plant.in"
+    nr = _upload(billx, "acc-nr", result("pvvnl_needs_review"))[0]
+    assert client.post(f"/bills/{nr['id']}/accept").status_code == 409
