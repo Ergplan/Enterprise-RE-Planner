@@ -8,7 +8,7 @@ ergPLAN's assumption they came from.
 from __future__ import annotations
 
 import hashlib
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Annotated, Any
 
@@ -21,11 +21,11 @@ from ...core.settings import get_settings
 from ...core.sourced import RefKind, SourcedValue, SourceRef
 from ...core.units import Unit
 from ...db.base import session_scope
-from ...db.models import Bill, Client, Connection, LoadProfile, Site
-from ...intake import bill_reading, defaults, measured_upload, profile_synthesis, site_intake
+from ...db.models import Bill, BillRead, Client, Connection, LoadProfile, Site
+from ...intake import bill_reading, bill_reads, defaults, measured_upload, profile_synthesis, site_intake
 from ...intake import bills as bill_store
 from ...intake.billx_client import BillxError, BillxUnavailable
-from ..auth import Caller, caller, owned_bills, owned_connection
+from ..auth import Caller, analyst, caller, owned_bills, owned_connection, production
 
 router = APIRouter(tags=["intake"])
 
@@ -107,6 +107,108 @@ async def upload_bill(
         raise HTTPException(503, str(e)) from e
     except BillxError as e:
         raise HTTPException(502, str(e)) from e
+
+
+class BillReadOut(BaseModel):
+    id: str
+    filename: str | None
+    pages: int
+    page_url: str  # with {page} for the 1-based page number
+    status: str  # queued | reading | done | failed
+    error: str | None
+    created_at: datetime
+    started_at: datetime | None
+    finished_at: datetime | None
+    bills: list[BillOut]
+
+
+def _read_out(s: Any, read: BillRead) -> BillReadOut:
+    return BillReadOut(
+        id=read.id,
+        filename=read.filename,
+        pages=read.pages,
+        page_url=f"/bill-reads/{read.id}/pages/{{page}}.png",
+        status=read.status,
+        error=read.error,
+        created_at=read.created_at,
+        started_at=read.started_at,
+        finished_at=read.finished_at,
+        bills=[_bill_out(s, b) for b in bill_reads.bills_of(s, read)],
+    )
+
+
+@router.post("/bill-reads", response_model=BillReadOut, status_code=202)
+async def start_bill_read(
+    file: Annotated[UploadFile, File()],
+    who: Annotated[Caller, Depends(caller)],
+    connection_id: Annotated[str | None, Form()] = None,
+) -> BillReadOut:
+    """Upload a bill file and return at once: billx reads it in the background (the worker), and
+    GET /bill-reads/{id} says when its bills are ready. A file already read returns done."""
+    data = await file.read()
+    if not data.startswith(b"%PDF"):
+        raise HTTPException(415, "a bill is uploaded as a PDF")
+    with session_scope() as s:
+        if connection_id and s.get(Connection, connection_id) is None:
+            raise HTTPException(404, "connection not found")
+        owned_connection(s, who, connection_id)
+        try:
+            read = bill_reads.queue(
+                s,
+                data,
+                file.filename or "bill.pdf",
+                connection_id=connection_id,
+                uploaded_by=who.actor if who.signed_in else None,
+            )
+        except ValueError as e:
+            raise HTTPException(422, str(e)) from e
+        out = _read_out(s, read)
+        s.commit()
+        return out
+
+
+def _get_read(s: Any, read_id: str, who: Caller) -> BillRead:
+    read = s.get(BillRead, read_id)
+    if read is None:
+        raise HTTPException(404, "reading not found")
+    if (
+        production()
+        and not (who.role == "analyst" and who.signed_in)
+        and read.uploaded_by not in (None, who.actor)
+    ):
+        raise HTTPException(403, "this belongs to another client")
+    return read  # type: ignore[no-any-return]
+
+
+@router.get("/bill-reads/{read_id}", response_model=BillReadOut)
+def get_bill_read(read_id: str, who: Annotated[Caller, Depends(caller)]) -> BillReadOut:
+    with session_scope() as s:
+        return _read_out(s, _get_read(s, read_id, who))
+
+
+@router.get("/bill-reads/{read_id}/pages/{page}.png")
+def bill_read_page(read_id: str, page: int, who: Annotated[Caller, Depends(caller)]) -> Response:
+    """A page of the file being read, drawn for display while billx reads it."""
+    with session_scope() as s:
+        sha = _get_read(s, read_id, who).file_sha256
+    try:
+        png = bill_store.page_png(sha, page)
+    except FileNotFoundError as e:
+        raise HTTPException(404, "the bill file is not stored") from e
+    except IndexError as e:
+        raise HTTPException(404, "no such page") from e
+    return Response(png, media_type="image/png", headers={"Cache-Control": "private, max-age=86400"})
+
+
+@router.post("/bills/{bill_id}/reread", response_model=BillReadOut, status_code=202)
+def reread_bill(bill_id: str, who: Annotated[Caller, Depends(analyst)]) -> BillReadOut:
+    """Analyst: read a stored file again (after billx improved). Its new bills replace this file's
+    bills that were neither accepted nor confirmed."""
+    with session_scope(actor=who.actor) as s:
+        read = bill_reads.reread(s, _get_bill(s, bill_id), who.actor)
+        out = _read_out(s, read)
+        s.commit()
+        return out
 
 
 def _get_bill(s: Any, bill_id: str) -> Bill:

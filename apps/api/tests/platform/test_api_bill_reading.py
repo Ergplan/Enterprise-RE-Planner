@@ -159,3 +159,54 @@ def test_page_images_are_rendered_and_cached(billx: FakeBillx) -> None:
     assert again.content == r.content
     assert client.get(f"/bills/{b['id']}/pages/99.png").status_code == 404
     assert client.get("/bills/missing/pages/1.png").status_code == 404
+
+
+def test_a_file_is_read_in_the_background_and_its_bills_appear(billx: FakeBillx) -> None:
+    from ergplan.intake import bill_reads
+
+    data = billx.register("bg1", oa_result())
+    r = client.post("/bill-reads", files={"file": ("bg1.pdf", data, "application/pdf")})
+    assert r.status_code == 202, r.text
+    read = r.json()
+    assert read["status"] == "queued" and read["pages"] >= 1 and read["bills"] == []
+    assert read["page_url"] == f"/bill-reads/{read['id']}/pages/{{page}}.png"
+    page = client.get(read["page_url"].replace("{page}", "1"))
+    assert page.status_code == 200 and page.content[:4] == b"\x89PNG"
+    assert billx.calls == 0  # nothing is read in the request
+    assert bill_reads.drain(billx.client()) >= 1
+    done = client.get(f"/bill-reads/{read['id']}").json()
+    assert done["status"] == "done" and len(done["bills"]) == 2 and done["finished_at"]
+    # the same file again is done at once from the stored reading, without billx
+    calls = billx.calls
+    again = client.post("/bill-reads", files={"file": ("bg1.pdf", data, "application/pdf")}).json()
+    assert again["status"] == "done" and len(again["bills"]) == 2 and billx.calls == calls
+    assert client.get("/bill-reads/missing").status_code == 404
+    bad = client.post("/bill-reads", files={"file": ("x.pdf", b"not a pdf", "application/pdf")})
+    assert bad.status_code == 415
+
+
+def test_a_failed_reading_says_so(billx: FakeBillx) -> None:
+    from ergplan.intake import bill_reads
+
+    data = billx.register("bg-fail", oa_result())
+    read = client.post("/bill-reads", files={"file": ("f.pdf", data, "application/pdf")}).json()
+    billx.down = True
+    bill_reads.drain(billx.client())
+    out = client.get(f"/bill-reads/{read['id']}").json()
+    assert out["status"] == "failed" and out["error"]
+
+
+def test_an_analyst_reads_a_file_again_and_the_new_bills_replace_the_old(billx: FakeBillx) -> None:
+    from ergplan.intake import bill_reads
+
+    an = {"X-Ergplan-Actor": "analyst@joulewise.in", "X-Ergplan-Role": "analyst"}
+    old = copy.deepcopy(result("pvvnl_needs_review"))
+    [b] = _upload(billx, "again", old)
+    assert client.post(f"/bills/{b['id']}/reread").status_code == 403  # analysts only
+    r = client.post(f"/bills/{b['id']}/reread", headers=an)
+    assert r.status_code == 202, r.text
+    billx.by_tag["again"] = oa_result()  # billx reads it better now
+    bill_reads.drain(billx.client())
+    done = client.get(f"/bill-reads/{r.json()['id']}", headers=an).json()
+    assert done["status"] == "done" and len(done["bills"]) == 2
+    assert client.get(f"/bills/{b['id']}").status_code == 404  # neither accepted nor confirmed: replaced

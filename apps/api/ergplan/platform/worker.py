@@ -30,6 +30,21 @@ def loop(poll: float) -> None:
             time.sleep(poll)
 
 
+def bill_loop(poll: float) -> None:
+    """Bill files in the background (billx takes minutes per file), beside the runs, so a long
+    reading never holds up a solve and a solve never holds up a reading."""
+    from ..intake import bill_reads
+
+    bill_reads.requeue_stale()
+    while True:
+        try:
+            if bill_reads.drain() == 0:
+                time.sleep(poll)
+        except Exception:
+            log.exception("bill read loop")
+            time.sleep(poll)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--once", action="store_true")
@@ -43,8 +58,14 @@ def main() -> None:
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(message)s")
     if args.once:
+        from ..intake import bill_reads
+
+        bill_reads.drain()
         drain()
         return
+    import threading
+
+    threading.Thread(target=bill_loop, args=(args.poll,), daemon=True, name="bill-reads").start()
     if args.concurrency <= 1:
         loop(args.poll)
         return

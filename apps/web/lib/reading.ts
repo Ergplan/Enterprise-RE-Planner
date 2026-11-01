@@ -1,6 +1,6 @@
 // The reading view of one bill (GET /bills/{id}/reading) and the hand-off to planning
 // (GET /bills/{id}/plan-inputs). Every figure carries a bill source_ref (invariant 1).
-import type { Ref } from "@/lib/intake";
+import type { BillOut, Ref } from "@/lib/intake";
 
 export type Box = { x: string; y: string; w: string; h: string };
 
@@ -130,3 +130,16 @@ export function indian(v: string | null | undefined): string {
 export function pct(b: Box | null, key: keyof Box): string {
   return b ? `${(Number(b[key]) * 100).toFixed(3)}%` : "0";
 }
+
+export type BillReadOut = {
+  id: string;
+  filename: string | null;
+  pages: number;
+  page_url: string;
+  status: "queued" | "reading" | "done" | "failed";
+  error: string | null;
+  created_at: string;
+  started_at: string | null;
+  finished_at: string | null;
+  bills: BillOut[];
+};

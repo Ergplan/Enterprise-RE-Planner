@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ReadingCard } from "@/components/intake/ReadingCard";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { clientFetch, monthLabel } from "@/lib/intake";
-import { READERS, VERIFICATION, indian, pct, type BillReading, type ReadValue } from "@/lib/reading";
+import { READERS, VERIFICATION, indian, pct, type BillReadOut, type BillReading, type ReadValue } from "@/lib/reading";
 
 // The reading view: the bill on the left, what billx read on the right, each value placed where it
 // is printed on the page. "Replay" steps through the stored reading in the order it happened (each
@@ -41,6 +43,29 @@ export function BillTheatre({ initial }: { initial: BillReading }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [edits, setEdits] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
+  const [analyst, setAnalyst] = useState(false);
+  const [again, setAgain] = useState<BillReadOut | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    clientFetch<{ role: string; signed_in: boolean }>("/auth/me")
+      .then((me) => setAnalyst(me.role === "analyst"))
+      .catch(() => setAnalyst(false));
+  }, []);
+
+  async function readAgain() {
+    setError("");
+    try {
+      setAgain(await clientFetch<BillReadOut>(`/bills/${r.bill_id}/reread`, { method: "POST" }));
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  }
+
+  const againDone = useCallback((done: BillReadOut) => {
+    const same = done.bills.find((b) => b.bill_month && b.bill_month === initial.fields.find((f) => f.path === "period.bill_month")?.value) ?? done.bills[0];
+    if (same) router.push(`/plan/intake/bill/${same.id}`);
+  }, [router, initial.fields]);
 
   const values = useMemo(() => allValues(r), [r]);
   const readers = useMemo(() => READERS.filter((x) => r.readers_used.includes(x.id)), [r.readers_used]);
@@ -135,9 +160,15 @@ export function BillTheatre({ initial }: { initial: BillReading }) {
           <button className="eg-btn eg-btn--sm" onClick={() => { setStep(-1); setPlaying(true); }} disabled={playing}>
             <span data-icon="play" data-size="14"></span>{playing ? "Replaying…" : "Replay the reading"}
           </button>
+          {analyst && !again && (
+            <button className="eg-btn eg-btn--sm eg-btn--ghost" onClick={readAgain} title="Read the stored file again with billx's current readers">
+              <span data-icon="rotate" data-size="14"></span>Read again
+            </button>
+          )}
           <a className="ep-cite" href={`/api${r.file_url}`} target="_blank" rel="noreferrer"><span data-icon="file" data-size="14"></span>Open the PDF</a>
         </div>
       </header>
+      {again && <ReadingCard initial={again} onDone={againDone} />}
 
       <ol className="ep-steps" aria-label="How this bill was read">
         {steps.map((s, i) => (

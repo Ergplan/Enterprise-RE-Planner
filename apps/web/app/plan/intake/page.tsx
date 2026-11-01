@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BillReview } from "@/components/intake/BillReview";
 import { IntakeReview } from "@/components/intake/IntakeReview";
 import { TypeFacts } from "@/components/intake/TypeFacts";
 import { VoicePanel } from "@/components/voice/VoicePanel";
+import { ReadingCard } from "@/components/intake/ReadingCard";
 import { clientFetch, type BillOut, type SiteIntake } from "@/lib/intake";
+import type { BillReadOut } from "@/lib/reading";
 
 type Door = "bill" | "tell" | "type";
 
@@ -13,6 +15,7 @@ type Door = "bill" | "tell" | "type";
 export default function IntakePage() {
   const [door, setDoor] = useState<Door>("bill");
   const [bills, setBills] = useState<BillOut[]>([]);
+  const [reads, setReads] = useState<BillReadOut[]>([]);
   const [uploading, setUploading] = useState(0);
   const [error, setError] = useState("");
   const [intake, setIntake] = useState<SiteIntake | null>(null);
@@ -43,9 +46,10 @@ export default function IntakePage() {
       const fd = new FormData();
       fd.append("file", f);
       try {
-        const got = await clientFetch<BillOut[]>("/bills", { method: "POST", body: fd });
-        setBills((cur) => [...cur.filter((b) => !got.some((g) => g.id === b.id)), ...got]
-          .sort((a, b) => (a.bill_month ?? "").localeCompare(b.bill_month ?? "")));
+        // billx reads in the background (minutes for a scan): the page shows the file meanwhile
+        const read = await clientFetch<BillReadOut>("/bill-reads", { method: "POST", body: fd });
+        if (read.status === "done") addBills(read.bills);
+        else setReads((cur) => [...cur.filter((x) => x.id !== read.id), read]);
       } catch (e) {
         setError(`${f.name}: ${(e as Error).message}`);
       } finally {
@@ -53,6 +57,17 @@ export default function IntakePage() {
       }
     }));
   }
+
+  function addBills(got: BillOut[]) {
+    setBills((cur) => [...cur.filter((b) => !got.some((g) => g.id === b.id)), ...got]
+      .sort((a, b) => (a.bill_month ?? "").localeCompare(b.bill_month ?? "")));
+  }
+
+  const readDone = useCallback((r: BillReadOut) => {
+    setReads((cur) => cur.filter((x) => x.id !== r.id));
+    setBills((cur) => [...cur.filter((b) => !r.bills.some((g) => g.id === b.id)), ...r.bills]
+      .sort((a, b) => (a.bill_month ?? "").localeCompare(b.bill_month ?? "")));
+  }, []);
 
   async function next() {
     setError("");
@@ -99,11 +114,16 @@ export default function IntakePage() {
           >
             <span data-icon="receipt" data-size="28"></span>
             <h2 className="eg-card__title">Drop up to twelve monthly bills</h2>
-            <p className="eg-card__sub">PDF, as your DISCOM sends it. Reading takes a minute or two per bill.</p>
+            <p className="eg-card__sub">PDF, as your DISCOM sends it, scanned or digital. A file can hold several months.</p>
             <input ref={input} type="file" accept="application/pdf" multiple hidden onChange={(e) => e.target.files && upload(e.target.files)} />
             <button className="eg-btn eg-btn--primary" onClick={() => input.current?.click()}>Choose files</button>
-            {uploading > 0 && <p className="eg-muted"><span className="eg-dot eg-dot--live"></span> Reading {uploading} bill{uploading > 1 ? "s" : ""}…</p>}
+            {uploading > 0 && <p className="eg-muted"><span className="eg-dot eg-dot--live"></span> Uploading {uploading} file{uploading > 1 ? "s" : ""}…</p>}
           </section>
+          {reads.length > 0 && (
+            <div className="ep-bills">
+              {reads.map((r) => <ReadingCard key={r.id} initial={r} onDone={readDone} />)}
+            </div>
+          )}
           {pending.length > 0 && (
             <p className="eg-muted">
               {pending.length} bill{pending.length > 1 ? "s need" : " needs"} a quick check: confirm the highlighted values (or correct them) and the bill can be used.

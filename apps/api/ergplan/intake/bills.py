@@ -233,6 +233,39 @@ def ingest(
         if earlier is not None
         else (client or BillxClient()).read(data, filename, account_ref=connection_id)
     )
+    return store_result(session, sha, filename, result, connection_id, uploaded_by)
+
+
+def reusable(session: Session, sha: str, uploaded_by: str | None) -> tuple[list[Bill], dict[str, Any] | None]:
+    """This uploader's stored bills of the file (when billx's reading of them still stands), and
+    any other uploader's stored reading of the same file billx need not read again."""
+    q = select(Bill).where(Bill.file_sha256 == sha)
+    mine = list(
+        session.scalars(
+            q.where(
+                Bill.uploaded_by.is_(None) if uploaded_by is None else Bill.uploaded_by == uploaded_by
+            ).order_by(Bill.bill_index)
+        )
+    )
+    if mine and _retry(session, mine):
+        for b in mine:
+            session.delete(b)
+        session.flush()
+        mine = []
+    # the latest reading stands: a file read again after billx improved is not read the old way
+    latest = session.scalars(q.where(Bill.status != UNREADABLE).order_by(Bill.created_at.desc())).first()
+    return mine, (latest.billx_result if latest is not None else None)
+
+
+def store_result(
+    session: Session,
+    sha: str,
+    filename: str,
+    result: dict[str, Any],
+    connection_id: str | None,
+    uploaded_by: str | None,
+) -> list[Bill]:
+    """One `bills` row per bill in billx's result for the file."""
     rows = []
     for f in bill_fields.from_result(result):
         b = Bill(
