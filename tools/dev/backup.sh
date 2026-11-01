@@ -8,6 +8,10 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 DIR="${BACKUP_DIR:-/var/backups/ergplan}"
 KEEP="${BACKUP_KEEP_DAYS:-14}"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+if [ -n "${BACKUP_BUCKET:-}" ] && ! command -v gsutil >/dev/null; then
+  echo "backup: BACKUP_BUCKET is set but gsutil is not installed (install the Google Cloud CLI)" >&2
+  exit 1
+fi
 mkdir -p "$DIR"
 cd "$ROOT"
 COMPOSE=(docker compose -f docker/compose.yaml -f docker/compose.prod.yaml)
