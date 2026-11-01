@@ -80,6 +80,15 @@ def test_coverage_names_what_is_not_yet_sourced() -> None:
     cov = {c["state"]: c for c in client.get("/rulebooks/coverage", params={"on": "2026-11-01"}).json()}
     for st in ("KA", "TS", "PB"):
         assert cov[st]["families"]["tariff_schedule"] == "approved", st
+        assert cov[st]["families"]["oa_charge"] == "approved", st
+    assert set(cov["KA"]["jurisdictions"]["oa_charge"]) == {
+        "ka_escoms",
+        "bescom",
+        "mescom",
+        "cesc",
+        "hescom",
+        "gescom",
+    }
     assert cov["TS"]["families"]["oa_charge"] == "approved"  # CSS and T&D charges per DISCOM
     assert set(cov["TS"]["jurisdictions"]["oa_charge"]) == {"tgspdcl", "tgnpdcl"}
     assert cov["TS"]["families"]["settlement"] == "not yet sourced"  # banking: TGERC OA regulations
@@ -110,3 +119,33 @@ def test_telangana_open_access_cites_css_and_td_charges(
     assert css_line["value"] == css and css_line["source_refs"][0]["url"].endswith(f"#page={css_page}")
     td = next(ln for lbl, ln in by_value.items() if "T&D" in lbl or "wheeling" in lbl.lower())
     assert td["value"] == wheeling and td["source_refs"][0]["page"] == 152
+
+
+def _oa_solar(discom: str, state: str, cat: str, kv: str) -> dict[str, Any]:
+    restore_committed()
+    cid = client.post("/sites", json={"intake": intake(discom, state, cat, kv, "3000")}).json()[
+        "connection_id"
+    ]
+    sc = {"as_of": "2026-11-01", "month": 11, "sources": {"oa_solar_intra": {"ownership": "third_party"}}}
+    d = client.get(f"/connections/{cid}/landed-cost", params={"scenario": json.dumps(sc)}).json()
+    out: dict[str, Any] = next(s for s in d["sources"] if s["id"] == "oa_solar_intra")["by_slot"][0]
+    return out
+
+
+def test_karnataka_open_access_css_wheeling_and_loss() -> None:
+    solar = _oa_solar("mescom", "KA", "HT-2(a)", "11")
+    lines = {(ln["label"] or ""): ln for ln in solar["lines"]}
+    css = next(ln for lbl, ln in lines.items() if lbl.startswith("CSS"))
+    assert css["value"] == "1.86" and css["source_refs"][0]["page"] == 260
+    wh = next(ln for lbl, ln in lines.items() if lbl.startswith("HT network wheeling"))
+    assert wh["value"] == "0.44" and wh["source_refs"][0]["page"] == 249
+    assert any(lbl.startswith("Losses") and "HT technical loss" in lbl for lbl in lines)
+    assert any(lbl.startswith("Additional surcharge") and ln["value"] == "0" for lbl, ln in lines.items())
+
+
+def test_punjab_renewable_wheeling_in_kind_and_css() -> None:
+    solar = _oa_solar("pspcl", "PB", "LS General Industry", "11")
+    lines = {(ln["label"] or ""): ln for ln in solar["lines"]}
+    assert next(ln for lbl, ln in lines.items() if lbl.startswith("CSS"))["value"] == "0.86"
+    loss = next(lbl for lbl in lines if lbl.startswith("Losses"))
+    assert "2 %" in loss and "2.19" in loss and "4.00" in loss  # in-kind wheeling, transmission, 11 kV

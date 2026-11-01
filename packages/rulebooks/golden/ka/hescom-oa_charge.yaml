@@ -1,0 +1,9 @@
+# KERC Combined Tariff Order 2025 (ESCOMs), para 6.10.6, "For using HESCOM's network only", FY 27, HT
+# injection / HT drawal: wheeling charge in paise per unit with the applicable loss % in brackets.
+jurisdiction: hescom
+family: oa_charge
+tests:
+  - {name: "HT wheeling 0.38", given: {context: {connection: intra_state, voltage_kv: 11}, where: {/component: wheeling}, field: /value}, expect: {value: "0.38"}}
+  - {name: "HT wheeling at 33 kV 0.38", given: {context: {connection: ists, voltage_kv: 33}, where: {/component: wheeling}, field: /value}, expect: {value: "0.38"}}
+  - {name: "HT loss 4.33 %", given: {context: {connection: intra_state, voltage_kv: 11}, where: {/component: wheeling_losses}, field: /value}, expect: {value: "4.33"}}
+  - {name: "loss in kind", given: {context: {connection: intra_state, voltage_kv: 11}, where: {/component: wheeling_losses}, field: /basis}, expect: {value: percent_in_kind}}

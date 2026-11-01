@@ -281,3 +281,35 @@ def test_lcoe_and_lcos_hand_computed() -> None:
 def test_fractional_life_is_refused() -> None:
     with pytest.raises(ValueError):
         lcoe.crf(sv("10", Unit.PERCENT), sv("12.5", Unit.COUNT))
+
+
+def test_wheeling_levied_in_kind_grosses_up_like_a_loss() -> None:
+    """PSPCL: wheeling of NRSE power within the State 'shall be levied @ 2% of the energy injected'."""
+    ref = {"kind": "order", "document_id": "d", "page": 240, "quote": "q"}
+    rows = [
+        RuleView(
+            id="w",
+            family="oa_charge",
+            version_id="v",
+            jurisdiction_id="pspcl",
+            scope={"connection": ["intra_state"], "source": ["solar"]},
+            source_ref=ref,
+            body={"component": "wheeling", "basis": "percent_in_kind", "value": "2"},
+        ),
+        RuleView(
+            id="t",
+            family="oa_charge",
+            version_id="v",
+            jurisdiction_id="pspcl",
+            scope={"connection": ["intra_state"]},
+            source_ref=ref,
+            body={"component": "stu_losses", "basis": "percent_in_kind", "value": "2.19"},
+        ),
+    ]
+    sc = lc.Scenario(price=sv("3.00", Unit.INR_PER_KWH), on=date(2026, 11, 1))
+    wf = lc.evaluate(lc.SOURCE_BY_ID["oa_solar_intra"], {"voltage_kv": Decimal(132)}, sc, rows, [])
+    assert not any(x.unit == Unit.INR_PER_KWH and str(x.label).startswith("wheeling") for x in wf.lines)
+    loss = next(x for x in wf.lines if str(x.label).startswith("Losses"))
+    # 3.00 / (0.98 × 0.9781) − 3.00
+    assert _r4(loss.value) == _r4(Decimal("3.00") / (Decimal("0.98") * Decimal("0.9781")) - Decimal("3.00"))
+    assert "oa_wheeling" not in wf.gaps

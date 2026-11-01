@@ -1,0 +1,73 @@
+family: oa_charge
+jurisdiction: ka_escoms
+version: 1
+status: approved
+title: KERC Combined Tariff Order 2025 (ESCOMs) · pp. 260, 266 · CSS and additional surcharge FY 2026-27
+effective_from: '2026-04-01'
+effective_to: '2027-03-31'
+origin: manual
+approved_by: build-agent@ergplan
+rows:
+- label: CSS · HT-2(a) · HT level (11 kV to 33 kV) · FY 2026-27
+  scope:
+    category:
+    - HT-2(a)
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      max: 33
+  body:
+    basis: inr_per_kwh
+    notes: Approved for FY2026-27, CSS @ HT level 186 Ps./Unit (common for all ESCOMs), held in rupees.
+    value: '1.86'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 260
+    quote: 'the Commission has determined common CSS for all the ESCOMs for the control period as follows: ... Approved for
+      FY2026-27 ... CSS @ HT level Ps./Unit ... HT-2a 187 187 - 186 186 -'
+    document_id: 8e00613e-3b46-50c8-b8c5-a475bb79196c
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: CSS · HT-2(a) · 66 kV and above · FY 2026-27
+  scope:
+    category:
+    - HT-2(a)
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      min: 33
+      min_exclusive: true
+  body:
+    basis: inr_per_kwh
+    notes: Approved for FY2026-27, CSS @ 66kV & Above 186 Ps./Unit, held in rupees.
+    value: '1.86'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 260
+    quote: 'the Commission has determined common CSS for all the ESCOMs for the control period as follows: ... Approved for
+      FY2026-27 CSS @ 66kV & Above Ps./Unit ... HT-2a 187 187 - 186 186 -'
+    document_id: 8e00613e-3b46-50c8-b8c5-a475bb79196c
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: Additional surcharge · not levied
+  scope:
+    connection:
+    - intra_state
+    - ists
+  body:
+    basis: inr_per_kwh
+    notes: Not levied until BESCOM files a petition and the Commission passes orders (KERC OA Regulations 2025).
+    value: '0'
+    component: additional_surcharge
+  source_ref:
+    kind: order
+    page: 266
+    quote: It is decided by the Commission that till such time BESCOM files the petition and the Commission passes orders,
+      ASC shall not be levied.
+    document_id: 8e00613e-3b46-50c8-b8c5-a475bb79196c
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'

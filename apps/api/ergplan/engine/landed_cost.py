@@ -224,6 +224,7 @@ def evaluate(
 
     # 2. injection charges and losses
     injection: list[SourcedValue] = []
+    in_kind: list[RuleView] = []  # a charge levied as a share of the energy injected (PSPCL NRSE: 2 %)
     for comp in INJECTION_COMPONENTS:
         r: RuleView | None = by_comp.get(comp)
         if r is None:
@@ -233,6 +234,9 @@ def evaluate(
                 gaps.append("oa_wheeling")
             continue
         if str(r.body["basis"]) in CAPACITY_BASES:
+            continue
+        if str(r.body["basis"]) == "percent_in_kind":
+            in_kind.append(r)
             continue
         v, ptr = _val(r, ctx)
         if v is None:
@@ -247,8 +251,10 @@ def evaluate(
         used.extend(ex_used)
     keep = Decimal(1)
     loss_inputs: list[SourcedValue] = []
-    for comp in LOSS_COMPONENTS:
-        r = by_comp.get(comp)
+    for comp, r in [
+        *((c, by_comp.get(c)) for c in LOSS_COMPONENTS),
+        *((str(k.body["component"]), k) for k in in_kind),
+    ]:
         if r is None:
             if comp in ("stu_losses", "wheeling_losses") and spec.connection in ("intra_state", "ists"):
                 gaps.append("oa_losses")

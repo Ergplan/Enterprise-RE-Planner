@@ -1,0 +1,11 @@
+# KERC Combined Tariff Order 2025 (ESCOMs), para 6.12.6 (PDF page 260): CSS approved for FY2026-27,
+# common for all ESCOMs, HT-2a 186 Ps./Unit at 66kV & above and at HT level. Para 6.13.6 (page 266):
+# additional surcharge not levied until BESCOM's petition is decided.
+jurisdiction: ka_escoms
+family: oa_charge
+tests:
+  - {name: "CSS HT-2(a) 11 kV 1.86", given: {context: {connection: intra_state, category: "HT-2(a)", voltage_kv: 11}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "1.86"}}
+  - {name: "CSS HT-2(a) 33 kV 1.86", given: {context: {connection: intra_state, category: "HT-2(a)", voltage_kv: 33}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "1.86"}}
+  - {name: "CSS HT-2(a) 66 kV 1.86", given: {context: {connection: ists, category: "HT-2(a)", voltage_kv: 66}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "1.86"}}
+  - {name: "CSS per kWh", given: {context: {connection: intra_state, category: "HT-2(a)", voltage_kv: 11}, where: {/component: cross_subsidy_surcharge}, field: /basis}, expect: {value: inr_per_kwh}}
+  - {name: "Additional surcharge not levied", given: {context: {connection: intra_state, category: "HT-2(a)", voltage_kv: 11}, where: {/component: additional_surcharge}, field: /value}, expect: {value: "0"}}

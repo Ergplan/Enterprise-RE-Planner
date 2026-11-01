@@ -1,0 +1,13 @@
+# PSERC Tariff Order FY 2026-27 for PSPCL: para 6.10.1 wheeling (PDF page 238), 6.10.2 T&D losses and
+# 6.10.3 cross-subsidy surcharge (page 239); applicable 1 April 2026 to 31 March 2027 (para 6.11).
+jurisdiction: pspcl
+family: oa_charge
+tests:
+  - {name: "CSS Large Supply 0.86", given: {context: {connection: intra_state, category: "LS General Industry", voltage_kv: 11}, where: {/component: cross_subsidy_surcharge}, field: /value}, expect: {value: "0.86"}}
+  - {name: "NRSE within the State: wheeling 2 % in kind", given: {context: {connection: intra_state, source: solar, voltage_kv: 11}, where: {/component: wheeling}, field: /value}, expect: {value: "2"}}
+  - {name: "NRSE within the State: in kind", given: {context: {connection: intra_state, source: wind, voltage_kv: 33}, where: {/component: wheeling}, field: /basis}, expect: {value: percent_in_kind}}
+  - {name: "Inter-state: Rs 2,54,092/MW/month", given: {context: {connection: ists, source: solar, voltage_kv: 33}, where: {/component: wheeling}, field: /value}, expect: {value: "254092"}}
+  - {name: "Transmission loss 2.19 %", given: {context: {connection: intra_state, voltage_kv: 132}, where: {/component: stu_losses}, field: /value}, expect: {value: "2.19"}}
+  - {name: "Distribution loss 11 kV 4.00 %", given: {context: {connection: intra_state, voltage_kv: 11}, where: {/component: wheeling_losses}, field: /value}, expect: {value: "4.00"}}
+  - {name: "Distribution loss 66 kV 1.50 %", given: {context: {connection: intra_state, voltage_kv: 66}, where: {/component: wheeling_losses}, field: /value}, expect: {value: "1.50"}}
+  - {name: "Distribution loss 220 kV 0", given: {context: {connection: ists, voltage_kv: 220}, where: {/component: wheeling_losses}, field: /value}, expect: {value: "0"}}

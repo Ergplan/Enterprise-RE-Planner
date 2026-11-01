@@ -1,0 +1,53 @@
+family: oa_charge
+jurisdiction: cesc
+version: 1
+status: approved
+title: KERC Combined Tariff Order 2025 (ESCOMs) · p. 249 · CESC wheeling FY 2026-27
+effective_from: '2026-04-01'
+effective_to: '2027-03-31'
+origin: manual
+approved_by: build-agent@ergplan
+rows:
+- label: HT network wheeling charge · CESC · FY 2026-27
+  scope:
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      max: 33
+  body:
+    basis: inr_per_kwh
+    notes: 'FY 27 column, drawal at HT: 39 paise per unit, held in rupees. Consumers at 66 kV and above draw from the transmission
+      network and pay no ESCOM wheeling (para 6.10.7(i)).'
+    value: '0.39'
+    component: wheeling
+  source_ref:
+    kind: order
+    page: 249
+    quote: 'CESC’s network only: FY 26 FY 27 FY 28 Injection point HT LT HT LT HT LT Drawal point HT 38 (0.48) 126 (7.44)
+      39 (0.42) 129 (7.22) 40 (0.37) 132 (7.01) LT 126 (7.44) 88 (6.96) 129 (7.22) 90 (6.80) 132 (7.01) 92 (6.64) Note: Figures
+      in brackets are applicable losses'
+    document_id: 8e00613e-3b46-50c8-b8c5-a475bb79196c
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: HT technical loss · CESC · FY 2026-27
+  scope:
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      max: 33
+  body:
+    basis: percent_in_kind
+    notes: Figure in brackets beside the FY 27 HT drawal charge (applicable losses, %).
+    value: '0.42'
+    component: wheeling_losses
+  source_ref:
+    kind: order
+    page: 249
+    quote: 'CESC’s network only: FY 26 FY 27 FY 28 Injection point HT LT HT LT HT LT Drawal point HT 38 (0.48) 126 (7.44)
+      39 (0.42) 129 (7.22) 40 (0.37) 132 (7.01) LT 126 (7.44) 88 (6.96) 129 (7.22) 90 (6.80) 132 (7.01) 92 (6.64) Note: Figures
+      in brackets are applicable losses'
+    document_id: 8e00613e-3b46-50c8-b8c5-a475bb79196c
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'

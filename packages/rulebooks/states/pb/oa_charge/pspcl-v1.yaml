@@ -1,0 +1,176 @@
+family: oa_charge
+jurisdiction: pspcl
+version: 1
+status: approved
+title: PSERC Tariff Order FY 2026-27 for PSPCL · pp. 238–239 · open-access charges
+effective_from: '2026-04-01'
+effective_to: '2027-03-31'
+origin: manual
+approved_by: build-agent@ergplan
+rows:
+- label: Wheeling · long/medium-term open access · inter-state
+  scope:
+    connection:
+    - ists
+    voltage_kv:
+      max: 66
+  body:
+    basis: inr_per_mw_month
+    notes: 'Rs. 2,54,092/MW/Month for LTOA/MTOA customers using PSPCL''s distribution network (STOA: Rs. 619.72/MWh, not seeded).
+      NRSE power from outside the State pays the full charge.'
+    value: '254092'
+    component: wheeling
+  source_ref:
+    kind: order
+    page: 238
+    quote: a) For Long Term/Medium Term Open Access Customers = Rs. 2,54,092/MW/Month b) For Short Term Open Access Customers
+      = Rs. 619.72/MWh ... In case of wheeling of power generated from NRSE project outside the state, full transmission and
+      wheeling charges alongwith transmission deviation and wheeling dev
+    document_id: 8fc3d382-3fde-5496-9246-411738181d7e
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: Wheeling · long/medium-term open access · within the State, conventional
+  scope:
+    source:
+    - thermal
+    - iex
+    - bess
+    - pumped_storage
+    connection:
+    - intra_state
+    voltage_kv:
+      max: 66
+  body:
+    basis: inr_per_mw_month
+    notes: Rs. 2,54,092/MW/Month for LTOA/MTOA customers using the distribution network.
+    value: '254092'
+    component: wheeling
+  source_ref:
+    kind: order
+    page: 238
+    quote: a) For Long Term/Medium Term Open Access Customers = Rs. 2,54,092/MW/Month b) For Short Term Open Access Customers
+      = Rs. 619.72/MWh
+    document_id: 8fc3d382-3fde-5496-9246-411738181d7e
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: Transmission and wheeling in kind · NRSE power within the State (2 %)
+  scope:
+    source:
+    - solar
+    - wind
+    - hybrid
+    - biomass
+    - small_hydro
+    - waste_to_energy
+    - any_re
+    connection:
+    - intra_state
+  body:
+    basis: percent_in_kind
+    notes: Transmission and wheeling charges for NRSE (renewable) power consumed within Punjab are levied as 2% of the energy
+      injected, irrespective of distance.
+    value: '2'
+    component: wheeling
+  source_ref:
+    kind: order
+    page: 238
+    quote: in case of wheeling of power generated from NRSE project for consumption within the State, transmission and wheeling
+      charges shall be levied @ 2% of the energy injected into the State Grid, irrespective of the distance
+    document_id: 8fc3d382-3fde-5496-9246-411738181d7e
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: Transmission loss · all open-access customers (2.19 %)
+  scope:
+    connection:
+    - intra_state
+    - ists
+  body:
+    basis: percent_in_kind
+    value: '2.19'
+    component: stu_losses
+  source_ref:
+    kind: order
+    page: 239
+    quote: (i) OA customers at 132/220/400 kV 2.19%
+    document_id: 8fc3d382-3fde-5496-9246-411738181d7e
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: Distribution loss · 11 kV (4.00 %)
+  scope:
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      max: 11
+  body:
+    basis: percent_in_kind
+    value: '4.00'
+    component: wheeling_losses
+  source_ref:
+    kind: order
+    page: 239
+    quote: iii) OA customers at 11 kV 40% of distribution losses (10.00%), which works out to 4.00%, in addition to the Transmission
+      Loss of 2.19%.
+    document_id: 8fc3d382-3fde-5496-9246-411738181d7e
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: Distribution loss · 33/66 kV (1.50 %)
+  scope:
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      max: 66
+      min: 11
+      min_exclusive: true
+  body:
+    basis: percent_in_kind
+    value: '1.50'
+    component: wheeling_losses
+  source_ref:
+    kind: order
+    page: 239
+    quote: (ii) OA customers at 66/33 kV 15% of distribution losses (10.00%), which works out to 1.50%, in addition to the
+      Transmission Loss of 2.19%.
+    document_id: 8fc3d382-3fde-5496-9246-411738181d7e
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: Distribution loss · 132 kV and above (none)
+  scope:
+    connection:
+    - intra_state
+    - ists
+    voltage_kv:
+      min: 66
+      min_exclusive: true
+  body:
+    basis: percent_in_kind
+    notes: Only the transmission loss (2.19%) applies at 132/220/400 kV.
+    value: '0'
+    component: wheeling_losses
+  source_ref:
+    kind: order
+    page: 239
+    quote: (i) OA customers at 132/220/400 kV 2.19%
+    document_id: 8fc3d382-3fde-5496-9246-411738181d7e
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
+- label: CSS · Large Supply
+  scope:
+    category:
+    - LS General Industry
+    connection:
+    - intra_state
+    - ists
+  body:
+    basis: inr_per_kwh
+    notes: 'Large Supply: 86 paise/kWh, held in rupees.'
+    value: '0.86'
+    component: cross_subsidy_surcharge
+  source_ref:
+    kind: order
+    page: 239
+    quote: 'the cross-subsidy surcharge for various categories of consumers is determined as under:- Large Supply : 86 paise/kWh'
+    document_id: 8fc3d382-3fde-5496-9246-411738181d7e
+    effective_to: '2027-03-31'
+    effective_from: '2026-04-01'
