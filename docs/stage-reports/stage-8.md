@@ -143,3 +143,36 @@ You chose the mini as the server, so deployment now targets it instead of a VM.
   - a DHCP reservation for the mini's address.
 - **Reviewer:** three more rounds on the deployment work. Fixed: a logout test that checks the database (revoked rows, cleared cookie), and a test that pins the public routes to real routes. The reviewer also said `/voice/tool` was not a route; it is, and the new test confirms it.
 
+## Addendum, 1 Nov 2026 afternoon — the VM, open access, Gujarat and Andhra Pradesh
+
+**Deployed** on the Google Cloud VM `replanner` at https://34-131-62-161.sslip.io, with a Let's Encrypt certificate. The flow you chose is in place: commit here → push to GitHub → SSH from the Mac mini → `tools/dev/vm-install.sh`.
+- The first install carried billx, the 24 indexed regulation files, the IEX files and the settings. The OpenAI key was read from Keys.rtf on the mini and never printed; the payload was deleted from the VM and the mini afterwards.
+- Updates send a git bundle of `main` only.
+- Console steps you did: the project SSH key, the web firewall rule and the 50 GB disk.
+- The API image now installs its dependencies before copying the code, so code-only updates build quickly.
+
+**Open access sourced from the tariff orders already in the corpus:**
+
+| State | Approved | Golden tests |
+| --- | --- | --- |
+| Telangana | CSS per DISCOM and voltage; the aggregate T&D charge | 15 |
+| Karnataka | CSS common to all ESCOMs; additional surcharge not levied; each ESCOM's HT wheeling charge and HT loss | 25 |
+| Punjab | Wheeling per MW; 2 % in kind for renewable power within the State; T&D losses by voltage; CSS | 8 |
+
+A charge levied in kind is applied as a loss and named "Losses and charges in kind".
+
+**Two more states with approved tariffs:**
+- **Gujarat** (HTP-I, common to the four state DISCOMs). The schemas grew to hold telescopic demand slabs, an excess-over-contract rate, a least billing demand, energy and ToD bands by billing demand, and an energy rebate by voltage. The evaluator, avoided cost, optimizer inputs and the judge use them.
+- **Andhra Pradesh** (Category III(A) HT), from Table 11, which has a readable text layer.
+
+States with approved tariffs: **7 of the 10** the plan names (UP, MH, KA, TS, PB, GJ, AP). Still not yet sourced:
+- **Rajasthan:** the stored file is an HTML page.
+- **Haryana:** the file is a UHBVN sales circular implementing the HERC order, with scanned tables whose OCR is too uncertain to quote. It was not seeded, on purpose (traceability beats speed).
+- **Tamil Nadu:** the indexed FY 2026-27 rates are missing.
+
+**Reviewer** (two rounds on the afternoon's diff):
+- Fixed: the in-kind charge line label; explicit coverage assertions per state.
+- By design: the VM forces `ERGPLAN_ENV=prod` through `compose.prod.yaml`; approvals live in `packages/rulebooks/states/`, which the reviewer does not see.
+
+**Model cost:** none this afternoon. Every rule was authored from the page text with verbatim quotes, without the reader. Reviewer: four gpt-5.1 rounds, about USD 0.20.
+
