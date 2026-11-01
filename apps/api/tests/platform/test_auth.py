@@ -13,7 +13,7 @@ from fastapi.testclient import TestClient
 
 from ergplan.core.settings import get_settings
 from ergplan.db.base import session_scope
-from ergplan.db.models import LoginToken
+from ergplan.db.models import AuthSession, LoginToken
 from ergplan.intake import bills as bill_store
 from ergplan.platform import mail
 from ergplan.platform.app import app
@@ -66,7 +66,14 @@ def test_sign_in_roles_and_logout(prod: list[tuple[str, str]]) -> None:
     bearer = TestClient(app, base_url="https://testserver")  # a non-browser client: same token as a bearer
     me = bearer.get("/auth/me", headers={"Authorization": f"Bearer {old_cookie}"}).json()
     assert me["signed_in"] is True and me["email"] == "ops@acme.in"
-    assert c.post("/auth/logout").json()["signed_in"] is False
+    out = c.post("/auth/logout")
+    assert out.json()["signed_in"] is False
+    assert (
+        'ergplan_session=""' in out.headers["set-cookie"] or "max-age=0" in out.headers["set-cookie"].lower()
+    )
+    with session_scope() as s:
+        rows = s.query(AuthSession).filter(AuthSession.email == "ops@acme.in").all()
+        assert rows and all(r.revoked_at is not None for r in rows)  # revoked in the database
     assert c.get("/auth/me").json()["signed_in"] is False
     replay = TestClient(app, base_url="https://testserver", cookies={"ergplan_session": old_cookie})
     assert replay.get("/rulebooks/versions").status_code == 401  # the session is revoked, not just forgotten
