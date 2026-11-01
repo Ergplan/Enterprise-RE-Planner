@@ -40,6 +40,9 @@ DISCOM_STATE = {
     "tnpdcl": "TN",
     "pspcl": "PB",
     "mgvcl": "GJ",
+    "ugvcl": "GJ",
+    "dgvcl": "GJ",
+    "pgvcl": "GJ",
     "uhbvn": "HR",
     "dhbvn": "HR",
     "jvvnl": "RJ",
@@ -74,6 +77,7 @@ CATEGORY_PATTERNS: dict[str, list[tuple[str, str]]] = {
     "KA": [(r"\bHT\s*[-–]?\s*2\s*\(?\s*A\s*\)?", "HT-2(a)")],
     "TS": [(r"\bHT\s*[-–]?\s*(I|1)\s*\(?\s*A\s*\)?", "HT-I(A)")],
     "PB": [(r"\bLARGE\s+SUPPLY|\bLS\b", "LS General Industry")],
+    "GJ": [(r"\bHTP\s*[-–]?\s*(I|1)\b(?!I)", "HTP-I")],
 }
 
 # The usual supply voltage of a category, offered as the default chip (most bills do not print it).
@@ -88,6 +92,7 @@ USUAL_VOLTAGE_KV = {
     "HT-2(a)": Decimal("11"),
     "HT-I(A)": Decimal("11"),
     "LS General Industry": Decimal("11"),
+    "HTP-I": Decimal("11"),
 }
 
 

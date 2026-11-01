@@ -44,7 +44,7 @@
             "value": {
               "type": "string",
               "pattern": "^-?\\d+(\\.\\d+)?$",
-              "description": "Fixed/demand charge (decimal as string)"
+              "description": "Fixed/demand charge (decimal as string). With slabs: the rate of the last (highest) slab"
             },
             "basis": {
               "enum": [
@@ -66,6 +66,40 @@
                   "type": "string",
                   "pattern": "^\\d+(\\.\\d+)?$",
                   "description": "Multiple of demand charge on demand above contract (e.g. 2)"
+                },
+                "min_kva": {
+                  "type": "string",
+                  "pattern": "^-?\\d+(\\.\\d+)?$",
+                  "description": "Billing demand is never below this many kVA (GERC: one hundred kVA)"
+                },
+                "excess_demand_rate": {
+                  "type": "string",
+                  "pattern": "^-?\\d+(\\.\\d+)?$",
+                  "description": "INR/kVA/month on billing demand above contract demand, charged instead of the slab rates for that part (GERC HTP-I 11.1.2)"
+                }
+              }
+            },
+            "slabs": {
+              "type": "array",
+              "minItems": 1,
+              "description": "Telescopic slabs of billing demand (GERC HTP-I: first 500 kVA, next 500 kVA, above 1000 kVA); each slab's rate applies to the kVA inside it. The last slab has no up_to_kva.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "value"
+                ],
+                "properties": {
+                  "up_to_kva": {
+                    "type": "string",
+                    "pattern": "^-?\\d+(\\.\\d+)?$",
+                    "description": "Upper edge of the slab in kVA of billing demand (cumulative); omit on the last slab"
+                  },
+                  "value": {
+                    "type": "string",
+                    "pattern": "^-?\\d+(\\.\\d+)?$",
+                    "description": "INR/kVA/month for the kVA inside this slab"
+                  }
                 }
               }
             }
@@ -90,6 +124,35 @@
                 "pattern": "^-?\\d+(\\.\\d+)?$",
                 "description": "Energy charge for this slot where the order prices slots directly (decimal as string)"
               }
+            },
+            "by_billing_demand": {
+              "type": "array",
+              "description": "Energy charge for the entire consumption chosen by the month's billing demand (GERC HTP-I 11.2): the last band whose above_kva is below the billing demand applies; base applies below the first band.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "above_kva",
+                  "base"
+                ],
+                "properties": {
+                  "above_kva": {
+                    "type": "string",
+                    "pattern": "^-?\\d+(\\.\\d+)?$",
+                    "description": "Billing demand above which this band applies"
+                  },
+                  "base": {
+                    "type": "string",
+                    "pattern": "^-?\\d+(\\.\\d+)?$",
+                    "description": "Energy charge per billed unit in this band"
+                  }
+                }
+              }
+            },
+            "rebate_pct": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "description": "Rebate on the energy charges, e.g. for supply at a higher voltage (GERC 11.9) (percent, decimal as string)"
             }
           }
         },

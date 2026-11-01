@@ -113,6 +113,102 @@ def slot_adjustment_pct(slot: Mapping[str, object]) -> Decimal:
     return Decimal(0)
 
 
+_BDR = "/demand_charge/billing_demand_rule"
+
+
+def _get(row: RuleView, pointer: str) -> Decimal | None:
+    raw = row.get(pointer)
+    return None if raw in (None, "") else Decimal(str(raw))
+
+
+def demand_slabs(schedule: RuleView) -> list[tuple[Decimal | None, Decimal, str]]:
+    """(upper edge in kVA or None for the last, INR/kVA/month, pointer); a flat rate is one open slab."""
+    slabs = (schedule.body.get("demand_charge") or {}).get("slabs") or []
+    if not slabs:
+        v = _get(schedule, "/demand_charge/value")
+        return [] if v is None else [(None, v, "/demand_charge/value")]
+    return [
+        (
+            Decimal(str(sl["up_to_kva"])) if sl.get("up_to_kva") not in (None, "") else None,
+            Decimal(str(sl["value"])),
+            f"/demand_charge/slabs/{i}/value",
+        )
+        for i, sl in enumerate(slabs)
+    ]
+
+
+def slab_split(
+    slabs: list[tuple[Decimal | None, Decimal, str]], kva: Decimal
+) -> list[tuple[Decimal, Decimal, str]]:
+    """The kVA inside each slab for a billing demand: (kVA, rate, pointer), slabs with kVA only."""
+    out, lo = [], Decimal(0)
+    for hi, rate, ptr in slabs:
+        top = kva if hi is None else min(kva, hi)
+        if top > lo:
+            out.append((top - lo, rate, ptr))
+        if hi is None or kva <= hi:
+            break
+        lo = hi
+    return out
+
+
+def billing_floor_kva(schedule: RuleView, contract_kva: Decimal | None) -> Decimal:
+    """The least billing demand the schedule allows: a share of contract demand and/or a fixed kVA."""
+    floors = [Decimal(0)]
+    pct = _get(schedule, f"{_BDR}/min_pct_of_contract_demand")
+    if pct is not None and contract_kva is not None:
+        floors.append(contract_kva * pct / HUNDRED)
+    mk = _get(schedule, f"{_BDR}/min_kva")
+    if mk is not None:
+        floors.append(mk)
+    return max(floors)
+
+
+def demand_amount(schedule: RuleView, billing_kva: Decimal, contract_kva: Decimal | None) -> Decimal:
+    """Demand charge for a month at a billing demand: slabs (or the flat rate) up to contract demand
+    when the row has an absolute excess rate, that rate above it; the multiple-of-rate penalty
+    (UPERC, MERC) is added by the caller from the recorded demand, as before."""
+    excess = _get(schedule, f"{_BDR}/excess_demand_rate")
+    within = (
+        min(billing_kva, contract_kva) if excess is not None and contract_kva is not None else billing_kva
+    )
+    amt = sum((k * r for k, r, _ in slab_split(demand_slabs(schedule), within)), Decimal(0))
+    if excess is not None and contract_kva is not None and billing_kva > contract_kva:
+        amt += (billing_kva - contract_kva) * excess
+    return amt
+
+
+def marginal_demand_rate(schedule: RuleView, kva: Decimal) -> Decimal | None:
+    """INR/kVA/month for one more kVA of billing demand at this level (the slab it falls in)."""
+    split = slab_split(demand_slabs(schedule), kva) if kva > 0 else []
+    if split:
+        return split[-1][1]
+    slabs = demand_slabs(schedule)
+    return slabs[0][1] if slabs else None
+
+
+def energy_base_pointer(schedule: RuleView, billing_kva: Decimal | None) -> str:
+    """/energy_charge/base, or the band the billing demand falls in (GERC HTP-I 11.2)."""
+    bands = (schedule.body.get("energy_charge") or {}).get("by_billing_demand") or []
+    ptr = "/energy_charge/base"
+    if billing_kva is not None:
+        for i, b in enumerate(bands):
+            if billing_kva > Decimal(str(b["above_kva"])):
+                ptr = f"/energy_charge/by_billing_demand/{i}/base"
+    return ptr
+
+
+def tod_delta_pointer(tod: RuleView, slot_index: int, billing_kva: Decimal | None) -> str | None:
+    """The slot's INR adjustment pointer, by billing-demand band where the order varies it."""
+    slot = tod.body["slots"][slot_index]
+    ptr = f"/slots/{slot_index}/rate_delta_inr_per_kwh" if slot.get("rate_delta_inr_per_kwh") else None
+    if billing_kva is not None:
+        for i, b in enumerate(slot.get("rate_delta_by_billing_demand") or []):
+            if billing_kva > Decimal(str(b["above_kva"])):
+                ptr = f"/slots/{slot_index}/rate_delta_by_billing_demand/{i}/rate_delta_inr_per_kwh"
+    return ptr
+
+
 def evaluate(schedule: RuleView, tod: RuleView | None, q: MonthQuantities) -> TariffBill:
     body = schedule.body
     basis = str(body.get("billing_basis", "kwh"))
@@ -129,6 +225,7 @@ def evaluate(schedule: RuleView, tod: RuleView | None, q: MonthQuantities) -> Ta
         recorded = q.max_kva
         cd = q.contract_kva
         floor_pct = schedule.get("/demand_charge/billing_demand_rule/min_pct_of_contract_demand")
+        min_kva = _rate(schedule, f"{_BDR}/min_kva", Unit.KVA, "Least billing demand")
         if recorded is None and cd is not None:
             billing = cd
             notes.append("recorded demand not given: demand charge on contract demand")
@@ -151,19 +248,43 @@ def evaluate(schedule: RuleView, tod: RuleView | None, q: MonthQuantities) -> Ta
                 notes.append(
                     "the schedule row states no billing-demand floor: demand charge on recorded demand"
                 )
+        if billing is not None and min_kva is not None and billing.value < min_kva.value:
+            billing = derive(min_kva.value, Unit.KVA, [billing, min_kva], label="Billing demand")
         if billing is not None:
             # Demand charge on the whole billing demand; demand above contract is charged again at
             # the stated multiple of the demand rate (UPERC general provisions 7(ii)(b): "200% of the
             # normal rate apart from the normal fixed / demand charges"; MERC: 150% additionally).
-            lines.append(
-                Line(
-                    "demand_charge",
-                    "Demand charge",
-                    _amount(billing.value * dc.value, [billing, dc], "Demand charge"),
-                    quantity=billing,
-                    rate=dc,
-                )
+            # Slabs (GERC HTP-I 11.1.1) split the billing demand up to contract demand; an absolute
+            # excess rate (11.1.2) prices the part above contract instead.
+            excess_abs = _rate(
+                schedule, f"{_BDR}/excess_demand_rate", Unit.INR_PER_KVA_MONTH, "Demand above contract"
             )
+            within = billing
+            if excess_abs is not None and cd is not None and billing.value > cd.value:
+                within = derive(cd.value, Unit.KVA, [billing, cd], label="Billing demand up to contract")
+            slabs = demand_slabs(schedule)
+            parts = slab_split(slabs, within.value)
+            for k, _, ptr in parts:
+                r = _rate(schedule, ptr, Unit.INR_PER_KVA_MONTH, "Demand charge")
+                assert r is not None
+                qty = within if len(parts) == 1 else derive(k, Unit.KVA, [within], label="kVA in this slab")
+                label = "Demand charge" if len(slabs) == 1 else f"Demand charge · {k:,} kVA at ₹{r.value}"
+                lines.append(
+                    Line("demand_charge", label, _amount(k * r.value, [qty, r], label), quantity=qty, rate=r)
+                )
+            if excess_abs is not None and cd is not None and billing.value > cd.value:
+                over = derive(
+                    billing.value - cd.value, Unit.KVA, [billing, cd], label="Demand above contract"
+                )
+                lines.append(
+                    Line(
+                        "excess_demand_penalty",
+                        "Demand above contract",
+                        _amount(over.value * excess_abs.value, [over, excess_abs], "Demand above contract"),
+                        quantity=over,
+                        rate=excess_abs,
+                    )
+                )
             mult = schedule.get("/demand_charge/billing_demand_rule/excess_demand_penalty_multiplier")
             if mult is not None and cd is not None and recorded is not None and recorded.value > cd.value:
                 m = _rate(
@@ -187,12 +308,19 @@ def evaluate(schedule: RuleView, tod: RuleView | None, q: MonthQuantities) -> Ta
                 )
 
     # Energy and ToD
-    base = _rate(schedule, "/energy_charge/base", rate_unit, "Energy charge")
+    billing_kva = billing.value if dc is not None and billing is not None else None
+    base = _rate(schedule, energy_base_pointer(schedule, billing_kva), rate_unit, "Energy charge")
     energy_total = Decimal(0)
     if base is not None:
         slots = list(tod.body.get("slots", [])) if tod is not None else []
         slots = [s for s in slots if not s.get("months") or q.month.month in s["months"]]
-        adjusting = [s for s in slots if slot_adjustment_pct(s) != 0 or s.get("rate_delta_inr_per_kwh")]
+        adjusting = [
+            s
+            for s in slots
+            if slot_adjustment_pct(s) != 0
+            or s.get("rate_delta_inr_per_kwh")
+            or s.get("rate_delta_by_billing_demand")
+        ]
         if slots and q.by_slot:
             covered = Decimal(0)
             for i, s in enumerate(slots):
@@ -231,8 +359,8 @@ def evaluate(schedule: RuleView, tod: RuleView | None, q: MonthQuantities) -> Ta
                             slot=name,
                         )
                     )
-                elif s.get("rate_delta_inr_per_kwh"):
-                    d = _rate(tod, f"/slots/{i}/rate_delta_inr_per_kwh", rate_unit, f"ToD {name}")
+                elif (dptr := tod_delta_pointer(tod, i, billing_kva)) is not None:
+                    d = _rate(tod, dptr, rate_unit, f"ToD {name}")
                     assert d is not None
                     adj = units.value * d.value
                     energy_total += adj
@@ -276,6 +404,19 @@ def evaluate(schedule: RuleView, tod: RuleView | None, q: MonthQuantities) -> Ta
             )
             if adjusting:
                 gaps.append("tod_split_unknown")
+    reb = _rate(schedule, "/energy_charge/rebate_pct", Unit.PERCENT, "Rebate on energy charges")
+    if reb is not None and base is not None:
+        on = [ln.amount for ln in lines if ln.code == "energy_charge"]
+        amt = -sum((x.value for x in on), Decimal(0)) * reb.value / HUNDRED
+        energy_total += amt
+        lines.append(
+            Line(
+                "energy_charge",
+                "Rebate on energy charges",
+                _amount(amt, [reb, *on], "Energy rebate"),
+                rate=reb,
+            )
+        )
     energy_charges = [ln.amount for ln in lines if ln.code in ("energy_charge", "tod_adjustment")]
 
     # Per-unit additions

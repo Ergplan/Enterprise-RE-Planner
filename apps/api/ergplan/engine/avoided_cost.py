@@ -20,7 +20,16 @@ from ..core.money import inr
 from ..core.sourced import SourcedValue, derive
 from ..core.units import Unit
 from ..rulebook.models import RuleView
-from .tariff_eval import RATE_OF_BASIS, slot_adjustment_pct, slot_of
+from .tariff_eval import (
+    RATE_OF_BASIS,
+    billing_floor_kva,
+    demand_amount,
+    demand_slabs,
+    energy_base_pointer,
+    slot_adjustment_pct,
+    slot_of,
+    tod_delta_pointer,
+)
 
 HUNDRED = Decimal(100)
 
@@ -59,17 +68,29 @@ def _rate(row: RuleView, pointer: str, unit: Unit, label: str) -> SourcedValue |
 
 
 def rate_card(
-    month: date, rules: MonthRules, slot_index: int | None, kvah_factor: SourcedValue | None
+    month: date,
+    rules: MonthRules,
+    slot_index: int | None,
+    kvah_factor: SourcedValue | None,
+    billing_kva: Decimal | None = None,
 ) -> RateCard | None:
+    """The avoided cost of a unit in one ToD slot. `billing_kva` picks the energy and ToD band where
+    the order prices them by billing demand (GERC HTP-I); callers pass the month's billing demand, or
+    the contract demand as the status-quo estimate."""
     s = rules.schedule
     if s is None:
         return None
     basis = str(s.body.get("billing_basis", "kwh"))
     unit = RATE_OF_BASIS[basis]
-    base = _rate(s, "/energy_charge/base", unit, "Energy charge")
+    base = _rate(s, energy_base_pointer(s, billing_kva), unit, "Energy charge")
     if base is None:
         return None
     comps = [base]
+    reb = _rate(s, "/energy_charge/rebate_pct", Unit.PERCENT, "Rebate on energy charges")
+    if reb is not None:
+        comps.append(
+            derive(-base.value * reb.value / HUNDRED, unit, [base, reb], label="Rebate on energy charges")
+        )
     slot_name = None
     energy_rate = base.value
     if rules.tod is not None and slot_index is not None:
@@ -82,8 +103,8 @@ def rate_card(
             assert p is not None
             comps.append(derive(base.value * pct / HUNDRED, unit, [base, p], label=f"ToD {slot_name}"))
             energy_rate += base.value * pct / HUNDRED
-        elif slot.get("rate_delta_inr_per_kwh"):
-            d = _rate(rules.tod, f"/slots/{slot_index}/rate_delta_inr_per_kwh", unit, f"ToD {slot_name}")
+        elif (dptr := tod_delta_pointer(rules.tod, slot_index, billing_kva)) is not None:
+            d = _rate(rules.tod, dptr, unit, f"ToD {slot_name}")
             assert d is not None
             comps.append(d)
             energy_rate += d.value
@@ -138,6 +159,13 @@ def build(
         first = date(y, mo, 1)
         n = calendar.monthrange(y, mo)[1] * 96
         rules = rules_for(first)
+        seg = kw[i : i + n]
+        billing_est: Decimal | None = contract_kva.value if contract_kva is not None else None
+        if rules.schedule is not None and seg and power_factor is not None:
+            billing_est = max(
+                max(seg) / power_factor.value,
+                billing_floor_kva(rules.schedule, contract_kva.value if contract_kva else None),
+            )
         row: list[Decimal] = []
         idx_row: list[int] = []
         by_slot: dict[int | None, RateCard | None] = {}
@@ -147,7 +175,7 @@ def build(
                 s = slot_of(rules.tod, mo, b * 15)
                 idx = rules.tod.body["slots"].index(s) if s is not None else None
             if idx not in by_slot:
-                by_slot[idx] = rate_card(first, rules, idx, kvah_factor)
+                by_slot[idx] = rate_card(first, rules, idx, kvah_factor, billing_est)
                 if by_slot[idx] is not None:
                     cards.append(by_slot[idx])  # type: ignore[arg-type]
             card = by_slot[idx]
@@ -159,7 +187,6 @@ def build(
             )
         matrix.append(row)
         cell_cards.append(idx_row)
-        seg = kw[i : i + n]
         for k, v in enumerate(seg):
             energy_cost += v * Decimal("0.25") * row[k % 96]
         for c in by_slot.values():
@@ -168,23 +195,27 @@ def build(
         # demand charge at this month's billing demand (profile peak in kVA, floor from the row)
         if rules.schedule is not None and seg:
             dc = _rate(rules.schedule, "/demand_charge/value", Unit.INR_PER_KVA_MONTH, "Demand charge")
-            if dc is not None and power_factor is not None:
-                peak_kva = max(seg) / power_factor.value
-                floor = rules.schedule.get("/demand_charge/billing_demand_rule/min_pct_of_contract_demand")
-                billing = peak_kva
-                inputs = [profile_ref, power_factor, dc]
-                if floor is not None and contract_kva is not None:
-                    fp = _rate(
-                        rules.schedule,
-                        "/demand_charge/billing_demand_rule/min_pct_of_contract_demand",
-                        Unit.PERCENT,
-                        "Billing-demand floor",
-                    )
-                    assert fp is not None
-                    billing = max(peak_kva, contract_kva.value * fp.value / HUNDRED)
-                    inputs += [contract_kva, fp]
+            if dc is not None and power_factor is not None and billing_est is not None:
+                inputs = [profile_ref, power_factor]
+                inputs += [
+                    sv
+                    for _, _, ptr in demand_slabs(rules.schedule)
+                    if (sv := _rate(rules.schedule, ptr, Unit.INR_PER_KVA_MONTH, "Demand charge")) is not None
+                ]
+                for ptr, u in (
+                    ("/demand_charge/billing_demand_rule/min_pct_of_contract_demand", Unit.PERCENT),
+                    ("/demand_charge/billing_demand_rule/min_kva", Unit.KVA),
+                    ("/demand_charge/billing_demand_rule/excess_demand_rate", Unit.INR_PER_KVA_MONTH),
+                ):
+                    if (fv := _rate(rules.schedule, ptr, u, "Billing demand rule")) is not None:
+                        inputs.append(fv)
+                if contract_kva is not None:
+                    inputs.append(contract_kva)
+                amount = demand_amount(
+                    rules.schedule, billing_est, contract_kva.value if contract_kva is not None else None
+                )
                 demand_lines.append(
-                    derive(inr(billing * dc.value), Unit.INR, inputs, label=f"Demand charge · {first:%b %Y}")
+                    derive(inr(amount), Unit.INR, inputs, label=f"Demand charge · {first:%b %Y}")
                 )
         i += n
     annual.append(derive(inr(energy_cost), Unit.INR, energy_inputs, label="Energy at avoided rates (year)"))

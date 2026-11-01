@@ -47,6 +47,18 @@ CASES = [
     ("tgspdcl", "TS", "HT-I(A)", "33", "3000", 0, 30, Decimal("8.65")),  # 07:30: 7.15 + 1.50 per kVAh
     ("tgspdcl", "TS", "HT-I(A)", "33", "3000", 0, 50, Decimal("6.65")),  # 12:30: 7.15 - 0.50
     (
+        "mgvcl",
+        "GJ",
+        "HTP-I",
+        "11",
+        "3000",
+        0,
+        28,
+        Decimal("5.107"),
+    ),  # 07:00: 4.30 (>2500 kVA) + 0.85 - 1 % of 4.30
+    ("mgvcl", "GJ", "HTP-I", "11", "3000", 0, 50, Decimal("3.657")),  # 12:30: 4.30 - 0.60 - 0.043
+    ("ugvcl", "GJ", "HTP-I", "11", "600", 0, 28, Decimal("5.008")),  # billing ≥ 510 kVA: 4.20 + 0.85 - 0.042
+    (
         "pspcl",
         "PB",
         "LS General Industry",
@@ -96,8 +108,10 @@ def test_coverage_names_what_is_not_yet_sourced() -> None:
         cov["KA"]["families"]["tod_slots"] == "approved"
         and cov["PB"]["families"]["tod_slots"] == "not yet sourced"
     )
-    for st in ("GJ", "RJ", "HR"):
+    for st in ("RJ", "HR"):
         assert set(cov[st]["families"].values()) == {"not yet sourced"}, st
+    assert cov["GJ"]["families"]["tariff_schedule"] == "approved"
+    assert cov["GJ"]["jurisdictions"]["tariff_schedule"] == ["gj_discoms"]
     assert cov["UP"]["families"]["settlement"] == "approved"
 
 

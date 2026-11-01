@@ -199,3 +199,119 @@ def test_slot_of_wraps_midnight() -> None:
     assert slot_of(tod, 5, 23 * 60)["name"] == "night"  # type: ignore[index]
     assert slot_of(tod, 5, 2 * 60)["name"] == "night"  # type: ignore[index]
     assert slot_of(tod, 5, 12 * 60)["name"] == "day"  # type: ignore[index]
+
+
+def _gerc_htp1() -> tuple[RuleView, RuleView]:
+    """GERC HTP-I for MGVCL FY 2026-27 (PDF pages 173-175), as rule rows."""
+    ref = {"kind": "order", "document_id": "g", "page": 173, "quote": "q"}
+    sch = RuleView(
+        id="s",
+        family="tariff_schedule",
+        version_id="v",
+        jurisdiction_id="mgvcl",
+        scope={},
+        source_ref=ref,
+        body={
+            "category": "HTP-I",
+            "billing_basis": "kwh",
+            "demand_charge": {
+                "value": "475",
+                "basis": "inr_per_kva_month_billing_demand",
+                "slabs": [
+                    {"up_to_kva": "500", "value": "150"},
+                    {"up_to_kva": "1000", "value": "260"},
+                    {"value": "475"},
+                ],
+                "billing_demand_rule": {
+                    "min_pct_of_contract_demand": "85",
+                    "min_kva": "100",
+                    "excess_demand_rate": "555",
+                },
+            },
+            "energy_charge": {
+                "base": "4.00",
+                "by_billing_demand": [
+                    {"above_kva": "500", "base": "4.20"},
+                    {"above_kva": "2500", "base": "4.30"},
+                ],
+                "rebate_pct": "1",
+            },
+        },
+    )
+    tod = RuleView(
+        id="t",
+        family="tod_slots",
+        version_id="v",
+        jurisdiction_id="mgvcl",
+        scope={},
+        source_ref=ref,
+        body={
+            "slots": [
+                {
+                    "name": "peak",
+                    "start": "07:00",
+                    "end": "11:00",
+                    "rate_delta_inr_per_kwh": "0.45",
+                    "rate_delta_by_billing_demand": [{"above_kva": "500", "rate_delta_inr_per_kwh": "0.85"}],
+                },
+                {"name": "day", "start": "11:00", "end": "17:00", "rate_delta_inr_per_kwh": "-0.60"},
+                {"name": "normal", "start": "17:00", "end": "07:00"},
+            ]
+        },
+    )
+    return sch, tod
+
+
+def test_gerc_demand_slabs_billing_floor_energy_band_tod_band_and_rebate() -> None:
+    sch, tod = _gerc_htp1()
+    q = MonthQuantities(
+        month=date(2026, 5, 1),
+        units=sv("1000000", Unit.KWH),
+        by_slot={
+            "peak": sv("200000", Unit.KWH),
+            "day": sv("300000", Unit.KWH),
+            "normal": sv("500000", Unit.KWH),
+        },
+        max_kva=sv("1500", Unit.KVA),
+        contract_kva=sv("2000", Unit.KVA),
+    )
+    tb = evaluate(sch, tod, q)
+    # billing demand = max(1500, 85% of 2000) = 1700: 500 × 150 + 500 × 260 + 700 × 475
+    assert _amount(tb, "demand_charge") == Decimal("537500.00")
+    energy = [ln for ln in tb.lines if ln.code == "energy_charge" and ln.slot]
+    assert {ln.rate.value for ln in energy if ln.rate} == {Decimal("4.20")}  # 500 < 1700 ≤ 2500 kVA
+    tod_lines = {ln.slot: ln.amount.value for ln in tb.lines if ln.code == "tod_adjustment"}
+    assert tod_lines["peak"] == Decimal("170000.00")  # 0.85 above 500 kVA
+    assert tod_lines["day"] == Decimal("-180000.00")
+    rebate = next(ln for ln in tb.lines if ln.label == "Rebate on energy charges")
+    assert rebate.amount.value == Decimal("-42000.00")  # 1 % of 4.20 × 1,000,000
+
+
+def test_gerc_excess_over_contract_and_least_billing_demand() -> None:
+    sch, _ = _gerc_htp1()
+    over = evaluate(
+        sch,
+        None,
+        MonthQuantities(
+            month=date(2026, 5, 1),
+            units=sv("100000", Unit.KWH),
+            max_kva=sv("1000", Unit.KVA),
+            contract_kva=sv("800", Unit.KVA),
+        ),
+    )
+    assert _amount(over, "demand_charge") == Decimal("153000.00")  # 500 × 150 + 300 × 260 (up to contract)
+    assert _amount(over, "excess_demand_penalty") == Decimal("111000.00")  # 200 × 555
+    small = evaluate(
+        sch,
+        None,
+        MonthQuantities(
+            month=date(2026, 5, 1),
+            units=sv("5000", Unit.KWH),
+            max_kva=sv("40", Unit.KVA),
+            contract_kva=sv("100", Unit.KVA),
+        ),
+    )
+    assert _amount(small, "demand_charge") == Decimal("15000.00")  # one hundred kVA × 150
+    assert next(ln for ln in small.lines if ln.code == "energy_charge" and ln.rate).rate.value == Decimal(
+        "4.00"
+    )

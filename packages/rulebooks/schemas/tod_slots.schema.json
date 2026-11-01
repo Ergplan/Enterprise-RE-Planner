@@ -71,6 +71,30 @@
                 "type": "string",
                 "pattern": "^-?\\d+(\\.\\d+)?$",
                 "description": "Absolute ToD adjustment where the order states INR/kWh (decimal as string)"
+              },
+              "rate_delta_by_billing_demand": {
+                "type": "array",
+                "description": "Where the order varies the ToD adjustment with billing demand (GERC HTP-I 11.3): the last band whose above_kva is below the billing demand replaces rate_delta_inr_per_kwh.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "above_kva",
+                    "rate_delta_inr_per_kwh"
+                  ],
+                  "properties": {
+                    "above_kva": {
+                      "type": "string",
+                      "pattern": "^-?\\d+(\\.\\d+)?$",
+                      "description": "Billing demand above which this adjustment applies"
+                    },
+                    "rate_delta_inr_per_kwh": {
+                      "type": "string",
+                      "pattern": "^-?\\d+(\\.\\d+)?$",
+                      "description": "ToD adjustment in this band (INR per billed unit)"
+                    }
+                  }
+                }
               }
             }
           }

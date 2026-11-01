@@ -33,7 +33,7 @@ from ..db.models import (
     Scenario,
     Site,
 )
-from ..engine import avoided_cost, landed_cost, lcoe
+from ..engine import avoided_cost, landed_cost, lcoe, tariff_eval
 from ..engine import scope as escope
 from ..engine.tariff_eval import slot_adjustment_pct, slot_of
 from ..intake import generation, profile_synthesis
@@ -203,12 +203,12 @@ def assemble(
             for i, sl in enumerate(mr.tod.body.get("slots", [])):
                 if sl.get("months") and mf.month not in sl["months"]:
                     continue
-                card = avoided_cost.rate_card(mf, mr, i, factor)
+                card = avoided_cost.rate_card(mf, mr, i, factor, conn.contract_demand_kva)
                 if card is not None:
                     card_rate[(mf, str(sl["name"]))] = card.rate_inr_per_kwh
                 names.append(str(sl["name"]))
         if not names:
-            card = avoided_cost.rate_card(mf, mr, None, factor)
+            card = avoided_cost.rate_card(mf, mr, None, factor, conn.contract_demand_kva)
             assert card is not None
             card_rate[(mf, "all hours")] = card.rate_inr_per_kwh
             names = ["all hours"]
@@ -244,22 +244,39 @@ def assemble(
     excess_d: dict[date, Decimal] = {}
     floor = ZERO
     demand_inputs: list[SourcedValue] = []
+    slabs_d: dict[date, list[tuple[Decimal | None, Decimal]]] = {}
+    excess_abs_d: dict[date, Decimal] = {}
+    min_kva = ZERO
+    cd_level = conn.contract_demand_kva or ZERO
     for mf in month_firsts:
         sch = rules_for(mf).schedule
         assert sch is not None
         dc = sch.get("/demand_charge/value")
         if dc not in (None, ""):
-            demand_d[mf] = Decimal(str(dc))
-            demand_rate[mf] = _f(demand_d[mf])
-            sv = _sv(
-                Decimal(str(dc)), Unit.INR_PER_KVA_MONTH, sch.ref("/demand_charge/value"), "Demand charge"
-            )
-            if sv not in demand_inputs:
-                demand_inputs.append(sv)
+            slabs = tariff_eval.demand_slabs(sch)
+            # the solver sees the slab rate at contract demand; the judge prices every slab exactly
+            marginal = tariff_eval.marginal_demand_rate(sch, cd_level) or Decimal(str(dc))
+            demand_d[mf] = marginal
+            demand_rate[mf] = _f(marginal)
+            for _, rate_v, ptr in slabs:
+                sv = _sv(rate_v, Unit.INR_PER_KVA_MONTH, sch.ref(ptr), "Demand charge")
+                if sv not in demand_inputs:
+                    demand_inputs.append(sv)
+            if len(slabs) > 1:
+                slabs_d[mf] = [(hi, rate_v) for hi, rate_v, _ in slabs]
+            ex_abs = sch.get("/demand_charge/billing_demand_rule/excess_demand_rate")
             mult = sch.get("/demand_charge/billing_demand_rule/excess_demand_penalty_multiplier")
-            if mult not in (None, ""):
+            if ex_abs not in (None, ""):
+                excess_abs_d[mf] = Decimal(str(ex_abs))
+                slabs_d.setdefault(mf, [(hi, rate_v) for hi, rate_v, _ in slabs])
+                excess_d[mf] = max(Decimal(str(ex_abs)) - marginal, ZERO)  # on top of the marginal rate
+                excess_rate[mf] = _f(excess_d[mf])
+            elif mult not in (None, ""):
                 excess_d[mf] = Decimal(str(dc)) * Decimal(str(mult))
                 excess_rate[mf] = _f(excess_d[mf])
+        mk = sch.get("/demand_charge/billing_demand_rule/min_kva")
+        if mk not in (None, ""):
+            min_kva = Decimal(str(mk))
         fp = sch.get("/demand_charge/billing_demand_rule/min_pct_of_contract_demand")
         if fp not in (None, ""):
             floor = Decimal(str(fp))
@@ -596,6 +613,9 @@ def assemble(
             fuel={u.id: Decimal(repr(u.fuel_inr_per_kwh)) for u in thermals},
             lapse=lapse,
             cd_change=cds.change_inr_per_kva_year if cds else ZERO,
+            demand_slabs=slabs_d,
+            excess_abs=excess_abs_d,
+            min_kva=min_kva,
         ),
     )
     profile_ref = _sv(

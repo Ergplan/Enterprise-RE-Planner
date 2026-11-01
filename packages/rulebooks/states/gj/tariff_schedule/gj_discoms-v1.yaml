@@ -1,0 +1,286 @@
+family: tariff_schedule
+jurisdiction: gj_discoms
+version: 1
+status: approved
+title: GERC tariff schedule effective 1 April 2026 (MGVCL FY 2026-27 order) · pp. 173–175 · HTP-I
+effective_from: '2026-04-01'
+effective_to: '2027-03-31'
+origin: manual
+approved_by: build-agent@ergplan
+rows:
+- label: HTP-I · 11 kV / 22 kV
+  scope:
+    category:
+    - HTP-I
+    voltage_kv:
+      max: 22
+  body:
+    notes: 'Paise per unit held in rupees. Power-factor adjustment (11.6: graded per 1 % of PF) not seeded.'
+    category: HTP-I
+    billing_basis: kwh
+    demand_charge:
+      basis: inr_per_kva_month_billing_demand
+      slabs:
+      - value: '150'
+        up_to_kva: '500'
+      - value: '260'
+        up_to_kva: '1000'
+      - value: '475'
+      value: '475'
+      billing_demand_rule:
+        min_kva: '100'
+        excess_demand_rate: '555'
+        min_pct_of_contract_demand: '85'
+    energy_charge:
+      base: '4.00'
+      rebate_pct: '1'
+      by_billing_demand:
+      - base: '4.20'
+        above_kva: '500'
+      - base: '4.30'
+        above_kva: '2500'
+  source_ref:
+    kind: order
+    page: 173
+    quote: 11.1.1. For billing demand up to contract demand (a) For the first 500 kVA of billing demand Rs. 150/- per kVA
+      per month (b) For next 500 kVA of billing demand Rs. 260/- per kVA per month (c) For billing demand in excess of 1000
+      kVA Rs. 475/- per kVA per month
+    document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+    effective_from: '2026-04-01'
+  field_refs:
+    /energy_charge/base:
+      kind: order
+      page: 173
+      quote: 11.2. ENERGY CHARGES For entire consumption during the month (a) Up to 500 kVA of billing demand 400 Paise per
+        unit (b) For billing demand above 500 kVA and up to 2500 kVA 420 Paise per Unit (c) For billing demand above 2500
+        kVA 430 Paise per Unit
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /energy_charge/rebate_pct:
+      kind: order
+      page: 175
+      quote: '11.9. REBATE FOR SUPPLY AT HV and EHV: On ENERGY CHARGES: Rebate @ (a) If supply is availed at 11 kV/ 22 kV
+        (HV) 1% (b) If supply is availed at 33 kV/ 66 kV (EHV) 1.5% (c) If supply is availed at 132 kV and above (EHV) 2%'
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /energy_charge/by_billing_demand/0/base:
+      kind: order
+      page: 173
+      quote: 11.2. ENERGY CHARGES For entire consumption during the month (a) Up to 500 kVA of billing demand 400 Paise per
+        unit (b) For billing demand above 500 kVA and up to 2500 kVA 420 Paise per Unit (c) For billing demand above 2500
+        kVA 430 Paise per Unit
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /energy_charge/by_billing_demand/1/base:
+      kind: order
+      page: 173
+      quote: 11.2. ENERGY CHARGES For entire consumption during the month (a) Up to 500 kVA of billing demand 400 Paise per
+        unit (b) For billing demand above 500 kVA and up to 2500 kVA 420 Paise per Unit (c) For billing demand above 2500
+        kVA 430 Paise per Unit
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/min_kva:
+      kind: order
+      page: 174
+      quote: 'The billing demand shall be the highest of the following: a) Actual maximum demand established during the month
+        b) Eighty-five percent of the contract demand c) One hundred kVA'
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/excess_demand_rate:
+      kind: order
+      page: 173
+      quote: For billing demand in excess over the contract demand Rs. 555 per kVA per month
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      page: 174
+      quote: 'The billing demand shall be the highest of the following: a) Actual maximum demand established during the month
+        b) Eighty-five percent of the contract demand c) One hundred kVA'
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+- label: HTP-I · 33 kV / 66 kV
+  scope:
+    category:
+    - HTP-I
+    voltage_kv:
+      max: 66
+      min: 22
+      min_exclusive: true
+  body:
+    notes: 'Paise per unit held in rupees. Power-factor adjustment (11.6: graded per 1 % of PF) not seeded.'
+    category: HTP-I
+    billing_basis: kwh
+    demand_charge:
+      basis: inr_per_kva_month_billing_demand
+      slabs:
+      - value: '150'
+        up_to_kva: '500'
+      - value: '260'
+        up_to_kva: '1000'
+      - value: '475'
+      value: '475'
+      billing_demand_rule:
+        min_kva: '100'
+        excess_demand_rate: '555'
+        min_pct_of_contract_demand: '85'
+    energy_charge:
+      base: '4.00'
+      rebate_pct: '1.5'
+      by_billing_demand:
+      - base: '4.20'
+        above_kva: '500'
+      - base: '4.30'
+        above_kva: '2500'
+  source_ref:
+    kind: order
+    page: 173
+    quote: 11.1.1. For billing demand up to contract demand (a) For the first 500 kVA of billing demand Rs. 150/- per kVA
+      per month (b) For next 500 kVA of billing demand Rs. 260/- per kVA per month (c) For billing demand in excess of 1000
+      kVA Rs. 475/- per kVA per month
+    document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+    effective_from: '2026-04-01'
+  field_refs:
+    /energy_charge/base:
+      kind: order
+      page: 173
+      quote: 11.2. ENERGY CHARGES For entire consumption during the month (a) Up to 500 kVA of billing demand 400 Paise per
+        unit (b) For billing demand above 500 kVA and up to 2500 kVA 420 Paise per Unit (c) For billing demand above 2500
+        kVA 430 Paise per Unit
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /energy_charge/rebate_pct:
+      kind: order
+      page: 175
+      quote: '11.9. REBATE FOR SUPPLY AT HV and EHV: On ENERGY CHARGES: Rebate @ (a) If supply is availed at 11 kV/ 22 kV
+        (HV) 1% (b) If supply is availed at 33 kV/ 66 kV (EHV) 1.5% (c) If supply is availed at 132 kV and above (EHV) 2%'
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /energy_charge/by_billing_demand/0/base:
+      kind: order
+      page: 173
+      quote: 11.2. ENERGY CHARGES For entire consumption during the month (a) Up to 500 kVA of billing demand 400 Paise per
+        unit (b) For billing demand above 500 kVA and up to 2500 kVA 420 Paise per Unit (c) For billing demand above 2500
+        kVA 430 Paise per Unit
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /energy_charge/by_billing_demand/1/base:
+      kind: order
+      page: 173
+      quote: 11.2. ENERGY CHARGES For entire consumption during the month (a) Up to 500 kVA of billing demand 400 Paise per
+        unit (b) For billing demand above 500 kVA and up to 2500 kVA 420 Paise per Unit (c) For billing demand above 2500
+        kVA 430 Paise per Unit
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/min_kva:
+      kind: order
+      page: 174
+      quote: 'The billing demand shall be the highest of the following: a) Actual maximum demand established during the month
+        b) Eighty-five percent of the contract demand c) One hundred kVA'
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/excess_demand_rate:
+      kind: order
+      page: 173
+      quote: For billing demand in excess over the contract demand Rs. 555 per kVA per month
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      page: 174
+      quote: 'The billing demand shall be the highest of the following: a) Actual maximum demand established during the month
+        b) Eighty-five percent of the contract demand c) One hundred kVA'
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+- label: HTP-I · 132 kV and above
+  scope:
+    category:
+    - HTP-I
+    voltage_kv:
+      min: 66
+      min_exclusive: true
+  body:
+    notes: 'Paise per unit held in rupees. Power-factor adjustment (11.6: graded per 1 % of PF) not seeded.'
+    category: HTP-I
+    billing_basis: kwh
+    demand_charge:
+      basis: inr_per_kva_month_billing_demand
+      slabs:
+      - value: '150'
+        up_to_kva: '500'
+      - value: '260'
+        up_to_kva: '1000'
+      - value: '475'
+      value: '475'
+      billing_demand_rule:
+        min_kva: '100'
+        excess_demand_rate: '555'
+        min_pct_of_contract_demand: '85'
+    energy_charge:
+      base: '4.00'
+      rebate_pct: '2'
+      by_billing_demand:
+      - base: '4.20'
+        above_kva: '500'
+      - base: '4.30'
+        above_kva: '2500'
+  source_ref:
+    kind: order
+    page: 173
+    quote: 11.1.1. For billing demand up to contract demand (a) For the first 500 kVA of billing demand Rs. 150/- per kVA
+      per month (b) For next 500 kVA of billing demand Rs. 260/- per kVA per month (c) For billing demand in excess of 1000
+      kVA Rs. 475/- per kVA per month
+    document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+    effective_from: '2026-04-01'
+  field_refs:
+    /energy_charge/base:
+      kind: order
+      page: 173
+      quote: 11.2. ENERGY CHARGES For entire consumption during the month (a) Up to 500 kVA of billing demand 400 Paise per
+        unit (b) For billing demand above 500 kVA and up to 2500 kVA 420 Paise per Unit (c) For billing demand above 2500
+        kVA 430 Paise per Unit
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /energy_charge/rebate_pct:
+      kind: order
+      page: 175
+      quote: '11.9. REBATE FOR SUPPLY AT HV and EHV: On ENERGY CHARGES: Rebate @ (a) If supply is availed at 11 kV/ 22 kV
+        (HV) 1% (b) If supply is availed at 33 kV/ 66 kV (EHV) 1.5% (c) If supply is availed at 132 kV and above (EHV) 2%'
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /energy_charge/by_billing_demand/0/base:
+      kind: order
+      page: 173
+      quote: 11.2. ENERGY CHARGES For entire consumption during the month (a) Up to 500 kVA of billing demand 400 Paise per
+        unit (b) For billing demand above 500 kVA and up to 2500 kVA 420 Paise per Unit (c) For billing demand above 2500
+        kVA 430 Paise per Unit
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /energy_charge/by_billing_demand/1/base:
+      kind: order
+      page: 173
+      quote: 11.2. ENERGY CHARGES For entire consumption during the month (a) Up to 500 kVA of billing demand 400 Paise per
+        unit (b) For billing demand above 500 kVA and up to 2500 kVA 420 Paise per Unit (c) For billing demand above 2500
+        kVA 430 Paise per Unit
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/min_kva:
+      kind: order
+      page: 174
+      quote: 'The billing demand shall be the highest of the following: a) Actual maximum demand established during the month
+        b) Eighty-five percent of the contract demand c) One hundred kVA'
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/excess_demand_rate:
+      kind: order
+      page: 173
+      quote: For billing demand in excess over the contract demand Rs. 555 per kVA per month
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'
+    /demand_charge/billing_demand_rule/min_pct_of_contract_demand:
+      kind: order
+      page: 174
+      quote: 'The billing demand shall be the highest of the following: a) Actual maximum demand established during the month
+        b) Eighty-five percent of the contract demand c) One hundred kVA'
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'

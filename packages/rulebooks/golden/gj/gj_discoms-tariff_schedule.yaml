@@ -1,0 +1,19 @@
+# GERC tariff schedule effective 1 April 2026 for DGVCL, MGVCL, PGVCL and UGVCL (MGVCL FY 2026-27 order,
+# Annexure, PDF page 159), Rate HTP-I: demand slabs, excess over contract, energy by billing demand
+# (PDF page 173), billing demand (page 174), rebate for HV/EHV supply (page 175).
+jurisdiction: gj_discoms
+family: tariff_schedule
+tests:
+  - {name: "first 500 kVA at 150", given: {context: {category: HTP-I, voltage_kv: 11}, field: /demand_charge/slabs/0/value}, expect: {value: "150"}}
+  - {name: "next 500 kVA at 260", given: {context: {category: HTP-I, voltage_kv: 11}, field: /demand_charge/slabs/1/value}, expect: {value: "260"}}
+  - {name: "above 1000 kVA at 475", given: {context: {category: HTP-I, voltage_kv: 66}, field: /demand_charge/slabs/2/value}, expect: {value: "475"}}
+  - {name: "first slab ends at 500 kVA", given: {context: {category: HTP-I, voltage_kv: 11}, field: /demand_charge/slabs/0/up_to_kva}, expect: {value: "500"}}
+  - {name: "excess over contract at 555", given: {context: {category: HTP-I, voltage_kv: 11}, field: /demand_charge/billing_demand_rule/excess_demand_rate}, expect: {value: "555"}}
+  - {name: "billing demand at least 85 % of contract", given: {context: {category: HTP-I, voltage_kv: 11}, field: /demand_charge/billing_demand_rule/min_pct_of_contract_demand}, expect: {value: "85"}}
+  - {name: "billing demand at least 100 kVA", given: {context: {category: HTP-I, voltage_kv: 11}, field: /demand_charge/billing_demand_rule/min_kva}, expect: {value: "100"}}
+  - {name: "energy up to 500 kVA 4.00", given: {context: {category: HTP-I, voltage_kv: 11}, field: /energy_charge/base}, expect: {value: "4.00"}}
+  - {name: "energy 500-2500 kVA 4.20", given: {context: {category: HTP-I, voltage_kv: 11}, field: /energy_charge/by_billing_demand/0/base}, expect: {value: "4.20"}}
+  - {name: "energy above 2500 kVA 4.30", given: {context: {category: HTP-I, voltage_kv: 33}, field: /energy_charge/by_billing_demand/1/base}, expect: {value: "4.30"}}
+  - {name: "rebate 11 kV 1 %", given: {context: {category: HTP-I, voltage_kv: 11}, field: /energy_charge/rebate_pct}, expect: {value: "1"}}
+  - {name: "rebate 66 kV 1.5 %", given: {context: {category: HTP-I, voltage_kv: 66}, field: /energy_charge/rebate_pct}, expect: {value: "1.5"}}
+  - {name: "rebate 132 kV 2 %", given: {context: {category: HTP-I, voltage_kv: 132}, field: /energy_charge/rebate_pct}, expect: {value: "2"}}

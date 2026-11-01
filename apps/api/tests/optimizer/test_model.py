@@ -258,3 +258,26 @@ def test_exchange_purchase_is_dispatched_block_by_block() -> None:
 
 def s_delivered(s: Solution, cid: str) -> list[float]:
     return s.delivered[cid]
+
+
+def test_judge_prices_demand_slabs_and_excess_exactly() -> None:
+    """GERC HTP-I: 500 kVA at 150, next 500 at 260, the rest at 475 (up to contract); 555 above it."""
+    from dataclasses import replace
+
+    from ergplan.optimizer.model import exact_of
+    from ergplan.optimizer.resettle import demand_costs
+
+    p = P([1200.0, 900.0], grid={"cd_kva": 1000.0, "pf": 1.0, "floor_pct": 85.0})
+    x = replace(
+        exact_of(p),
+        demand_slabs={
+            APR: [(Decimal(500), Decimal(150)), (Decimal(1000), Decimal(260)), (None, Decimal(475))]
+        },
+        excess_abs={APR: Decimal(555)},
+        min_kva=Decimal(100),
+        cd_kva=Decimal(1000),
+    )
+    p = replace(p, exact=x)
+    out = demand_costs(p, [Decimal(1200), Decimal(900)], Decimal(1000))
+    # billing demand 1200 kVA: 500 × 150 + 500 × 260 up to contract; 200 × 555 above it
+    assert out == {"demand": Decimal(205000), "excess_demand": Decimal(111000)}

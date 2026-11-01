@@ -134,8 +134,26 @@ def demand_costs(p: Problem, metered_kwh: list[Decimal], cd_kva: Decimal) -> dic
     out = {"demand": Decimal(0), "excess_demand": Decimal(0)}
     floor = cd_kva * x.floor_pct / 100
     for mo, md in by_month.items():
-        out["demand"] += max(md, floor) * x.demand_rate.get(mo, Decimal(0))
-        out["excess_demand"] += max(md - cd_kva, Decimal(0)) * x.excess_rate.get(mo, Decimal(0))
+        bd = max(md, floor, x.min_kva)
+        slabs = x.demand_slabs.get(mo)
+        if not slabs:
+            out["demand"] += bd * x.demand_rate.get(mo, Decimal(0))
+            out["excess_demand"] += max(md - cd_kva, Decimal(0)) * x.excess_rate.get(mo, Decimal(0))
+            continue
+        ex = x.excess_abs.get(mo)
+        within = min(bd, cd_kva) if ex is not None else bd
+        lo = Decimal(0)
+        for hi, rate in slabs:  # telescopic: each slab's rate on the kVA inside it
+            top = within if hi is None else min(within, hi)
+            if top > lo:
+                out["demand"] += (top - lo) * rate
+            if hi is None or within <= hi:
+                break
+            lo = hi
+        if ex is not None:
+            out["excess_demand"] += max(bd - cd_kva, Decimal(0)) * ex
+        else:
+            out["excess_demand"] += max(md - cd_kva, Decimal(0)) * x.excess_rate.get(mo, Decimal(0))
     return out
 
 

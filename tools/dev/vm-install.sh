@@ -82,8 +82,8 @@ grep -q "^ERGPLAN_ANALYST_EMAILS=" .env || setkey ERGPLAN_ANALYST_EMAILS "$ANALY
 
 say "5/9 Regulation PDFs and IEX prices"
 mkdir -p data/corpus data/iex
-[ -f "$P/corpus.tar.gz" ] && tar -xzf "$P/corpus.tar.gz" -C data/corpus && echo "corpus unpacked"
-[ -f "$P/iex.tar.gz" ] && tar -xzf "$P/iex.tar.gz" -C data/iex && echo "IEX files unpacked"
+for f in "$P"/corpus.tar*; do [ -f "$f" ] && tar -xf "$f" -C data/corpus && echo "corpus unpacked"; done
+for f in "$P"/iex.tar*; do [ -f "$f" ] && tar -xf "$f" -C data/iex && echo "IEX files unpacked"; done
 true
 
 say "6/9 Building and starting (the first build takes 15–30 minutes on 2 vCPUs)"

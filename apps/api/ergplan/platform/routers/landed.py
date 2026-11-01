@@ -237,7 +237,7 @@ def connection_landed_cost(
                 name = str(sl["name"]) if sl else "all hours"
                 if name not in slot_names:
                     continue
-                card = avoided_cost.rate_card(mdate, mr, i if sl else None, factor)
+                card = avoided_cost.rate_card(mdate, mr, i if sl else None, factor, conn.contract_demand_kva)
                 if card is not None:
                     cards[name] = card.rate_inr_per_kwh
         ctx = escope.context(facts, mdate)

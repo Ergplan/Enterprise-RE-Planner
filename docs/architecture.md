@@ -158,7 +158,9 @@ Stage 8: `docker/compose.prod.yaml` over `docker/compose.yaml` on the VM (only C
 | `pspcl` | oa_charge (wheeling per MW and NRSE 2 % in kind, T&D losses by voltage, CSS Large Supply) | PSERC FY 2026-27 order pp. 238–239 | 8 |
 | `ka_escoms`; `bescom`, `mescom`, `cesc`, `hescom`, `gescom` | oa_charge (CSS HT-2(a) common, additional surcharge not levied; per ESCOM HT wheeling and HT loss) | KERC Tariff Order 2025 pp. 249–250, 260, 266 | 25 |
 
-GJ, RJ, HR, TN and AP are registered jurisdictions with no approved rules ("not yet sourced"; see `docs/known-gaps.md`).
+| `gj_discoms` (DGVCL, MGVCL, PGVCL, UGVCL) | tariff_schedule (HTP-I: demand slabs, excess over contract, energy by billing demand, HV/EHV rebate), tod_slots (peak adder by billing demand, day concession) | GERC tariff schedule from 1 Apr 2026 (MGVCL order pp. 159, 173–175) | 18 |
+
+RJ, HR, TN and AP are registered jurisdictions with no approved rules ("not yet sourced"; see `docs/known-gaps.md`).
 
 ## What changed
 

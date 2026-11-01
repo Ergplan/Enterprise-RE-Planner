@@ -1,0 +1,59 @@
+family: tod_slots
+jurisdiction: gj_discoms
+version: 1
+status: approved
+title: GERC tariff schedule effective 1 April 2026 · pp. 173, 175 · HTP-I time of use
+effective_from: '2026-04-01'
+effective_to: '2027-03-31'
+origin: manual
+approved_by: build-agent@ergplan
+rows:
+- label: HTP-I · time of use · all year
+  scope:
+    category:
+    - HTP-I
+  body:
+    slots:
+    - end: '11:00'
+      name: Peak 07:00-11:00
+      start: 07:00
+      rate_delta_inr_per_kwh: '0.45'
+      rate_delta_by_billing_demand:
+      - above_kva: '500'
+        rate_delta_inr_per_kwh: '0.85'
+    - end: '17:00'
+      name: Day 11:00-17:00
+      start: '11:00'
+      rate_delta_inr_per_kwh: '-0.60'
+    - end: '18:00'
+      name: Normal 17:00-18:00
+      start: '17:00'
+      rate_delta_inr_per_kwh: '0'
+    - end: '22:00'
+      name: Peak 18:00-22:00
+      start: '18:00'
+      rate_delta_inr_per_kwh: '0.45'
+      rate_delta_by_billing_demand:
+      - above_kva: '500'
+        rate_delta_inr_per_kwh: '0.85'
+    - end: 07:00
+      name: Normal 22:00-07:00
+      start: '22:00'
+      rate_delta_inr_per_kwh: '0'
+    season_note: All year; peak adders by billing demand (11.3), day concession (11.10)
+  source_ref:
+    kind: order
+    page: 173
+    quote: 11.3. TIME OF USE CHARGES For energy consumption during the two peak periods, viz. 0700 Hrs. to 1100 Hrs. and 1800
+      Hrs. to 2200 Hrs. (a) For Billing Demand up to 500 kVA 45 Paise per unit (b) For billing demand above 500 kVA 85 Paise
+      per Unit
+    document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+    effective_from: '2026-04-01'
+  field_refs:
+    /slots/1/rate_delta_inr_per_kwh:
+      kind: order
+      page: 175
+      quote: 11.10.TIME OF USE DISCOUNT Concession of 60 Paise per Unit shall be applicable for the consumption of energy
+        during 1100 Hrs. to 1700 Hrs.
+      document_id: 17db86c4-2914-591e-a92b-03372554e3a6
+      effective_from: '2026-04-01'

@@ -31,6 +31,7 @@ groups:
   - {id: ka_escoms, name: "Karnataka ESCOMs (one combined KERC tariff order: BESCOM, MESCOM, CESC, HESCOM, GESCOM)", state: KA}
   - {id: tg_discoms, name: "Telangana DISCOMs (one TGERC tariff order: TGSPDCL, TGNPDCL)", state: TS}
   - {id: ap_discoms, name: "Andhra Pradesh DISCOMs (one APERC tariff order: APSPDCL, APCPDCL, APEPDCL)", state: AP}
+  - {id: gj_discoms, name: "Gujarat state DISCOMs (one GERC tariff schedule: DGVCL, MGVCL, PGVCL, UGVCL)", state: GJ}
 discoms:
   - {id: npcl, name: Noida Power Company Limited, state: UP}
   - {id: pvvnl, name: Paschimanchal Vidyut Vitran Nigam Limited, state: UP, parent: uppcl}
@@ -47,10 +48,10 @@ discoms:
   - {id: cesc, name: Chamundeshwari Electricity Supply Corporation Ltd., state: KA, parent: ka_escoms}
   - {id: hescom, name: Hubli Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
   - {id: gescom, name: Gulbarga Electricity Supply Company Ltd., state: KA, parent: ka_escoms}
-  - {id: mgvcl, name: Madhya Gujarat Vij Company Limited, state: GJ}
-  - {id: ugvcl, name: Uttar Gujarat Vij Company Limited, state: GJ}
-  - {id: dgvcl, name: Dakshin Gujarat Vij Company Limited, state: GJ}
-  - {id: pgvcl, name: Paschim Gujarat Vij Company Limited, state: GJ}
+  - {id: mgvcl, name: Madhya Gujarat Vij Company Limited, state: GJ, parent: gj_discoms}
+  - {id: ugvcl, name: Uttar Gujarat Vij Company Limited, state: GJ, parent: gj_discoms}
+  - {id: dgvcl, name: Dakshin Gujarat Vij Company Limited, state: GJ, parent: gj_discoms}
+  - {id: pgvcl, name: Paschim Gujarat Vij Company Limited, state: GJ, parent: gj_discoms}
   - {id: jvvnl, name: Jaipur Vidyut Vitran Nigam Limited, state: RJ}
   - {id: avvnl, name: Ajmer Vidyut Vitran Nigam Limited, state: RJ}
   - {id: jdvvnl, name: Jodhpur Vidyut Vitran Nigam Limited, state: RJ}

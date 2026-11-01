@@ -133,6 +133,12 @@ class Exact:
     fuel: dict[str, Decimal]  # thermal unit → INR/kWh
     lapse: Decimal = Decimal(0)
     cd_change: Decimal = Decimal(0)
+    # Telescopic demand slabs per month ((upper kVA or None, INR/kVA/month), GERC HTP-I), an absolute
+    # rate for billing demand above contract, and the least billing demand: the judge prices demand
+    # exactly from these; the solver sees the slab rate at contract demand (demand_rate above).
+    demand_slabs: dict[date, list[tuple[Decimal | None, Decimal]]] = field(default_factory=dict)
+    excess_abs: dict[date, Decimal] = field(default_factory=dict)
+    min_kva: Decimal = Decimal(0)
 
 
 @dataclass(frozen=True)

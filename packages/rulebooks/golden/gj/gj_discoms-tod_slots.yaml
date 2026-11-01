@@ -1,0 +1,10 @@
+# GERC HTP-I time of use (MGVCL FY 2026-27 order, PDF pages 173 and 175): +45 paise (billing demand up to
+# 500 kVA) or +85 paise (above 500 kVA) in 07:00-11:00 and 18:00-22:00; 60 paise concession 11:00-17:00.
+jurisdiction: gj_discoms
+family: tod_slots
+tests:
+  - {name: "morning peak +0.45", given: {context: {category: HTP-I}, field: /slots/0/rate_delta_inr_per_kwh}, expect: {value: "0.45"}}
+  - {name: "morning peak above 500 kVA +0.85", given: {context: {category: HTP-I}, field: /slots/0/rate_delta_by_billing_demand/0/rate_delta_inr_per_kwh}, expect: {value: "0.85"}}
+  - {name: "day concession -0.60", given: {context: {category: HTP-I}, field: /slots/1/rate_delta_inr_per_kwh}, expect: {value: "-0.60"}}
+  - {name: "evening peak above 500 kVA +0.85", given: {context: {category: HTP-I}, field: /slots/3/rate_delta_by_billing_demand/0/rate_delta_inr_per_kwh}, expect: {value: "0.85"}}
+  - {name: "evening peak starts 18:00", given: {context: {category: HTP-I}, field: /slots/3/start}, expect: {value: "18:00"}}
