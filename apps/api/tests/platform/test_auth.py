@@ -58,8 +58,15 @@ def test_sign_in_roles_and_logout(prod: list[tuple[str, str]]) -> None:
     }
     c = sign_in("ops@acme.in", prod)
     assert c.get("/auth/me").json()["role"] == "client"
+    private = c.get("/rulebooks/versions")  # any signed-in route
+    assert private.status_code == 200
+    assert private.headers["x-content-type-options"] == "nosniff"
+    assert "max-age" in private.headers["strict-transport-security"]
+    old_cookie = c.cookies["ergplan_session"]
     assert c.post("/auth/logout").json()["signed_in"] is False
     assert c.get("/auth/me").json()["signed_in"] is False
+    replay = TestClient(app, base_url="https://testserver", cookies={"ergplan_session": old_cookie})
+    assert replay.get("/rulebooks/versions").status_code == 401  # the session is revoked, not just forgotten
 
 
 def test_expired_link_is_refused(prod: list[tuple[str, str]]) -> None:
