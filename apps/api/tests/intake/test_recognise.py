@@ -183,3 +183,16 @@ def test_a_bill_printing_two_tod_schemes_gives_one() -> None:
     # both cover the day: the approved windows decide
     assert one_scheme(whole + new, Decimal(290), {("05:00", "11:00"), ("23:00", "05:00")})[0].slot == "TOD-1"
     assert one_scheme(old, Decimal(10), set()) == []
+
+
+def test_slots_in_kvah_make_a_kvah_month_when_the_bill_prints_both(billx: FakeBillx) -> None:
+    res = oa_result()
+    for b in res["bills"]:
+        b["fields"]["energy"]["kwh"] = _fo("16500")  # a kWh register beside the kVAh slots
+        b["fields"]["energy"]["kvah"] = _fo("17000")
+    [b, _] = _upload(billx, "rec-units", res)
+    assert client.post(f"/bills/{b['id']}/accept").status_code == 200, client.get(f"/bills/{b['id']}").text
+    with session_scope(actor="t") as s:
+        month = site_intake.from_bills(s, [b["id"]]).months[0]
+    assert month.energy_unit == "kVAh" and month.energy.value == 17000
+    assert sum(t.energy.value for t in month.tod) == 17000

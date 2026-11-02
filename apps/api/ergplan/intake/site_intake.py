@@ -393,17 +393,33 @@ def month_from_bill(session: Session, bill: Bill) -> MonthFacts:
     else:
         raise ValueError(f"bill {bill.id} has no energy")
     tod, unmapped = [], []
+    tod_units: set[str] = set()
     for i, slot in enumerate(bill_store.tod_slots(bill)):
         bv = v.get(f"energy.tod.{i}.kwh")
         w = window_of(slot)
         if bv is None or bv.dec is None:
             continue
+        tod_units.add(bv.unit or "kWh")
         if w is None:
             unmapped.append(slot or f"slot {i + 1}")
             continue
         tod.append(TodEnergy(start=w[0], end=w[1], energy=from_bill(bv, bv.dec), slot=slot))
     if unmapped:
         tod = []  # a partial split would mislead; the month's total is used until the client types the hours
+    # the slots and the month in one unit: a bill whose slots are in kVAh (UPPCL) is a kVAh month
+    # when the bill prints its kVAh, though it also prints a kWh register
+    if tod and tod_units == {"kVAh"} and unit == "kWh":
+        if "energy.kvah" in v and v["energy.kvah"].dec:
+            energy, unit = from_bill(v["energy.kvah"], v["energy.kvah"].dec), "kVAh"
+        else:
+            tod = []
+    elif tod and tod_units == {"kWh"} and unit == "kVAh":
+        if "energy.kwh" in v and v["energy.kwh"].dec:
+            energy, unit = from_bill(v["energy.kwh"], v["energy.kwh"].dec), "kWh"
+        else:
+            tod = []
+    elif len(tod_units) > 1:
+        tod = []
     if tod and sum((t.energy.value for t in tod), Decimal(0)) > energy.value * Decimal("1.001"):
         # no complete day: the month's total is used and the day's shape comes from the pattern
         tod = one_scheme(tod, energy.value, _approved_windows(session, bill, month))

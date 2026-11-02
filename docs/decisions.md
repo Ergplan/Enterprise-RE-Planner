@@ -195,4 +195,5 @@ Dated entries. Every deviation from `docs/MASTER-PROMPT.md` is one.
 ## 2 Nov 2026 — a plan from real bills, end to end
 
 - **Two ToD schemes on one bill.** UPPCL HT meters register the old four ToD slots and the new four for the same month, each adding up to the month's energy (a DVVNL May 2026 bill prints TOD-1 to TOD-8). The intake refused the month ("the ToD split adds up to more than the month's energy"). `site_intake.one_scheme` now keeps one: the runs of consecutive windows that cover the day exactly once; of those, the one whose windows the approved ToD rules name, else the one nearest the month's energy, else the last printed. With no complete day the month's total is used and the day's shape comes from the operating pattern, as for a bill without slots.
+- **The slots and the month in one unit.** The same DVVNL bill prints its slots in kVAh and a kWh register; the intake took the month in kWh and the slots in kVAh, so the slots exceeded the month. When the slots are in kVAh and the bill prints its kVAh, the month is taken in kVAh (and the other way round); when the matching total is not usable, the split is dropped and the month's total is used.
 
