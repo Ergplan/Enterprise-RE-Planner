@@ -190,3 +190,21 @@ States with approved tariffs: **7 of the 10** the plan names (UP, MH, KA, TS, PB
 **Reviewer** (gpt-5.1, diff fc233eb..working tree): 12 findings, 0 code defects. Acted on: a test that the search path imports no model SDK and switches Haystack's telemetry off; a test for analytics with no bills. The API rows for search it asked for are present. By design or later: optional unverified values left out of planning (recorded in decisions); ownership of `bill-reads` pages follows the per-route pattern already in known gaps.
 
 **Open:** a working LlamaParse key; the billx team's merge of the branch (and a profile change for the PVVNL open-access G08/G09/G21 lines, measured on their golden set).
+
+
+## Addendum, 2 Nov 2026 — billx in the repository; recognition and the state's settlement
+
+**Asked:** pull billx into this repository; make the software recognise a bill's DISCOM, state and open-access regime and settle under that state's rules in the next stage.
+
+**Built:**
+- `billx/` holds billx's source as one squashed commit (the repository is public: no history, synthetic figures only; three real figures in an ergPLAN test were replaced). Compose and the installers build billx from it.
+- billx readers, measured on the person's 15 files (22 bills) on the server: two readers now agree on contract demand on 9 bills (was 2), recorded demand 8 (3), kWh 7 (2), kVAh 5 (3), net payable 14 (10); slot figures verified on a DVVNL and a PVVNL bill for the first time. Changes: Docling column layouts and UPPCL meter tables, a label rule that takes a typed value only next to its label, footnote markers, rate annotations, sanity ranges, more common labels.
+- `intake/recognise.py`: the DISCOM (billx profile, else the printed name), the state, the open access the bill shows (units set off, open-access charge lines, green tariff, printed kinds), each with its bill page; the approved settlement rule per ownership for the state, or a plain statement that the state has none. On the hand-off screen, carried into `SiteIntake.open_access`, recorded on the connection, and used as the default ownership when settling and costing new open-access sources; the client can state it on the intake review.
+- billx identifies HPSEBL and APDCL (new draft profiles), TGSPDCL as "... Company of TG", and a DISCOM whose name only a model read.
+
+**Reviewer** (gpt-5.1, diff aacb99d..working tree): 19 findings, 3 marked code defects, none a defect on inspection: (1, 3) "`profile.id` is never None when the local text named no DISCOM": it is (`_identify` returns an empty `Profile()` then; a comment at the call now says so); (2) "the TGSPDCL `match` entry may be a substring, not a regex": `match_discom` applies `re.search`, and the new test matches "Co. of T.S.".
+
+**Model cost:** the 15-file re-read on the server, about USD 2.56 (Model A); one gpt-5.1 reviewer round. The OpenAI account ran out of credit mid-run on 1 Nov (shared key) and was topped up on 2 Nov.
+
+**Open:** ten states (Karnataka, Telangana, Punjab, Andhra Pradesh, Gujarat, Rajasthan, Tamil Nadu, Haryana, Himachal Pradesh, Assam) have no approved settlement rules; billx per-layout templates (profile versions) for the team's layouts; the billx team's merge of the branch into GitLab.
+

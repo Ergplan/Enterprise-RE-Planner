@@ -360,6 +360,8 @@ def _read_bill(
         # identify again with what the readers verified: a scan's printed name may be cut or
         # unreadable to local OCR, and the bill month picks the version
         named = consensus_fields(outputs, [s for s in specs if s.path == "utility.name"])
+        # profile.id is None exactly when the local text named no discom (_identify returned an
+        # empty Profile above); only then may an unverified model-read name pick one
         found = _identify(
             identity_text(joined, named[0] if named else None, profile.id), outputs, specs
         )
