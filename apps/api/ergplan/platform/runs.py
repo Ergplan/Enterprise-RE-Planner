@@ -433,6 +433,10 @@ def assemble(
         if governing is None and own_rule is not None:
             governing = own_rule
         meta.rule = own_rule
+        if own_rule is None:
+            # no approved settlement rule for this ownership in the state: the simulator sets off
+            # in the same block with no banking, which the plan must say (rule 13)
+            meta.gaps.append("settlement_rule")
         if src.price_kind == "iex":
             got = _iex_prices(
                 s,

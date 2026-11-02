@@ -48,6 +48,7 @@ A replayed bill line that differs from the approved tariff is "explained" only b
 | `bulk_consumption_rebate` | MSEDCL bulk and incremental consumption rebates | Stage 4 |
 | `state_subsidy` | State industrial subsidies (Maharashtra textile and region-based) are government schemes outside the tariff order | Not modelled (client-specific; entered as stated) |
 | `regulatory_discount` | NPCL's 10% regulatory discount on demand + energy, printed on the FY 2026-27 bills; the order provision is not yet located | Stage 4 |
+| `settlement_rule` | No approved settlement rule for the source's ownership in the state (in UP, third-party open access: the approved rows, from the CRE Regulations 2024, cover captive and group captive only): set-off in the same 15-minute block, no banking | When the state's OA/GEOA banking regulation is read and approved |
 | `tod_split_unknown` | The bill gives no energy by ToD slot, so the ToD adjustment cannot be recomputed | When billx returns the split |
 | `billing_demand_rule` | The schedule row states no billing-demand floor (MSEDCL) while recorded demand is below contract | Stage 4 (MERC billing-demand clause) |
 | `demand_proration` | NPCL prorates the monthly demand charge by days in the billing period (31 / (365/12)); the provision is not yet located | Stage 4 |

@@ -30,6 +30,10 @@ GAPS: dict[str, str] = {
     "regulatory_discount": (
         "A regulatory discount or surplus pass-through ordered for the period is not in the rulebook"
     ),
+    "settlement_rule": (
+        "No approved settlement rule for this source's ownership in the state: energy is set off "
+        "in the 15-minute block it arrives in, with no banking, until the regulation is read"
+    ),
     "tod_split_unknown": (
         "The bill does not give energy by ToD slot, so the ToD adjustment cannot be recomputed"
     ),
