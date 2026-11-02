@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { clientFetch, monthLabel, refHref, type SiteIntake } from "@/lib/intake";
-import { indian, type PlanInputs, type PlanValue } from "@/lib/reading";
+import { indian, KIND_LABEL, OPEN_ACCESS_LABEL, type PlanInputs, type PlanValue, type Recognition } from "@/lib/reading";
 
 const UNIT: Record<string, string> = { "INR/kVAh": "₹/kVAh", "INR/kWh": "₹/kWh", INR: "₹", percent: "%", ratio: "", kVA: "kVA", kVAh: "kVAh", kWh: "kWh" };
 
@@ -18,6 +18,84 @@ function Figure({ v, big }: { v: PlanValue; big?: boolean }) {
     <span className={`ep-figure${big ? " ep-figure--big" : ""}${v.verification && v.verification !== "verified" && v.verification !== "confirmed" ? " is-check" : ""}`}>
       {href ? <a href={href} target="_blank" rel="noreferrer" title={`${v.label}${ref?.page ? `, page ${ref.page}` : ""}`}>{text}</a> : text}
     </span>
+  );
+}
+
+function Cite({ refTo, children }: { refTo: Parameters<typeof refHref>[0]; children: React.ReactNode }) {
+  const href = refHref(refTo);
+  return href ? <a href={href} target="_blank" rel="noreferrer">{children}</a> : <>{children}</>;
+}
+
+// The connection as the bill shows it — DISCOM, state, the open access it already takes — and the
+// state's settlement rules the next stage applies (or a plain "not yet" when the state has none).
+function RecognitionCard({ r }: { r: Recognition }) {
+  const kinds = r.open_access_kinds.map((k) => KIND_LABEL[k] ?? k);
+  return (
+    <section className="eg-card ep-panel ep-recognised">
+      <h2 className="eg-card__title">The connection this bill describes</h2>
+      <dl className="ep-recognised__facts">
+        <div>
+          <dt>DISCOM</dt>
+          <dd>
+            {r.discom ? (
+              <>
+                <Cite refTo={r.discom_ref}>{r.discom_name ?? r.discom.toUpperCase()}</Cite>
+                {r.discom_how && <small className="eg-muted"> · from {r.discom_how}</small>}
+              </>
+            ) : (
+              <span className="ep-tocheck">not recognised</span>
+            )}
+          </dd>
+        </div>
+        <div>
+          <dt>State</dt>
+          <dd>{r.state_name ?? r.state ?? "—"}</dd>
+        </div>
+        <div>
+          <dt>Open access today</dt>
+          <dd>
+            {OPEN_ACCESS_LABEL[r.open_access]}
+            {kinds.length > 0 && ` · ${kinds.join(", ")}`}
+          </dd>
+        </div>
+      </dl>
+      {r.evidence.length > 0 && (
+        <ul className="ep-evidence">
+          {r.evidence.map((e, i) => (
+            <li key={i}>
+              <Cite refTo={e.ref}>{e.finding}</Cite>
+            </li>
+          ))}
+        </ul>
+      )}
+      {r.settlement.length > 0 && (
+        <>
+          <h3 className="ep-recognised__sub">How new green power will be settled</h3>
+          <table className="ep-table">
+            <tbody>
+              {r.settlement.map((s) => (
+                <tr key={s.ownership}>
+                  <td>{s.ownership_label}</td>
+                  <td>
+                    {s.rule_label ? (
+                      <Cite refTo={s.ref}>
+                        {s.rulebook ?? s.rule_label}
+                        {s.version ? ` (v${s.version})` : ""}
+                      </Cite>
+                    ) : (
+                      <span className="eg-muted">no approved settlement rules yet</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+      {r.notes.map((n) => (
+        <p key={n} className="eg-muted ep-note">{n}</p>
+      ))}
+    </section>
   );
 }
 
@@ -59,6 +137,8 @@ export function PlanInputsView({ inputs }: { inputs: PlanInputs }) {
           Each figure links to the page it was read from.
         </p>
       </div>
+
+      <RecognitionCard r={inputs.recognition} />
 
       <section className="ep-cards">
         {inputs.facts.map((f) => (

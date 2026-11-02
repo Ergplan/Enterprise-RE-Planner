@@ -360,8 +360,9 @@ def _read_bill(
         # identify again with what the readers verified: a scan's printed name may be cut or
         # unreadable to local OCR, and the bill month picks the version
         named = consensus_fields(outputs, [s for s in specs if s.path == "utility.name"])
-        name = named[0].value if named and named[0].verification == "verified" else ""
-        found = _identify(joined + "\n" + (name or ""), outputs, specs)
+        found = _identify(
+            identity_text(joined, named[0] if named else None, profile.id), outputs, specs
+        )
         if found[0].id is not None:
             utility, profile, version = found
     if confirm_with_model:
@@ -468,6 +469,20 @@ def _read_bill(
         accepted=v.accepted,
         accepted_by=v.accepted_by,  # type: ignore[arg-type]
     )
+
+
+def identity_text(joined: str, name, profile_id: str | None) -> str:
+    """The text the discom is identified from after the models read: the local text and the
+    utility's name when verified. When the local text named no discom (a scan, or a name the
+    text layer garbles), the name one model read is used too: it picks which profile's labels and
+    checks apply, never a value, and a wrong profile shows as failing checks, not as a verified
+    value."""
+    value = getattr(name, "value", None)
+    if not value:
+        return joined
+    if getattr(name, "verification", None) == "verified" or profile_id is None:
+        return joined + "\n" + str(value)
+    return joined
 
 
 def _identify(text: str, outputs, specs) -> tuple[Utility, Profile, object | None]:

@@ -14,6 +14,18 @@ import {
 import { AssetsEditor } from "./AssetsEditor";
 import { FactRow, ProvenanceChip } from "./FactChip";
 
+// the open access the consumer already takes (SiteIntake.open_access)
+const OPEN_ACCESS_CHOICES: [string, string][] = [
+  ["none", "None"],
+  ["captive", "Captive"],
+  ["group_captive", "Group captive"],
+  ["third_party", "Third-party open access"],
+  ["exchange", "Power exchange"],
+  ["geoa", "Green energy open access (GEOA)"],
+  ["green_tariff", "Green tariff from the DISCOM"],
+  ["open_access", "Open access, kind not known"],
+];
+
 type BuildOut = { connection_id: string; warnings: string[]; load_profile_version: number };
 
 // The intake as ergPLAN understood it: every value with where it came from. Editing a value makes it
@@ -78,6 +90,25 @@ export function IntakeReview({ initial, connectionId, submitLabel = "Save and bu
           </div>
           <div><ProvenanceChip provenance={si.category.provenance} refx={si.category.ref} /></div>
           {si.category.provenance === "assumption" && <div className="ep-fact__note eg-muted">{si.category.ref?.note}</div>}
+        </div>
+        <div className="ep-fact">
+          <div className="ep-fact__label">Open access today</div>
+          <div className="ep-fact__value">
+            <span className="eg-input ep-fact__input">
+              <select
+                aria-label="Open access today"
+                value={si.open_access?.value ?? ""}
+                onChange={(e) => setSi((cur) => ({ ...cur, open_access: e.target.value ? stated(e.target.value) : null }))}
+              >
+                <option value="">not stated</option>
+                {OPEN_ACCESS_CHOICES.map(([v, label]) => (
+                  <option key={v} value={v}>{label}</option>
+                ))}
+              </select>
+            </span>
+          </div>
+          <div>{si.open_access && <ProvenanceChip provenance={si.open_access.provenance} refx={si.open_access.ref} />}</div>
+          <div className="ep-fact__note eg-muted">New green power is settled under this arrangement unless you choose otherwise.</div>
         </div>
         <FactRow label="Supply voltage" unit="kV" fact={si.voltage_kv} onEdit={(v) => set("voltage_kv", stated(v))} />
         <FactRow label="Contract demand" unit="kVA" fact={si.contract_demand_kva} onEdit={(v) => set("contract_demand_kva", stated(v))} />

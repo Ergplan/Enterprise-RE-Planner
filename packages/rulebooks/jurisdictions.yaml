@@ -13,6 +13,8 @@ regulators:
   - {id: APERC, name: Andhra Pradesh Electricity Regulatory Commission, state: AP}
   - {id: PSERC, name: Punjab State Electricity Regulatory Commission, state: PB}
   - {id: HERC, name: Haryana Electricity Regulatory Commission, state: HR}
+  - {id: HPERC, name: Himachal Pradesh Electricity Regulatory Commission, state: HP}
+  - {id: AERC, name: Assam Electricity Regulatory Commission, state: AS}
 states:
   - {id: UP, name: Uttar Pradesh}
   - {id: MH, name: Maharashtra}
@@ -26,6 +28,8 @@ states:
   - {id: HR, name: Haryana}
   - {id: OD, name: Odisha}
   - {id: BR, name: Bihar}
+  - {id: HP, name: Himachal Pradesh}
+  - {id: AS, name: Assam}
 groups:
   - {id: uppcl, name: "UPPCL state DISCOMs (one tariff order: PVVNL, MVVNL, PuVVNL, DVVNL, KESCO)", state: UP}
   - {id: ka_escoms, name: "Karnataka ESCOMs (one combined KERC tariff order: BESCOM, MESCOM, CESC, HESCOM, GESCOM)", state: KA}
@@ -64,3 +68,5 @@ discoms:
   - {id: apspdcl, name: Southern Power Distribution Company of A.P. Ltd., state: AP, parent: ap_discoms}
   - {id: apepdcl, name: Eastern Power Distribution Company of A.P. Ltd., state: AP, parent: ap_discoms}
   - {id: tnpdcl, name: Tamil Nadu Power Distribution Corporation Ltd., state: TN}
+  - {id: hpsebl, name: Himachal Pradesh State Electricity Board Limited, state: HP}
+  - {id: apdcl, name: Assam Power Distribution Company Limited, state: AS}

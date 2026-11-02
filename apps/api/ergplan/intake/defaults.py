@@ -48,7 +48,60 @@ DISCOM_STATE = {
     "jvvnl": "RJ",
     "avvnl": "RJ",
     "jdvvnl": "RJ",
+    "hpsebl": "HP",
+    "apdcl": "AS",
 }
+
+# A DISCOM from its name as the bill prints it, when billx has no layout profile for the bill.
+# Checked in order: the more specific names first ("... of Telangana" before "... of A.P.").
+DISCOM_NAMES: tuple[tuple[str, re.Pattern[str]], ...] = tuple(
+    (d, re.compile(p))
+    for d, p in (
+        ("pvvnl", r"PAS?H?CHIMANCHAL VIDYUT|\bPVVNL\b"),
+        ("mvvnl", r"MADHYANCHAL VIDYUT|\bMVVNL\b"),
+        ("dvvnl", r"DAKSHINANCHAL VIDYUT|\bDVVNL\b"),
+        ("puvvnl", r"PURVANCHAL VIDYUT|\bPUVVNL\b"),
+        ("kesco", r"KANPUR ELECTRICITY SUPPLY|\bKESCO\b"),
+        ("npcl", r"NOIDA POWER"),
+        ("msedcl", r"MAHARASHTRA STATE ELECTRICITY DISTRIBUTION|MAHAVITARAN|\bMSEDCL\b"),
+        ("aeml", r"ADANI ELECTRICITY MUMBAI"),
+        ("tpcd", r"TATA POWER"),
+        ("best", r"BRIHANMUMBAI ELECTRIC|\bBEST UNDERTAKING\b"),
+        ("bescom", r"BAN?GALORE ELECTRICITY SUPPLY|BENGALURU ELECTRICITY SUPPLY|\bBESCOM\b"),
+        ("mescom", r"MANGALORE ELECTRICITY SUPPLY|\bMESCOM\b"),
+        ("cesc", r"CHAMUNDESHWARI ELECTRICITY"),
+        ("hescom", r"HUBLI ELECTRICITY SUPPLY|\bHESCOM\b"),
+        ("gescom", r"GULBARGA ELECTRICITY SUPPLY|KALABURAGI ELECTRICITY SUPPLY|\bGESCOM\b"),
+        ("mgvcl", r"MADHYA GUJARAT VIJ"),
+        ("ugvcl", r"UTTAR GUJARAT VIJ"),
+        ("dgvcl", r"DAKSHIN GUJARAT VIJ"),
+        ("pgvcl", r"PASCHIM GUJARAT VIJ"),
+        ("jvvnl", r"JAIPUR VIDYUT VITRAN"),
+        ("avvnl", r"AJMER VIDYUT VITRAN"),
+        ("jdvvnl", r"JODHPUR VIDYUT VITRAN"),
+        ("tgspdcl", r"SOUTHERN POWER DISTRIBUTION (COMPANY|CO) OF (TELANGANA|TG|T S)\b|\bT[GS]SPDCL\b"),
+        ("tgnpdcl", r"NORTHERN POWER DISTRIBUTION (COMPANY|CO) OF (TELANGANA|TG|T S)\b|\bT[GS]NPDCL\b"),
+        ("apspdcl", r"SOUTHERN POWER DISTRIBUTION (COMPANY|CO) OF (A P|ANDHRA)|\bAPSPDCL\b"),
+        ("apcpdcl", r"CENTRAL POWER DISTRIBUTION (CORPORATION|COMPANY)|\bAPCPDCL\b"),
+        ("apepdcl", r"EASTERN POWER DISTRIBUTION (COMPANY|CO) OF (A P|ANDHRA)|\bAPEPDCL\b"),
+        ("pspcl", r"PUNJAB STATE POWER CORPORATION|\bPSPCL\b"),
+        ("dhbvn", r"DAKSHIN HARYANA BIJLI"),
+        ("uhbvn", r"UTTAR HARYANA BIJLI"),
+        ("tnpdcl", r"TAMIL ?NADU (POWER|GENERATION AND) DISTRIBUTION|\bTANGEDCO\b|\bTNPDCL\b"),
+        ("hpsebl", r"HIMACHAL PRADESH STATE ELECTRICITY BOARD|\bHPSEBL?\b"),
+        ("apdcl", r"ASSAM POWER DISTRIBUTION|\bAPDCL\b"),
+    )
+)
+
+
+def discom_from_name(printed: str | None) -> str | None:
+    """The DISCOM a printed name belongs to ("PASHCHIMANCHAL VIDYUT VITRAN NIGAM LIMITED" → pvvnl);
+    None when no known DISCOM's name is in it."""
+    if not printed:
+        return None
+    text = re.sub(r"[^A-Z0-9]+", " ", printed.upper()).strip()
+    return next((d for d, rx in DISCOM_NAMES if rx.search(text)), None)
+
 
 # billx profile ids that are not ergPLAN jurisdiction ids.
 BILLX_PROFILE_ALIASES = {

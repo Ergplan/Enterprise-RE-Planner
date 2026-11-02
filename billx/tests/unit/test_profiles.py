@@ -106,7 +106,8 @@ def test_repository_profiles_load_as_drafts_with_decimal_params():
     P.clear_cache()
     p = P.profiles(ROOT)
     assert {"avvnl", "pvvnl"} <= set(p.discoms)
-    assert len(p.discoms) == 11  # Stage 3.2: a draft discom.yaml for every discom in the sample
+    # Stage 3.2: a draft discom.yaml for every discom in the sample; HPSEBL and APDCL (2 Nov 2026)
+    assert len(p.discoms) == 13
     for discom_id, name in (
         ("avvnl", "Ajmer Vidyut Vitran Nigam Limited"),
         ("pvvnl", "Paschimanchal Vidyut Vitran Nigam Limited"),
@@ -290,3 +291,29 @@ def test_pvvnl_keeps_open_access_units_as_printed_in_kvah():
 
 def load_profiles_version(discom: str):
     return P.load_profiles().versions[discom][-1]
+
+
+def test_match_discom_names_added_from_real_layouts():
+    P.clear_cache()
+    assert P.match_discom("HIMACHAL PRADESH STATE ELECTRICITY BOARD LIMITED", ROOT) == "hpsebl"
+    assert P.match_discom("ASSAM POWER DISTRIBUTION COMPANY LIMITED", ROOT) == "apdcl"
+    assert P.match_discom("SOUTHERN POWER DISTRIBUTION COMPANY OF TG LIMITED", ROOT) == "tgspdcl"
+    assert P.match_discom("Southern Power Distribution Co. of T.S. Ltd", ROOT) == "tgspdcl"
+    assert P.match_discom("DAKSHINANCHAL VIDYUT VITRAN NIGAM LIMITED A/D", ROOT) == "dvvnl"
+
+
+def test_a_model_read_name_identifies_only_when_the_local_text_named_no_discom():
+    from types import SimpleNamespace
+
+    from billx.reader.pipeline import identity_text
+
+    one = SimpleNamespace(
+        value="ASSAM POWER DISTRIBUTION COMPANY LIMITED", verification="unverified"
+    )
+    both = SimpleNamespace(
+        value="ASSAM POWER DISTRIBUTION COMPANY LIMITED", verification="verified"
+    )
+    assert identity_text("local", one, None).endswith("ASSAM POWER DISTRIBUTION COMPANY LIMITED")
+    assert identity_text("local", one, "pvvnl") == "local"  # the local text already named one
+    assert identity_text("local", both, "pvvnl").endswith("LIMITED")
+    assert identity_text("local", None, None) == "local"

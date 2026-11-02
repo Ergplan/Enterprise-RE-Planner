@@ -19,6 +19,7 @@ from ..core.sourced import RefKind, SourcedValue, SourceRef, derive
 from ..core.units import Unit
 from ..db.models import Bill
 from . import bills as bill_store
+from .recognise import Recognition, discom_of, recognise
 
 LABELS: dict[str, str] = {
     "utility.name": "DISCOM",
@@ -327,8 +328,6 @@ def _cost(result: dict[str, Any]) -> str | None:
 
 
 def build(session: Session, bill: Bill) -> BillReading:
-    from . import defaults
-
     b = _bill_dict(bill)
     fields = b.get("fields") or {}
     review = {r.path: r for r in bill_store.review(session, bill)}
@@ -360,7 +359,6 @@ def build(session: Session, bill: Bill) -> BillReading:
                 if r.confirmed:
                     cell.value = r.value
                     cell.verification = "confirmed"
-    facts = bill_store._bill_facts(bill)
     pages = [int(p) for p in b.get("pages") or []]
     return BillReading(
         bill_id=bill.id,
@@ -370,7 +368,7 @@ def build(session: Session, bill: Bill) -> BillReading:
         page_url=f"/bills/{bill.id}/pages/{{page}}.png",
         status=bill.status,
         accepted=bill.accepted,
-        discom=defaults.discom_from_profile(facts.profile_id),
+        discom=discom_of(bill).discom,
         profile_status=(b.get("profile") or {}).get("status"),
         readers_used=[str(r) for r in b.get("routes_used") or []],
         fields=values,
@@ -428,6 +426,7 @@ class PlanInputs(BaseModel):
     slots: list[PlanSlot]
     derived: list[PlanValue]
     notes: list[str]
+    recognition: Recognition
 
 
 _UNITS = {
@@ -564,6 +563,7 @@ def plan_inputs(session: Session, bill: Bill) -> PlanInputs:
         notes.append("Confirm the values marked for checking before this bill is used for planning.")
     month = by_path.get("period.bill_month")
     category = by_path.get("tariff.category") or by_path.get("connection.tariff_category")
+    recognition = recognise(session, bill)
     return PlanInputs(
         bill_id=bill.id,
         bill_month=month.value if month else None,
@@ -575,4 +575,5 @@ def plan_inputs(session: Session, bill: Bill) -> PlanInputs:
         slots=slots,
         derived=derived,
         notes=notes,
+        recognition=recognition,
     )

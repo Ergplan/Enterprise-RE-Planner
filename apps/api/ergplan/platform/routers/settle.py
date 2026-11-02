@@ -18,7 +18,7 @@ from ...db.models import Connection, LoadProfile, Site
 from ...engine import landed_cost
 from ...engine import scope as escope
 from ...engine.tariff_eval import slot_adjustment_pct, slot_of
-from ...intake import generation, profile_synthesis
+from ...intake import generation, profile_synthesis, site_intake
 from ...rulebook import repository
 from ...rulebook.scope import matches
 from ...rulebook.service import jurisdiction_chain
@@ -40,7 +40,8 @@ class DispatchSource(BaseModel):
     id: str = Field(pattern="^[a-z0-9_]{1,32}$")
     kind: str  # a landed-cost source id: oa_solar_intra, oa_wind_ists, …
     capacity_mw: Decimal = Field(gt=0)
-    ownership: str = Field(default="captive", pattern="^(captive|group_captive|third_party)$")
+    # None: the open access the connection already takes (recorded at intake), else captive
+    ownership: str | None = Field(default=None, pattern="^(captive|group_captive|third_party)$")
     kw: list[Decimal] | None = None  # 15-minute injection at the generator; a normative curve when absent
 
 
@@ -110,7 +111,9 @@ def settle(connection_id: str, body: DispatchIn, who: Annotated[Caller, Depends(
         supply: dict[str, list[Decimal]] = {}
         info: list[dict[str, Any]] = []
         rule = None
+        default_ownership = site_intake.recorded_ownership(conn) or "captive"
         for d in body.sources:
+            ownership = d.ownership or default_ownership
             spec = landed_cost.SOURCE_BY_ID.get(d.kind)
             if spec is None or not spec.open_access:
                 raise HTTPException(422, f"{d.kind} is not an open-access source")
@@ -138,18 +141,18 @@ def settle(connection_id: str, body: DispatchIn, who: Annotated[Caller, Depends(
                 source_refs=(SourceRef(kind=RefKind.ASSUMPTION, note="price not needed to settle"),),
             )
             wf = landed_cost.evaluate(
-                spec, ctx, landed_cost.Scenario(price=price, ownership=d.ownership, on=as_of), oa_rows
+                spec, ctx, landed_cost.Scenario(price=price, ownership=ownership, on=as_of), oa_rows
             )
             keep = wf.delivered.value if wf.delivered else Decimal(1)
             supply[d.id] = [v * keep * Decimal("0.25") for v in inj]
-            src_ctx = {**ctx, "connection": spec.connection, "source": spec.source, "ownership": d.ownership}
+            src_ctx = {**ctx, "connection": spec.connection, "source": spec.source, "ownership": ownership}
             own_rule = next((r for r in settlements if matches(r.scope, src_ctx)), None)
             if rule is None and own_rule is not None:
                 rule = own_rule
             sources.append(
                 SourceIn(
                     id=d.id,
-                    category=CATEGORY[d.ownership],
+                    category=CATEGORY[ownership],
                     may_bank=own_rule is not None and own_rule.id == (rule.id if rule else None),
                 )
             )
@@ -160,6 +163,7 @@ def settle(connection_id: str, body: DispatchIn, who: Annotated[Caller, Depends(
                     "capacity_mw": format(d.capacity_mw, "f"),
                     "delivered_share": format(keep, "f"),
                     "injected_kwh": format(sum(inj, Decimal(0)) * Decimal("0.25"), "f"),
+                    "ownership": ownership,
                     "settlement_rule": own_rule.label if own_rule else None,
                 }
             )

@@ -1,0 +1,10 @@
+# Himachal Pradesh State Electricity Board Limited (Himachal Pradesh). Drafted on 2 Nov 2026 from
+# the name the board prints; no version yet: bills are read by the generic ladder (profile.status
+# none) until the team's confirmed sample bills exist and a version is drafted from them.
+id: hpsebl
+name: Himachal Pradesh State Electricity Board Limited
+state: Himachal Pradesh
+bill_type: electricity
+match:
+  - "\\bHPSEBL?\\b"
+  - "Himachal Pradesh State Electricity Board"

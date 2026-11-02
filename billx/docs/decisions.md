@@ -514,3 +514,10 @@ comparison lab of 4.2 section 9B), with a live reading view. Work happens on the
   left to the table readers, which take the total row. A label inside a sentence
   ("Net Billed Units are the units used for ...", a DVVNL footnote) takes no figure from
   below: a lower-case word right after the label marks prose.
+- **DISCOM identification on more real layouts (2 Nov 2026).** On the team's real bills billx
+  named no DISCOM for HPSEBL (Himachal Pradesh), APDCL (Assam) and TGSPDCL bills printed as
+  "Southern Power Distribution Company of TG", and for DVVNL bills whose text layer garbles the
+  name. Draft `discom.yaml` profiles (no versions) for `hpsebl` and `apdcl`, a wider TGSPDCL
+  name pattern, and a second identification pass that uses the utility name one model read when
+  the local text named no DISCOM (`pipeline.identity_text`). The profile decides which labels
+  and checks apply, never a value: a wrong profile shows as failing checks.

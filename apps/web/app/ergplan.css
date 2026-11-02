@@ -307,3 +307,11 @@ a.eg-btn { text-decoration: none; }
 .ep-stage--zoom .ep-sheet__view { max-height: 78vh; overflow: auto; overscroll-behavior: contain; }
 .ep-stage--zoom .ep-sheet__page { width: calc(var(--zoom) * 100%); }
 .ep-tocheck { color: var(--warning); font-size: 12px; }
+
+/* the connection a bill describes (hand-off screen) */
+.ep-recognised__facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-3); margin: var(--space-3) 0; }
+.ep-recognised__facts dt { font-size: 12px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: .04em; }
+.ep-recognised__facts dd { margin: 4px 0 0; font-weight: 600; }
+.ep-evidence { margin: 0 0 var(--space-3); padding-left: 1.1em; font-size: 13px; }
+.ep-evidence li { margin: 2px 0; }
+.ep-recognised__sub { font-size: 14px; margin: var(--space-3) 0 var(--space-2); }

@@ -1,0 +1,10 @@
+# Assam Power Distribution Company Limited (Assam). Drafted on 2 Nov 2026 from the name the
+# company prints; no version yet: bills are read by the generic ladder (profile.status none)
+# until the team's confirmed sample bills exist and a version is drafted from them.
+id: apdcl
+name: Assam Power Distribution Company Limited
+state: Assam
+bill_type: electricity
+match:
+  - "\\bAPDCL\\b"
+  - "Assam Power Distribution Company"

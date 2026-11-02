@@ -22,6 +22,7 @@ from ...engine import avoided_cost, landed_cost, lcoe
 from ...engine import scope as escope
 from ...engine.gaps import GAPS
 from ...engine.tariff_eval import slot_of
+from ...intake import site_intake
 from ...rulebook import repository
 from ...rulebook.models import RuleView
 from ...rulebook.scope import matches
@@ -248,9 +249,10 @@ def connection_landed_cost(
         assets = s.scalars(select(Asset).where(Asset.site_id == conn.site_id)).all()
         all_gaps: set[str] = set()
         sources: list[SourceOut] = []
+        recorded = site_intake.recorded_ownership(conn)  # the open access the client already takes
         for spec in landed_cost.SOURCES:
             o = sc_in.sources.get(spec.id, SourceScenario())
-            ownership = o.ownership or DEFAULT_OWNERSHIP.get(spec.id, "third_party")
+            ownership = o.ownership or DEFAULT_OWNERSHIP.get(spec.id) or recorded or "third_party"
             notes: list[str] = []
             prices: dict[str, SourcedValue] = {}
             extra: tuple[SourcedValue, ...] = ()

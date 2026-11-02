@@ -22,7 +22,7 @@ from sqlalchemy.orm import Session
 from ..core.sourced import RefKind, SourceRef
 from ..db.models import Asset, Bill, Client, Connection, LoadProfile, Site
 from . import bills as bill_store
-from . import defaults
+from . import defaults, recognise
 from .bill_fields import parse_month
 from .profile_synthesis import MonthInput, ShapeNotFound, TodWindow, encode, shape, shape_ids, synthesise_year
 
@@ -225,6 +225,18 @@ class Shift(BaseModel):
         return v
 
 
+OPEN_ACCESS_VALUES = (
+    "captive",
+    "group_captive",
+    "third_party",
+    "exchange",
+    "geoa",
+    "open_access",
+    "green_tariff",
+    "none",
+)
+
+
 class SiteIntake(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -242,6 +254,10 @@ class SiteIntake(BaseModel):
     shifts: Fact[list[Shift]] | None = None
     land_acres: Fact[Decimal] | None = None
     roof_sqm: Fact[Decimal] | None = None
+    # the open access the consumer already takes, as the bill shows it (recognise.py) or the client
+    # states it: captive | group_captive | third_party | exchange | geoa | open_access (kind not
+    # printed) | green_tariff | none
+    open_access: Fact[str] | None = None
     months: list[MonthFacts] = Field(min_length=1, max_length=12)
     assets: list[AssetIn] = Field(default_factory=list)
 
@@ -257,6 +273,10 @@ class SiteIntake(BaseModel):
         if self.industry_shape.value not in shape_ids():
             raise ValueError(
                 f"unknown industry shape {self.industry_shape.value!r}; one of {', '.join(shape_ids())}"
+            )
+        if self.open_access is not None and self.open_access.value not in OPEN_ACCESS_VALUES:
+            raise ValueError(
+                f"open access {self.open_access.value!r} is not one of {', '.join(OPEN_ACCESS_VALUES)}"
             )
         if any(not 0 <= d <= 6 for d in self.weekly_off.value):
             raise ValueError("weekly off days are 0 (Mon) to 6 (Sun)")
@@ -357,12 +377,14 @@ def from_bills(session: Session, bill_ids: list[str], overrides: dict[str, Any] 
     v = bill_store.values(session, latest)
     o = dict(overrides or {})
 
-    discom_id = defaults.discom_from_profile(bill_store.profile_id(latest))
+    found = recognise.discom_of(latest)
     if "discom" in o:
         discom = stated(o.pop("discom"))
-    elif discom_id:
+    elif found.discom and found.ref is not None:
+        discom = Fact(value=found.discom, provenance="bill", ref=found.ref)  # its printed name
+    elif found.discom:
         discom = Fact(
-            value=discom_id,
+            value=found.discom,
             provenance="assumption",
             ref=defaults.assumption(f"DISCOM from billx's layout profile '{bill_store.profile_id(latest)}'"),
         )
@@ -427,9 +449,38 @@ def from_bills(session: Session, bill_ids: list[str], overrides: dict[str, Any] 
         ),
         months=[months[k] for k in sorted(months)][-12:],
     )
+    if "open_access" in o:
+        data["open_access"] = stated(o.pop("open_access"))
+    else:
+        data["open_access"] = _open_access_fact(session, latest)
     for k, val in o.items():
         data[k] = stated(val) if k in SiteIntake.model_fields and not isinstance(val, (dict, list)) else val
     return SiteIntake.model_validate(data)
+
+
+def _open_access_fact(session: Session, bill: Bill) -> Fact[str] | None:
+    """The open access the bill shows, with the page it rests on: the kind when the bill names
+    one ownership (captive, group captive, third party), else 'open_access' (the client says which),
+    or 'green_tariff'. None when the bill shows none (absence is not evidence of none)."""
+    r = recognise.recognise(session, bill)
+    if r.open_access == "none_seen" or not r.evidence:
+        return None
+    owned = [k for k in r.open_access_kinds if k in recognise.OWNERSHIPS]
+    value = (
+        owned[0]
+        if len(owned) == 1
+        else ("green_tariff" if r.open_access == "green_tariff" else "open_access")
+    )
+    return Fact(value=value, provenance="bill", ref=r.evidence[0].ref)
+
+
+def recorded_ownership(conn: Connection) -> str | None:
+    """The ownership of the open access the connection already takes (captive, group captive or
+    third party), when the intake recorded one; the next stage settles new sources the same way
+    unless the client chooses otherwise."""
+    oa = (conn.provenance or {}).get("open_access") or {}
+    value = oa.get("value") if isinstance(oa, dict) else None
+    return value if value in recognise.OWNERSHIPS else None
 
 
 # ---------------------------------------------------------------- persistence
@@ -566,7 +617,10 @@ def build(
         contract_demand_kva=intake.contract_demand_kva,
         consumer_number=intake.consumer_number,
         rate_block=intake.rate_block,
+        open_access=intake.open_access,
     )
+    if intake.open_access is not None:
+        conn.provenance["open_access"]["value"] = intake.open_access.value
     session.flush()
     for a in intake.assets:
         session.add(

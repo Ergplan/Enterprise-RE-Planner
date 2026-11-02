@@ -9,4 +9,5 @@ match:
   - "\\bTGSPDCL\\b"
   - "\\bTSSPDCL\\b"
   - "Southern Power Distribution Company of Telangana"
+  - "Southern Power Distribution (Company|Co\\.?) of (TG|T\\.?S\\.?)\\b"
   - "తెలంగాణ దక్షిణ ప్రాంత విద్యుత్ పంపిణీ సంస్థ"

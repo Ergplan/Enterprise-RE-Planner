@@ -56,3 +56,23 @@ def test_generation_profile_scales_to_cuf() -> None:
     assert cuf2 == Decimal("24.5") and hyb[0] > 0
     with pytest.raises(generation.CurveNotFound):
         generation.curve("solar_xx")
+
+
+def test_settle_uses_the_open_access_the_connection_already_takes(connection: str) -> None:  # noqa: F811
+    from ergplan.db.base import session_scope
+    from ergplan.db.models import Connection
+
+    body = {"sources": [{"id": "pv", "kind": "oa_solar_intra", "capacity_mw": "1.5"}], "as_of": "2026-06-01"}
+    default = client.post(f"/connections/{connection}/settle", json=body, headers=AN)
+    assert default.status_code == 200, default.text
+    with session_scope(actor="t") as s:
+        conn = s.get(Connection, connection)
+        assert conn is not None
+        conn.provenance = {**(conn.provenance or {}), "open_access": {"value": "third_party"}}
+    recorded = client.post(f"/connections/{connection}/settle", json=body, headers=AN)
+    assert recorded.status_code == 200, recorded.text
+    stated = {"sources": [{**body["sources"][0], "ownership": "captive"}], "as_of": "2026-06-01"}  # type: ignore[dict-item]
+    chosen = client.post(f"/connections/{connection}/settle", json=stated, headers=AN)
+    assert default.json()["sources"][0]["ownership"] == "captive"  # nothing recorded: captive
+    assert recorded.json()["sources"][0]["ownership"] == "third_party"  # the recorded arrangement
+    assert chosen.json()["sources"][0]["ownership"] == "captive"  # the client's choice wins

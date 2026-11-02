@@ -98,6 +98,45 @@ export type PlanInputs = {
   slots: PlanSlot[];
   derived: PlanValue[];
   notes: string[];
+  recognition: Recognition;
+};
+
+// What the bill says about the connection: its DISCOM and state, the open access it already takes
+// (each finding links to its bill page), and the state settlement rules the next stage applies.
+export type Evidence = { finding: string; ref: Ref };
+export type SettlementRoute = {
+  ownership: string;
+  ownership_label: string;
+  rule_label: string | null;
+  rulebook: string | null;
+  version: number | null;
+  ref: Ref | null;
+};
+export type Recognition = {
+  discom: string | null;
+  discom_name: string | null;
+  discom_how: string | null;
+  discom_ref: Ref | null;
+  state: string | null;
+  state_name: string | null;
+  open_access: "none_seen" | "open_access" | "green_tariff";
+  open_access_kinds: string[];
+  evidence: Evidence[];
+  settlement: SettlementRoute[];
+  notes: string[];
+};
+
+export const OPEN_ACCESS_LABEL: Record<Recognition["open_access"], string> = {
+  none_seen: "No open access on this bill",
+  open_access: "Open access",
+  green_tariff: "Green tariff",
+};
+export const KIND_LABEL: Record<string, string> = {
+  captive: "captive",
+  group_captive: "group captive",
+  third_party: "third party",
+  exchange: "power exchange",
+  geoa: "GEOA",
 };
 
 export const READERS: { id: string; name: string; what: string }[] = [
