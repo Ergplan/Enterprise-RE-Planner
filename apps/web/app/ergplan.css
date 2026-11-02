@@ -315,3 +315,25 @@ a.eg-btn { text-decoration: none; }
 .ep-evidence { margin: 0 0 var(--space-3); padding-left: 1.1em; font-size: 13px; }
 .ep-evidence li { margin: 2px 0; }
 .ep-recognised__sub { font-size: 14px; margin: var(--space-3) 0 var(--space-2); }
+
+/* the audit screen: the chain beside the chat */
+.ep-audit { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 380px); gap: var(--space-4); align-items: start; }
+.ep-audit__main { display: grid; gap: var(--space-4); min-width: 0; }
+.ep-audit__chat { position: sticky; top: var(--space-4); display: grid; gap: var(--space-3); }
+.ep-audit__log { max-height: 55vh; }
+.ep-audit__head { justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: var(--space-4); }
+.ep-scroll { overflow-x: auto; }
+.ep-chain td:first-child { min-width: 220px; }
+.ep-chain__kind { display: block; font-size: 0.65rem; }
+.ep-msg { display: grid; gap: 2px; }
+.ep-msg__text { white-space: pre-wrap; }
+.ep-msg--action { opacity: 0.8; font-size: 0.82rem; }
+.ep-msg--user .ep-msg__text { font-weight: 500; }
+.ep-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: flex-end; }
+.ep-addline { margin: var(--space-3) 0; }
+.ep-addline__quote { grid-column: 1 / -1; }
+.ep-proposal { border-top: 1px solid var(--line, rgba(127, 127, 127, 0.25)); padding: var(--space-3) 0; display: grid; gap: var(--space-2); }
+@media (max-width: 960px) {
+  .ep-audit { grid-template-columns: 1fr; }
+  .ep-audit__chat { position: static; }
+}

@@ -66,6 +66,7 @@ export function PlanBuilder({ connectionId, initial }: { connectionId: string; i
       {done > 0 && (
         <div className="ep-row" style={{ marginTop: 12 }}>
           <button className="eg-btn eg-btn--primary" onClick={share}>Share my plan</button>
+          <a className="eg-btn eg-btn--ghost" href={`/plan/audit?c=${connectionId}`}>Audit the chain and check your working</a>
           {link && <a className="ep-share-link" href={link.path}>{link.url}</a>}
         </div>
       )}

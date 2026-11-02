@@ -17,6 +17,7 @@ const JOURNEY: { n: number; label: string; href: string; live: boolean }[] = [
 
 const ANALYST: { label: string; href: string; icon: string }[] = [
   { label: "Rulebooks", href: "/rulebooks", icon: "layers" },
+  { label: "Proposed changes", href: "/proposals", icon: "list" },
   { label: "Documents", href: "/documents", icon: "file" },
   { label: "Market prices", href: "/prices", icon: "trend" },
   { label: "Settlement", href: "/settlement", icon: "battery" },
