@@ -441,3 +441,16 @@ def test_the_arrangement_is_the_clients_to_state(plan: dict[str, str]) -> None:
         headers=CL,
     )
     assert bad.status_code == 422 and "no source nope" in bad.json()["detail"]
+
+
+def test_an_accepted_value_is_a_decimal_string_never_a_float() -> None:
+    from ergplan.report.audit import AuditError, _set_pointer
+
+    body: dict[str, Any] = {"charge": {"value": "2.11"}, "n": 3, "f": 0.5, "rows": [{"v": "1"}]}
+    assert _set_pointer(body, "/charge/value", Decimal("2.500000")) == "2.11"
+    assert body["charge"]["value"] == "2.5"
+    _set_pointer(body, "/n", Decimal("4"))
+    _set_pointer(body, "/rows/0/v", Decimal("1.25"))
+    assert body["n"] == 4 and body["rows"][0]["v"] == "1.25"
+    with pytest.raises(AuditError):
+        _set_pointer(body, "/f", Decimal("0.75"))

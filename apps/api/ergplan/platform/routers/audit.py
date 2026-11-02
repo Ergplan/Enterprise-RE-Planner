@@ -344,7 +344,7 @@ async def upload_working(
 
 @router.get("/workings/{working_id}/file")
 def working_file(working_id: str, who: Annotated[Caller, Depends(caller)]) -> FileResponse:
-    with session_scope() as s:
+    with session_scope(actor=who.actor) as s:
         w = s.get(Working, working_id)
         if w is None:
             raise HTTPException(404, "working not found")

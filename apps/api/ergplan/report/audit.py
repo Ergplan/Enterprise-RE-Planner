@@ -40,7 +40,7 @@ from ..documents import service as documents
 from ..optimizer.scenarios import ScenarioSpec
 from ..platform import runs as svc
 from ..regreader.grounding import quote_on_page
-from ..rulebook import service as rulebook
+from ..rulebook import service as rulebook_service  # the single writer of rules (invariant 3)
 from . import chain as chain_data
 
 MAX_BYTES = 10 * 1024 * 1024
@@ -448,10 +448,10 @@ def _set_pointer(body: dict[str, Any], pointer: str, value: Decimal) -> Any:
     # keep the type the family schema gives the field (a string stays a string)
     if isinstance(old, str):
         new: Any = format(value.normalize(), "f")
-    elif isinstance(old, int) and value == value.to_integral_value():
+    elif isinstance(old, int) and not isinstance(old, bool) and value == value.to_integral_value():
         new = int(value)
-    else:
-        new = float(value)  # the family schema stores this field as a JSON number
+    else:  # never a float in a rule (rule 15): the analyst edits such a field in the rulebook editor
+        raise AuditError(f"the field {pointer} is not a decimal value; change it in the rulebook editor")
     node[last] = new
     return old
 
@@ -483,7 +483,7 @@ def accept_proposal(
         raise AuditError(f"the quote does not print {format(p.proposed.normalize(), 'f')}")
     rule = s.get(Rule, p.rule_id)
     assert rule is not None
-    draft = rulebook.duplicate(
+    draft = rulebook_service.duplicate(
         s, rule.rulebook_version_id, actor, notes=f"proposal {p.id}: {p.rule_label or p.family} {p.pointer}"
     )
     row = s.scalars(
@@ -498,7 +498,7 @@ def accept_proposal(
         "page": page,
         "quote": quote[:400],
     }
-    rulebook.update_row(
+    rulebook_service.update_row(
         s,
         draft.id,
         row.id,

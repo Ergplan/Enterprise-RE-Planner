@@ -229,3 +229,9 @@ States with approved tariffs: **7 of the 10** the plan names (UP, MH, KA, TS, PB
 **Open questions:**
 1. Should an accepted "(your figures)" scenario become the plan's recommendation when its saving is the best, or always be shown beside the jouleWise plan?
 2. Should clients see the proposals they raised and their outcome on the audit screen (today they see their own connection's proposals, without the analyst's queue controls)?
+
+**Reviewer** (gpt-5.1, four rounds on 7207005..working tree):
+- Fixed: the working-file route now opens its session with the caller as actor, like the router's other routes; an accepted rule change never writes a float (a decimal string, an integer stays an integer, a JSON fraction is refused with a pointer to the rulebook editor), with a test; the rulebook service import is named `rulebook_service` so the single writer is visible at the call site.
+- Not defects: "the chain's ref kinds may not include client_stated or assumption" (they are `RefKind` members since Stage 0); "accept_proposal bypasses the single writer" (`duplicate` and `update_row` are `rulebook.service`, and the `ergplan_audit` trigger records every row they write); "report.audit_chat imports a provider" (it imports `ergplan.providers.openai_client`, which is the required path; no SDK is imported outside `providers/`, and the import-graph test passes; an earlier round marked the same line by design); "some endpoints lack tests" (the finding names none; all fifteen routes are called in `test_api_audit.py`).
+
+**Model cost:** reviewer four gpt-5.1 rounds, about USD 0.25. No app model call in the tests (the audit assistant is mocked); one live audit chat on the server (below).
