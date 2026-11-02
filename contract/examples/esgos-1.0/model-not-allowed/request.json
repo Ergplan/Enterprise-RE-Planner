@@ -1,0 +1,10 @@
+{
+ "file": "avvnl-ht-synth-v1_01.scan.pdf",
+ "options": {
+  "request_id": "example-model-not-allowed",
+  "product": "esgos",
+  "kind": "bill",
+  "allow_cloud_model": false
+ },
+ "note": "a scan with allow_cloud_model false: refused, never passed on one reading"
+}

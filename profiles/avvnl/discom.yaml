@@ -1,0 +1,15 @@
+# Ajmer Vidyut Vitran Nigam Limited (Rajasthan). The identity file: what names this discom on
+# a bill. Versions live in versions/<effective-from>.yaml; the first is a DRAFT for the
+# synthetic layout avvnl-ht-synth-v1 (build prompt section 7); real versions are drafted from
+# the team's confirmed bills (Stage 3).
+id: avvnl
+name: Ajmer Vidyut Vitran Nigam Limited
+state: Rajasthan
+bill_type: electricity
+match:
+  - "\\bAVVNL\\b"
+  - "Ajmer Vidyut Vitran Nigam"
+  - "अजमेर विद्युत वितरण निगम"
+  - "\\bAjmer\\s+Vidyut\\b"
+  - "अजमेर\\s+विद्युत"
+  - "(?<![A-Za-z])A\\.?V\\.?V\\.?N\\.?L(?![A-Za-z])"

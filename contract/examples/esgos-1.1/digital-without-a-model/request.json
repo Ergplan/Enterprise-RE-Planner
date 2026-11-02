@@ -1,0 +1,10 @@
+{
+ "file": "avvnl-ht-synth-v1_01.digital.pdf",
+ "options": {
+  "request_id": "example-digital-without-a-model",
+  "product": "esgos",
+  "kind": "bill",
+  "allow_cloud_model": false
+ },
+ "note": "a digital PDF with allow_cloud_model false: refused (proof rule 2), with its reading and checks"
+}

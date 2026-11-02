@@ -1,0 +1,143 @@
+# GitLab CI for billx (build prompt 5.0, section 3.1 and Stage 2.5): the checks, gitleaks, both
+# engine images to the GitLab registry, the identifier search over the amd64 image, the copy to
+# esgOS's registry on a tag, and the native amd64 OCR check.
+#
+# Variables the project needs (Settings > CI/CD > Variables; masked, and protected where noted):
+#   CLIENT_IDENTIFIERS      the client-identifier list, one per line (masked): the identifier
+#                           search fails without it (--require)
+#   ESGOS_REGISTRY          esgOS's registry path for the image, e.g.
+#                           asia-south1-docker.pkg.dev/<project>/<repo> (protected; release only)
+#   ESGOS_REGISTRY_KEY      the JSON key of a service account that may push there (masked,
+#                           protected; release only). Logged in as `_json_key` over stdin.
+#   BILLX_IMAGE_PLATFORMS   optional: the platforms to build, default linux/amd64,linux/arm64
+#                           (linux/arm64 is built under QEMU on the shared amd64 runner)
+# GitLab provides CI_REGISTRY, CI_REGISTRY_IMAGE, CI_REGISTRY_USER and CI_REGISTRY_PASSWORD
+# (a job token) for the project's own registry. No value is ever echoed: every login pipes the
+# secret into `docker login --password-stdin`.
+#
+# Image tags: $CI_REGISTRY_IMAGE/billx:<commit sha> on every pipeline, plus the branch or tag
+# slug (so `main` and `0.1` resolve), one multi-platform manifest per tag.
+
+stages: [checks, images, release]
+
+variables:
+  IMAGE: $CI_REGISTRY_IMAGE/billx
+  BILLX_IMAGE_PLATFORMS: linux/amd64,linux/arm64
+  # docker-in-docker over TLS, as GitLab documents it; the dind service generates the certificates.
+  DOCKER_TLS_CERTDIR: "/certs"
+
+default:
+  image: python:3.12-slim
+
+# The Stage 0 checks: lint, tests, the copy check and the identifier search over tracked files.
+checks:
+  stage: checks
+  before_script:
+    - pip install -q uv
+    - uv venv --python 3.12 .venv && uv pip install -q -e '.[dev]'
+  script:
+    - .venv/bin/ruff check . && .venv/bin/ruff format --check .
+    - .venv/bin/pytest -q -n auto -m "not ocr" tests/unit
+    - .venv/bin/python tools/check_copy.py
+    - .venv/bin/python tools/identifiers.py --require
+    - .venv/bin/billx openapi --check
+  rules:
+    - if: $CI_COMMIT_BRANCH || $CI_COMMIT_TAG
+
+gitleaks:
+  stage: checks
+  image:
+    name: zricethezav/gitleaks:latest
+    entrypoint: [""]
+  script:
+    - gitleaks git . --redact --no-banner -v
+  rules:
+    - if: $CI_COMMIT_BRANCH || $CI_COMMIT_TAG
+
+# The Stage 0 OCR check on a native amd64 machine (decisions.md, Stage 0): does PaddleOCR read
+# there, or is RapidOCR the amd64 reader? The shared runner is amd64, so nothing is emulated.
+# Manual, on the default branch only; its JSON line is kept as an artifact.
+ocr-check-amd64:
+  stage: checks
+  image: docker:27
+  services:
+    - docker:27-dind
+  script:
+    - docker buildx build --load --platform linux/amd64 -f docker/ocr-check.Dockerfile -t billx-ocr-check:amd64 .
+    - docker run --rm --platform linux/amd64 billx-ocr-check:amd64 | tee ocr-check-amd64.json
+  artifacts:
+    paths: [ocr-check-amd64.json]
+    expire_in: 90 days
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: true
+
+# Both engine images in one multi-platform manifest, pushed to the project registry. QEMU
+# (tonistiigi/binfmt) lets the amd64 runner build linux/arm64; the OCR warm-up runs under
+# emulation there, which is slow, hence the long timeout.
+images:
+  stage: images
+  image: docker:27
+  services:
+    - docker:27-dind
+  needs: [checks, gitleaks]
+  timeout: 3h
+  before_script:
+    - docker run --privileged --rm tonistiigi/binfmt --install all
+    - docker buildx create --use --name billx-builder --driver docker-container
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+  script:
+    - >
+      docker buildx build
+      --platform "$BILLX_IMAGE_PLATFORMS"
+      --file docker/engine.Dockerfile
+      --build-arg VCS_REF="$CI_COMMIT_SHA"
+      --tag "$IMAGE:$CI_COMMIT_SHA"
+      --tag "$IMAGE:$CI_COMMIT_REF_SLUG"
+      --provenance=false
+      --push .
+    - docker buildx imagetools inspect "$IMAGE:$CI_COMMIT_SHA"
+  rules:
+    - if: $CI_COMMIT_BRANCH || $CI_COMMIT_TAG
+
+# Rule 10: no real bill in the image. The amd64 image's filesystem is exported to a tar and
+# searched for the client identifiers (tools/identifiers.py --tar, stdlib only, so Alpine's
+# python3 is enough). A hit names a path and an identifier index, never the identifier.
+identifier-search-image:
+  stage: images
+  image: docker:27
+  services:
+    - docker:27-dind
+  needs: [images]
+  before_script:
+    - apk add --no-cache python3
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+  script:
+    - docker pull --platform linux/amd64 "$IMAGE:$CI_COMMIT_SHA"
+    - docker create --platform linux/amd64 --name billx-fs "$IMAGE:$CI_COMMIT_SHA"
+    - docker export billx-fs -o image.tar
+    - docker rm billx-fs
+    - python3 tools/identifiers.py --require --tar image.tar
+  rules:
+    - if: $CI_COMMIT_BRANCH || $CI_COMMIT_TAG
+
+# On a release tag, copy the manifest by digest to esgOS's registry (section 3.1) when its
+# variables exist. `imagetools create` copies the manifest list and both platforms' layers
+# registry to registry; nothing is rebuilt, so esgOS runs the bytes CI tested.
+release-to-esgos:
+  stage: release
+  image: docker:27
+  services:
+    - docker:27-dind
+  needs: [images, identifier-search-image]
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - echo "$ESGOS_REGISTRY_KEY" | docker login -u _json_key --password-stdin "${ESGOS_REGISTRY%%/*}"
+  script:
+    - DIGEST=$(docker buildx imagetools inspect "$IMAGE:$CI_COMMIT_SHA" --format '{{.Manifest.Digest}}')
+    - echo "copying $IMAGE@$DIGEST to $ESGOS_REGISTRY/billx:$CI_COMMIT_TAG"
+    - docker buildx imagetools create --tag "$ESGOS_REGISTRY/billx:$CI_COMMIT_TAG" "$IMAGE@$DIGEST"
+    - docker buildx imagetools inspect "$ESGOS_REGISTRY/billx:$CI_COMMIT_TAG"
+  rules:
+    - if: $CI_COMMIT_TAG && $ESGOS_REGISTRY && $ESGOS_REGISTRY_KEY

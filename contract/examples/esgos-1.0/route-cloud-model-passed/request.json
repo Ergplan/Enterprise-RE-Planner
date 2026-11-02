@@ -1,0 +1,12 @@
+{
+ "file": "avvnl-ht-synth-v1_01.digital.pdf",
+ "options": {
+  "request_id": "example-route-cloud-model-passed",
+  "product": "esgos",
+  "kind": "bill",
+  "allow_cloud_model": true,
+  "max_cost_usd": "1.00"
+ },
+ "note": "a digital PDF verified by the text layer and one model family agreeing (replayed)",
+ "models": "replay"
+}

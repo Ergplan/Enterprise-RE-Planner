@@ -1,0 +1,17 @@
+# Paschimanchal Vidyut Vitran Nigam Limited (Uttar Pradesh). The identity file: what names
+# this discom on a bill. The first version is a DRAFT for the synthetic layout
+# pvvnl-hv2-synth-v1; real versions are drafted from the team's confirmed bills (Stage 3).
+id: pvvnl
+name: Paschimanchal Vidyut Vitran Nigam Limited
+state: Uttar Pradesh
+bill_type: electricity
+match:
+  - "\\bPVVNL\\b"
+  - "Paschimanchal Vidyut Vitran Nigam"
+  - "पश्चिमांचल विद्युत वितरण निगम"
+  - "\\bPaschimanchal\\b"
+  - "पश्चिमांचल"
+  - "(?<![A-Za-z])P\\.?V\\.?V\\.?N\\.?L(?![A-Za-z])"
+  # a scanned bill's left edge often cuts the first letters of the printed name; no other
+  # discom's name contains this run
+  - "CHIMANCHAL\\s+VIDYUT"

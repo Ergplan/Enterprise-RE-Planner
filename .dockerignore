@@ -1,0 +1,15 @@
+# What never enters an image build context (docker/engine.Dockerfile copies only what it names,
+# but the context is sent to the builder, so bills, keys, venvs and output stay out).
+.git
+.venv
+.venv-ocr
+**/.env
+**/.env.*
+.status
+out
+docker/data
+tests
+docs
+tools
+**/__pycache__
+**/*.tar

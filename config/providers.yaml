@@ -1,0 +1,30 @@
+# Model-call settings for billx/reader/providers (rule 9: timeout, bounded retries,
+# cost estimate before, usage record after; rule 14: on a 429 wait 60 s, then back off).
+# Environment variables of the same upper-case name with the BILLX_ prefix override the
+# model ids (BILLX_MODEL_A, BILLX_MODEL_B).
+model_a: "openai:gpt-6.1-sol"
+model_b: "anthropic:claude-sonnet-5-5"
+timeout_seconds: 300               # a whole real bill with 16000 output tokens can take over 120 s
+max_attempts: 3                 # one call plus two retries, then the call fails
+rate_limit_wait_seconds: 60     # first wait after an HTTP 429
+retry_wait_seconds: 5           # first wait after a timeout, connection error or 5xx
+backoff_factor: 2               # each further wait is the previous one times this
+max_output_tokens: 16000             # real bills list far more lines than the synthetic ones: 23 of the first 75 live Model A answers were cut at 4000
+max_cost_usd_per_call: "1.00"   # a call whose estimate is above this is not made
+# Longest side of a page image sent to a model, in pixels. A page rendered larger is
+# downscaled (Pillow, LANCZOS) before it is encoded; bands are cut from the downscaled page.
+max_image_edge_px: 2000
+# Temperature per model id. A model listed here is called with that temperature
+# (invariant 6: 0 where the model accepts it); a model not listed is called without one,
+# because some reasoning models reject the parameter. Fill in after the live check.
+temperature: {}
+# The `llamaparse` reader (LlamaExtract v2, family `llamaindex`), with LLAMA_CLOUD_API_KEY.
+# Credits are converted to US dollars at `usd_per_credit` for the budget and the usage record;
+# `worst_case_credits_per_page` is the estimate made before a call. PLACEHOLDER rates until the
+# team confirms LlamaIndex's prices for its plan (record the change in docs/decisions.md).
+llamaparse:
+  tier: agentic
+  version: latest
+  usd_per_credit: "0.001"            # PLACEHOLDER
+  worst_case_credits_per_page: "90"  # PLACEHOLDER
+  poll_seconds: 3

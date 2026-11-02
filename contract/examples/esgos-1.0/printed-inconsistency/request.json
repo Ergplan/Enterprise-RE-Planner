@@ -1,0 +1,12 @@
+{
+ "file": "avvnl-ht-synth-v1_01.planted-G09.pdf",
+ "options": {
+  "request_id": "example-printed-inconsistency",
+  "product": "esgos",
+  "kind": "bill",
+  "allow_cloud_model": true,
+  "max_cost_usd": "1.00"
+ },
+ "note": "the bill's own numbers don't add up: 1.1 passes with a flag, 1.0 fails with a note",
+ "models": "replay"
+}

@@ -1,0 +1,1545 @@
+{
+ "contract_version": "1.0",
+ "engine_version": "0.2.1",
+ "schema_version": "2.0",
+ "file": {
+  "sha256": "71d43cd2c12d7e3244b71142bf012753fe73251f50991b6cee3f526add7574c3",
+  "pages": 1,
+  "media_type": "application/pdf"
+ },
+ "bills": [
+  {
+   "index": 0,
+   "pages": [
+    1
+   ],
+   "bill_type": "electricity",
+   "utility": {
+    "id": "avvnl",
+    "name_as_printed": "AJMER VIDYUT VITRAN NIGAM LIMITED(AVVNL)",
+    "state": "Rajasthan"
+   },
+   "profile": {
+    "id": "avvnl",
+    "version": "2025-01",
+    "status": "draft"
+   },
+   "route": "none",
+   "fields": {
+    "utility": {
+     "name": {
+      "value": "AJMER VIDYUT VITRAN NIGAM LIMITED(AVVNL)",
+      "unit": null,
+      "printed": "AJMER VIDYUT VITRAN NIGAM LIMITED (AVVNL)",
+      "page": 1,
+      "region": {
+       "x": "0.1422",
+       "y": "0.0466",
+       "w": "0.7141",
+       "h": "0.0200"
+      },
+      "source": "ocr"
+     }
+    },
+    "consumer": {
+     "account_number": {
+      "value": "992492780193",
+      "unit": null,
+      "printed": "992492780193",
+      "page": 1,
+      "region": {
+       "x": "0.0820",
+       "y": "0.1130",
+       "w": "0.1109",
+       "h": "0.0087"
+      },
+      "source": "ocr"
+     }
+    },
+    "meter": {
+     "number": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    },
+    "connection": {
+     "tariff_category": {
+      "value": "HT-5",
+      "unit": null,
+      "printed": "HT-5",
+      "page": 1,
+      "region": {
+       "x": "0.0827",
+       "y": "0.1451",
+       "w": "0.0356",
+       "h": "0.0087"
+      },
+      "source": "ocr"
+     }
+    },
+    "period": {
+     "from": {
+      "value": "2025-04-01",
+      "unit": null,
+      "printed": "01-04-2025",
+      "page": 1,
+      "region": {
+       "x": "0.7251",
+       "y": "0.2093",
+       "w": "0.0847",
+       "h": "0.0086"
+      },
+      "source": "ocr"
+     },
+     "to": {
+      "value": "2025-04-30",
+      "unit": null,
+      "printed": "30-04-2025",
+      "page": 1,
+      "region": {
+       "x": "0.5107",
+       "y": "0.2093",
+       "w": "0.0848",
+       "h": "0.0086"
+      },
+      "source": "ocr"
+     },
+     "bill_date": {
+      "value": "2025-05-08",
+      "unit": null,
+      "printed": "08-05-2025",
+      "page": 1,
+      "region": {
+       "x": "0.7251",
+       "y": "0.1451",
+       "w": "0.0847",
+       "h": "0.0087"
+      },
+      "source": "ocr"
+     },
+     "bill_month": {
+      "value": "2025-04",
+      "unit": null,
+      "printed": "APR-2025",
+      "page": 1,
+      "region": {
+       "x": "0.7244",
+       "y": "0.1130",
+       "w": "0.0779",
+       "h": "0.0087"
+      },
+      "source": "ocr"
+     }
+    },
+    "readings": [
+     {
+      "register": "KWH",
+      "tod_slot": "Normal",
+      "current": {
+       "value": "56545.82",
+       "unit": null,
+       "printed": "56545.82",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "previous": {
+       "value": "56082.94",
+       "unit": null,
+       "printed": "56082.94",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "multiplying_factor": {
+       "value": "1000",
+       "unit": null,
+       "printed": "1000",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      }
+     },
+     {
+      "register": "KWH",
+      "tod_slot": "Morning Peak",
+      "current": {
+       "value": "28860.76",
+       "unit": null,
+       "printed": "28860.76",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "previous": {
+       "value": "28191.6",
+       "unit": null,
+       "printed": "28191.60",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "multiplying_factor": {
+       "value": "1000",
+       "unit": null,
+       "printed": "1000",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      }
+     },
+     {
+      "register": "KWH",
+      "tod_slot": "Evening Peak",
+      "current": {
+       "value": "38256.63",
+       "unit": null,
+       "printed": "38256.63",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "previous": {
+       "value": "37607.09",
+       "unit": null,
+       "printed": "37607.09",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "multiplying_factor": {
+       "value": "1000",
+       "unit": null,
+       "printed": "1000",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      }
+     },
+     {
+      "register": "KWH",
+      "tod_slot": "Off Peak",
+      "current": {
+       "value": "19132.33",
+       "unit": null,
+       "printed": "19132.33",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "previous": {
+       "value": "18436.06",
+       "unit": null,
+       "printed": "18436.06",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "multiplying_factor": {
+       "value": "1000",
+       "unit": null,
+       "printed": "1000",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      }
+     },
+     {
+      "register": "KWH",
+      "tod_slot": null,
+      "current": {
+       "value": "285861.14",
+       "unit": null,
+       "printed": "285861.14",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "previous": {
+       "value": "283383.29",
+       "unit": null,
+       "printed": "283383.29",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "multiplying_factor": {
+       "value": "1000",
+       "unit": null,
+       "printed": "1000",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      }
+     },
+     {
+      "register": "KVAH",
+      "tod_slot": "Normal",
+      "current": {
+       "value": "44071.62",
+       "unit": null,
+       "printed": "44071.62",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "previous": {
+       "value": "43576.56",
+       "unit": null,
+       "printed": "43576.56",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "multiplying_factor": {
+       "value": "1000",
+       "unit": null,
+       "printed": "1000",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      }
+     },
+     {
+      "register": "KVAH",
+      "tod_slot": "Morning Peak",
+      "current": {
+       "value": "12243.29",
+       "unit": null,
+       "printed": "12243.29",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "previous": {
+       "value": "11526.84",
+       "unit": null,
+       "printed": "11526.84",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "multiplying_factor": {
+       "value": "1000",
+       "unit": null,
+       "printed": "1000",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      }
+     },
+     {
+      "register": "KVAH",
+      "tod_slot": "Evening Peak",
+      "current": {
+       "value": "46403.3",
+       "unit": null,
+       "printed": "46403.30",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "previous": {
+       "value": "45723.86",
+       "unit": null,
+       "printed": "45723.86",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "multiplying_factor": {
+       "value": "1000",
+       "unit": null,
+       "printed": "1000",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      }
+     },
+     {
+      "register": "KVAH",
+      "tod_slot": "Off Peak",
+      "current": {
+       "value": "51087.39",
+       "unit": null,
+       "printed": "51087.39",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "previous": {
+       "value": "50318.03",
+       "unit": null,
+       "printed": "50318.03",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "multiplying_factor": {
+       "value": "1000",
+       "unit": null,
+       "printed": "1000",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      }
+     },
+     {
+      "register": "KVAH",
+      "tod_slot": null,
+      "current": {
+       "value": "646189.13",
+       "unit": null,
+       "printed": "646189.13",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "previous": {
+       "value": "643528.82",
+       "unit": null,
+       "printed": "643528.82",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      },
+      "multiplying_factor": {
+       "value": "1000",
+       "unit": null,
+       "printed": "1000",
+       "page": null,
+       "region": null,
+       "source": "ocr"
+      }
+     }
+    ],
+    "energy": {
+     "kwh": {
+      "value": "2477850",
+      "unit": "kWh",
+      "printed": "24,77,850.00",
+      "page": 1,
+      "region": {
+       "x": "0.0823",
+       "y": "0.4075",
+       "w": "0.8356",
+       "h": "0.0072"
+      },
+      "source": "ocr"
+     },
+     "kvah": {
+      "value": "2660310",
+      "unit": "kVAh",
+      "printed": "26,60,310.00",
+      "page": 1,
+      "region": {
+       "x": "0.0823",
+       "y": "0.4966",
+       "w": "0.8356",
+       "h": "0.0072"
+      },
+      "source": "ocr"
+     },
+     "tod": [
+      {
+       "slot": "Normal",
+       "kwh": {
+        "value": "462880",
+        "unit": null,
+        "printed": "4,62,880.00",
+        "page": null,
+        "region": null,
+        "source": "ocr"
+       }
+      },
+      {
+       "slot": "Morning Peak",
+       "kwh": {
+        "value": "669160",
+        "unit": null,
+        "printed": "6,69,160.00",
+        "page": null,
+        "region": null,
+        "source": "ocr"
+       }
+      },
+      {
+       "slot": "Evening Peak",
+       "kwh": {
+        "value": "649540",
+        "unit": null,
+        "printed": "6,49,540.00",
+        "page": null,
+        "region": null,
+        "source": "ocr"
+       }
+      },
+      {
+       "slot": "Off Peak",
+       "kwh": {
+        "value": "696270",
+        "unit": null,
+        "printed": "6,96,270.00",
+        "page": null,
+        "region": null,
+        "source": "ocr"
+       }
+      }
+     ],
+     "power_factor": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    },
+    "demand": {
+     "max_kva": {
+      "value": "5562.5",
+      "unit": "kVA",
+      "printed": "5562.50",
+      "page": 1,
+      "region": {
+       "x": "0.8765",
+       "y": "0.5145",
+       "w": "0.0414",
+       "h": "0.0060"
+      },
+      "source": "ocr"
+     },
+     "contract_kva": {
+      "value": "6250",
+      "unit": "kVA",
+      "printed": "6250",
+      "page": 1,
+      "region": {
+       "x": "0.0822",
+       "y": "0.2093",
+       "w": "0.0358",
+       "h": "0.0086"
+      },
+      "source": "ocr"
+     }
+    },
+    "net_metering": {
+     "export_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     },
+     "import_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    },
+    "charges": {
+     "energy": {
+      "value": "19420263",
+      "unit": "INR",
+      "printed": "1,94,20,263.00",
+      "page": null,
+      "region": null,
+      "source": "ocr"
+     },
+     "demand": {
+      "value": "1835625",
+      "unit": "INR",
+      "printed": "18,35,625.00",
+      "page": null,
+      "region": null,
+      "source": "ocr"
+     }
+    },
+    "totals": {
+     "net_payable": {
+      "value": "25230114.71",
+      "unit": "INR",
+      "printed": "2,52,30,114.71",
+      "page": 1,
+      "region": {
+       "x": "0.8403",
+       "y": "0.7910",
+       "w": "0.0763",
+       "h": "0.0073"
+      },
+      "source": "ocr"
+     }
+    }
+   },
+   "data": {
+    "schema_version": "2.0",
+    "bill_type": "electricity",
+    "discom": {
+     "name_as_printed": "AJMER VIDYUT VITRAN NIGAM LIMITED(AVVNL)",
+     "short_code": null,
+     "state": null,
+     "office": null
+    },
+    "consumer": {
+     "name": "PLACEHOLDER TEXTILE MILLS LTD",
+     "address": null,
+     "account_number": "992492780193",
+     "service_connection_number": null,
+     "gstin": null,
+     "pan": null
+    },
+    "connection": {
+     "tariff_code": "HT-5",
+     "tariff_category": null,
+     "supply_kv": null,
+     "metering_side": null,
+     "meter_number": null,
+     "contract_demand_kva": "6250",
+     "minimum_billable_kva": null,
+     "sanctioned_load": null,
+     "sanctioned_load_unit": null
+    },
+    "period": {
+     "bill_month": "2025-04",
+     "bill_number": null,
+     "bill_date": "2025-05-08",
+     "due_date": "2025-05-23",
+     "disconnection_date": null,
+     "reading_from": "2025-04-01",
+     "reading_to": "2025-04-30",
+     "billing_days": null,
+     "reading_type": null,
+     "bill_kind": null
+    },
+    "meters": [
+     {
+      "label": "kWh NORMAL",
+      "quantity": "kWh",
+      "tod_slot": "NORMAL",
+      "present": "56545.82",
+      "past": "56082.94",
+      "difference": "462.88",
+      "multiplying_factor": "1000",
+      "multiplying_factor_printed": null,
+      "gross_units": "462880",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kWh MORNING PEAK",
+      "quantity": "kWh",
+      "tod_slot": "MORNING PEAK",
+      "present": "28860.76",
+      "past": "28191.6",
+      "difference": "669.16",
+      "multiplying_factor": "1000",
+      "multiplying_factor_printed": null,
+      "gross_units": "669160",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kWh EVENING PEAK",
+      "quantity": "kWh",
+      "tod_slot": "EVENING PEAK",
+      "present": "38256.63",
+      "past": "37607.09",
+      "difference": "649.54",
+      "multiplying_factor": "1000",
+      "multiplying_factor_printed": null,
+      "gross_units": "649540",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kWh OFF PEAK",
+      "quantity": "kWh",
+      "tod_slot": "OFF PEAK",
+      "present": "19132.33",
+      "past": "18436.06",
+      "difference": "696.27",
+      "multiplying_factor": "1000",
+      "multiplying_factor_printed": null,
+      "gross_units": "696270",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kWh Total",
+      "quantity": "kWh",
+      "tod_slot": null,
+      "present": "285861.14",
+      "past": "283383.29",
+      "difference": "2477.85",
+      "multiplying_factor": "1000",
+      "multiplying_factor_printed": null,
+      "gross_units": "2477850",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kVAh NORMAL",
+      "quantity": "kVAh",
+      "tod_slot": "NORMAL",
+      "present": "44071.62",
+      "past": "43576.56",
+      "difference": "495.06",
+      "multiplying_factor": "1000",
+      "multiplying_factor_printed": null,
+      "gross_units": "495060",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kVAh MORNING PEAK",
+      "quantity": "kVAh",
+      "tod_slot": "MORNING PEAK",
+      "present": "12243.29",
+      "past": "11526.84",
+      "difference": "716.45",
+      "multiplying_factor": "1000",
+      "multiplying_factor_printed": null,
+      "gross_units": "716450",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kVAh EVENING PEAK",
+      "quantity": "kVAh",
+      "tod_slot": "EVENING PEAK",
+      "present": "46403.3",
+      "past": "45723.86",
+      "difference": "679.44",
+      "multiplying_factor": "1000",
+      "multiplying_factor_printed": null,
+      "gross_units": "679440",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kVAh OFF PEAK",
+      "quantity": "kVAh",
+      "tod_slot": "OFF PEAK",
+      "present": "51087.39",
+      "past": "50318.03",
+      "difference": "769.36",
+      "multiplying_factor": "1000",
+      "multiplying_factor_printed": null,
+      "gross_units": "769360",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     },
+     {
+      "label": "kVAh Total",
+      "quantity": "kVAh",
+      "tod_slot": null,
+      "present": "646189.13",
+      "past": "643528.82",
+      "difference": "2660.31",
+      "multiplying_factor": "1000",
+      "multiplying_factor_printed": null,
+      "gross_units": "2660310",
+      "open_access_units": null,
+      "net_units": null,
+      "page": null
+     }
+    ],
+    "demand": {
+     "recorded_kva": "5562.5",
+     "billing_kva": null
+    },
+    "energy": {
+     "billed_units": null,
+     "billed_unit": null,
+     "gross_kwh": "2477850",
+     "gross_kvah": "2660310",
+     "open_access_kwh": null,
+     "open_access_re_kwh": null,
+     "open_access_non_re_kwh": null,
+     "open_access_banked_kwh": null,
+     "open_access_unit": null,
+     "green_tariff_kwh": null,
+     "net_metering_import_kwh": null,
+     "net_metering_export_kwh": null,
+     "off_peak_kwh": null,
+     "power_factor": null,
+     "load_factor": null,
+     "tod": []
+    },
+    "gas": {
+     "customer_id": null,
+     "volume_scm": null,
+     "gcv_kcal_per_scm": null,
+     "energy_mmbtu": null,
+     "correction_factor": null,
+     "reading_previous": null,
+     "reading_current": null
+    },
+    "line_items": [
+     {
+      "index": 0,
+      "group": null,
+      "label": "RECORDED MD(KVA)",
+      "kind": "info",
+      "stage": "current",
+      "quantity": null,
+      "rate": null,
+      "rate_unit": null,
+      "unit": null,
+      "amount": "5562.5",
+      "tod_slot": null,
+      "code": "other",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 1,
+      "group": null,
+      "label": "BILLING DEMAND(KVA)",
+      "kind": "info",
+      "stage": "current",
+      "quantity": null,
+      "rate": null,
+      "rate_unit": null,
+      "unit": null,
+      "amount": "5562.5",
+      "tod_slot": null,
+      "code": "other",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 2,
+      "group": null,
+      "label": "ENERGY CHARGES",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "2660310",
+      "rate": "7.3",
+      "rate_unit": null,
+      "unit": "kVAh",
+      "amount": "19420263",
+      "tod_slot": null,
+      "code": "energy_charge",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 3,
+      "group": null,
+      "label": "FIXED CHARGES(ON BILLING DEMAND)",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "5562.5",
+      "rate": "330",
+      "rate_unit": null,
+      "unit": "kVA",
+      "amount": "1835625",
+      "tod_slot": null,
+      "code": "demand_charge",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 4,
+      "group": null,
+      "label": "TOD SURCHARGE(PEAK HOURS)",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "1395890",
+      "rate": "0.73",
+      "rate_unit": null,
+      "unit": "kVAh",
+      "amount": "1018999.7",
+      "tod_slot": null,
+      "code": "tod_surcharge",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 5,
+      "group": null,
+      "label": "TOD REBATE(OFF PEAK HOURS)",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "769360",
+      "rate": "-0.73",
+      "rate_unit": null,
+      "unit": "kVAh",
+      "amount": "-561632.8",
+      "tod_slot": null,
+      "code": "tod_rebate",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 6,
+      "group": null,
+      "label": "FUEL SURCHARGE",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "2660310",
+      "rate": "0.38",
+      "rate_unit": null,
+      "unit": "kVAh",
+      "amount": "1010917.8",
+      "tod_slot": null,
+      "code": "fppca",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 7,
+      "group": null,
+      "label": "ELECTRICITY DUTY",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "2660310",
+      "rate": "0.4",
+      "rate_unit": null,
+      "unit": "kVAh",
+      "amount": "1064124",
+      "tod_slot": null,
+      "code": "electricity_duty",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 8,
+      "group": null,
+      "label": "WATER CONSERVATION CESS",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "2660310",
+      "rate": "0.1",
+      "rate_unit": null,
+      "unit": "kVAh",
+      "amount": "266031",
+      "tod_slot": null,
+      "code": "cess",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 9,
+      "group": null,
+      "label": "URBAN CESS",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "2660310",
+      "rate": "0.15",
+      "rate_unit": null,
+      "unit": "kVAh",
+      "amount": "399046.5",
+      "tod_slot": null,
+      "code": "cess",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 10,
+      "group": null,
+      "label": "METER RENT",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "1",
+      "rate": "1500",
+      "rate_unit": null,
+      "unit": "month",
+      "amount": "1500",
+      "tod_slot": null,
+      "code": "meter_rent",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 11,
+      "group": null,
+      "label": "CURRENT CHARGES(A)",
+      "kind": "subtotal",
+      "stage": "current",
+      "quantity": null,
+      "rate": null,
+      "rate_unit": null,
+      "unit": null,
+      "amount": "24454874.2",
+      "tod_slot": null,
+      "code": "other",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 12,
+      "group": null,
+      "label": "ARREARS(B)",
+      "kind": "item",
+      "stage": "arrear",
+      "quantity": null,
+      "rate": null,
+      "rate_unit": null,
+      "unit": null,
+      "amount": "775240.51",
+      "tod_slot": null,
+      "code": "arrears",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 13,
+      "group": null,
+      "label": "NET PAYABLE(A+B)",
+      "kind": "subtotal",
+      "stage": "current",
+      "quantity": null,
+      "rate": null,
+      "rate_unit": null,
+      "unit": null,
+      "amount": "25230114.71",
+      "tod_slot": null,
+      "code": "other",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     }
+    ],
+    "totals": {
+     "current_charges": "24454874.2",
+     "arrears_total": "775240.51",
+     "adjustments_total": null,
+     "net_payable": "25230114.71",
+     "due_date_rebate": null,
+     "payable_after_due": null
+    },
+    "payments": {
+     "previous_bill_amount": null,
+     "last_payment_amount": null,
+     "last_payment_date": null
+    },
+    "history": [],
+    "extra": [],
+    "extraction_notes": []
+   },
+   "checks": [
+    {
+     "id": "G01",
+     "description": "utility name, account number, bill month and net payable are present",
+     "status": "pass",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": [
+      "discom.name_as_printed",
+      "utility.name",
+      "consumer.account_number",
+      "period.bill_month",
+      "totals.net_payable"
+     ]
+    },
+    {
+     "id": "G02",
+     "description": "present - past = difference, per meter row",
+     "status": "pass",
+     "expected": "2660.31",
+     "actual": "2660.31",
+     "tolerance": "0.011",
+     "paths": [
+      "meters[0].present",
+      "meters[0].past",
+      "meters[0].difference",
+      "meters[1].present",
+      "meters[1].past",
+      "meters[1].difference",
+      "meters[2].present",
+      "meters[2].past",
+      "meters[2].difference",
+      "meters[3].present",
+      "meters[3].past",
+      "meters[3].difference",
+      "meters[4].present",
+      "meters[4].past",
+      "meters[4].difference",
+      "meters[5].present",
+      "meters[5].past",
+      "meters[5].difference",
+      "meters[6].present",
+      "meters[6].past",
+      "meters[6].difference",
+      "meters[7].present",
+      "meters[7].past",
+      "meters[7].difference",
+      "meters[8].present",
+      "meters[8].past",
+      "meters[8].difference",
+      "meters[9].present",
+      "meters[9].past",
+      "meters[9].difference"
+     ]
+    },
+    {
+     "id": "G03",
+     "description": "difference x MF = gross units, per meter row; the total register also equals the energy field",
+     "status": "pass",
+     "expected": "2660310",
+     "actual": "2660310",
+     "tolerance": "6",
+     "paths": [
+      "meters[0].difference",
+      "meters[0].multiplying_factor",
+      "meters[0].gross_units",
+      "meters[1].difference",
+      "meters[1].multiplying_factor",
+      "meters[1].gross_units",
+      "meters[2].difference",
+      "meters[2].multiplying_factor",
+      "meters[2].gross_units",
+      "meters[3].difference",
+      "meters[3].multiplying_factor",
+      "meters[3].gross_units",
+      "meters[4].difference",
+      "meters[4].multiplying_factor",
+      "meters[4].gross_units",
+      "energy.gross_kwh",
+      "energy.kwh",
+      "meters[5].difference",
+      "meters[5].multiplying_factor",
+      "meters[5].gross_units",
+      "meters[6].difference",
+      "meters[6].multiplying_factor",
+      "meters[6].gross_units",
+      "meters[7].difference",
+      "meters[7].multiplying_factor",
+      "meters[7].gross_units",
+      "meters[8].difference",
+      "meters[8].multiplying_factor",
+      "meters[8].gross_units",
+      "meters[9].difference",
+      "meters[9].multiplying_factor",
+      "meters[9].gross_units",
+      "energy.gross_kvah",
+      "energy.kvah"
+     ]
+    },
+    {
+     "id": "G04",
+     "description": "gross units - open access units = net units, per meter row",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G05",
+     "description": "|quantity x rate| = |amount| for every line that prints both (a % rate divided by 100)",
+     "status": "pass",
+     "expected": "1500",
+     "actual": "1500",
+     "tolerance": "1",
+     "paths": [
+      "line_items[2].quantity",
+      "line_items[2].rate",
+      "line_items[2].amount",
+      "line_items[3].quantity",
+      "line_items[3].rate",
+      "line_items[3].amount",
+      "line_items[4].quantity",
+      "line_items[4].rate",
+      "line_items[4].amount",
+      "line_items[5].quantity",
+      "line_items[5].rate",
+      "line_items[5].amount",
+      "line_items[6].quantity",
+      "line_items[6].rate",
+      "line_items[6].amount",
+      "line_items[7].quantity",
+      "line_items[7].rate",
+      "line_items[7].amount",
+      "line_items[8].quantity",
+      "line_items[8].rate",
+      "line_items[8].amount",
+      "line_items[9].quantity",
+      "line_items[9].rate",
+      "line_items[9].amount",
+      "line_items[10].quantity",
+      "line_items[10].rate",
+      "line_items[10].amount"
+     ]
+    },
+    {
+     "id": "G06",
+     "description": "items of a group = the group's printed subtotal",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G07",
+     "description": "current-stage items = totals.current_charges",
+     "status": "pass",
+     "expected": "24454874.2",
+     "actual": "24454874.2",
+     "tolerance": "1",
+     "paths": [
+      "line_items[2].amount",
+      "line_items[3].amount",
+      "line_items[4].amount",
+      "line_items[5].amount",
+      "line_items[6].amount",
+      "line_items[7].amount",
+      "line_items[8].amount",
+      "line_items[9].amount",
+      "line_items[10].amount",
+      "totals.current_charges"
+     ]
+    },
+    {
+     "id": "G08",
+     "description": "arrear-stage items = totals.arrears_total",
+     "status": "pass",
+     "expected": "775240.51",
+     "actual": "775240.51",
+     "tolerance": "1",
+     "paths": [
+      "line_items[12].amount",
+      "totals.arrears_total",
+      "totals.arrears"
+     ]
+    },
+    {
+     "id": "G09",
+     "description": "current charges + arrears + adjustments - due-date rebate = net payable",
+     "status": "pass",
+     "expected": "25230114.71",
+     "actual": "25230114.71",
+     "tolerance": "1",
+     "paths": [
+      "totals.current_charges",
+      "totals.arrears_total",
+      "totals.arrears",
+      "totals.net_payable"
+     ]
+    },
+    {
+     "id": "G10",
+     "description": "billing demand >= minimum billable and = max(recorded MD, minimum billable)",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G11",
+     "description": "power factor = gross kWh / gross kVAh",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G12",
+     "description": "due date after bill date; billing days match the reading period",
+     "status": "pass",
+     "expected": null,
+     "actual": null,
+     "tolerance": "1",
+     "paths": [
+      "period.bill_date",
+      "period.due_date"
+     ]
+    },
+    {
+     "id": "G13",
+     "description": "billed units within 0.33 to 3 times the history median",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G14",
+     "description": "the model wrote extraction notes",
+     "status": "pass",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": [
+      "extraction_notes"
+     ]
+    },
+    {
+     "id": "G15",
+     "description": "TOD slot units add up to the total register of the same quantity",
+     "status": "pass",
+     "expected": "2660310",
+     "actual": "2660310",
+     "tolerance": "24",
+     "paths": [
+      "meters[0].gross_units",
+      "meters[1].gross_units",
+      "meters[2].gross_units",
+      "meters[3].gross_units",
+      "meters[4].gross_units",
+      "energy.gross_kwh",
+      "energy.kwh",
+      "meters[5].gross_units",
+      "meters[6].gross_units",
+      "meters[7].gross_units",
+      "meters[8].gross_units",
+      "meters[9].gross_units",
+      "energy.gross_kvah",
+      "energy.kvah"
+     ]
+    },
+    {
+     "id": "G16",
+     "description": "gross kVAh >= gross kWh (both printed, no net metering)",
+     "status": "pass",
+     "expected": "2477850",
+     "actual": "2660310",
+     "tolerance": "6",
+     "paths": [
+      "energy.gross_kwh",
+      "energy.kwh",
+      "energy.gross_kvah",
+      "energy.kvah"
+     ]
+    },
+    {
+     "id": "G17",
+     "description": "net metering: import - export = net units billed",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G18",
+     "description": "bill month in the reading period, or within bill_month_offset months after it",
+     "status": "pass",
+     "expected": "0..0 months after the period",
+     "actual": "2025-04",
+     "tolerance": null,
+     "paths": [
+      "period.bill_month",
+      "period.reading_from",
+      "period.from",
+      "period.reading_to",
+      "period.to"
+     ]
+    },
+    {
+     "id": "G19",
+     "description": "reading period start is before its end",
+     "status": "pass",
+     "expected": "2025-04-30",
+     "actual": "2025-04-01",
+     "tolerance": null,
+     "paths": [
+      "period.reading_from",
+      "period.from",
+      "period.reading_to",
+      "period.to"
+     ]
+    },
+    {
+     "id": "G20",
+     "description": "a negative amount sits on a credit, rebate, arrear or adjustment line, or a line the layout marks signed",
+     "status": "pass",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": [
+      "line_items[0].amount",
+      "line_items[1].amount",
+      "line_items[2].amount",
+      "line_items[3].amount",
+      "line_items[4].amount",
+      "line_items[5].amount",
+      "line_items[6].amount",
+      "line_items[7].amount",
+      "line_items[8].amount",
+      "line_items[9].amount",
+      "line_items[10].amount",
+      "line_items[11].amount",
+      "line_items[12].amount",
+      "line_items[13].amount"
+     ]
+    },
+    {
+     "id": "G21",
+     "description": "lines that itemise another printed line add up to it (a calculation or details table against its summary line)",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "G22",
+     "description": "total consumption - open-access units set off = units billed by the discom (grid units)",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "T01",
+     "description": "each printed energy and TOD rate equals the version's param",
+     "status": "pass",
+     "expected": "-0.73",
+     "actual": "-0.73",
+     "tolerance": "0.0001",
+     "paths": [
+      "line_items[2].rate",
+      "line_items[4].rate",
+      "line_items[5].rate"
+     ]
+    },
+    {
+     "id": "T02",
+     "description": "demand charge = billing demand x the version's demand rate",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "T03",
+     "description": "electricity duty and cess rates equal the version's params",
+     "status": "pass",
+     "expected": "0.15",
+     "actual": "0.15",
+     "tolerance": "0.0001",
+     "paths": [
+      "line_items[7].rate",
+      "line_items[8].rate",
+      "line_items[9].rate"
+     ]
+    },
+    {
+     "id": "T04",
+     "description": "the PF incentive or penalty falls in the version's band for the printed power factor",
+     "status": "skip",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": []
+    },
+    {
+     "id": "T05",
+     "description": "the fixed or minimum charge equals the version's rate or amount",
+     "status": "pass",
+     "expected": "330",
+     "actual": "330",
+     "tolerance": "0.0001",
+     "paths": [
+      "line_items[3].rate"
+     ]
+    },
+    {
+     "id": "R:avvnl.electricity_duty",
+     "description": "electricity duty = ED rate x total kVAh",
+     "status": "pass",
+     "expected": "1064124",
+     "actual": "1064124",
+     "tolerance": "1",
+     "paths": [
+      "line_items[7].amount",
+      "meters[9].gross_units"
+     ]
+    },
+    {
+     "id": "R:avvnl.water_cess",
+     "description": "water conservation cess = rate x total kVAh",
+     "status": "pass",
+     "expected": "266031",
+     "actual": "266031",
+     "tolerance": "1",
+     "paths": [
+      "line_items[8].amount",
+      "meters[9].gross_units"
+     ]
+    },
+    {
+     "id": "R:avvnl.urban_cess",
+     "description": "urban cess = rate x total kVAh",
+     "status": "pass",
+     "expected": "399046.5",
+     "actual": "399046.5",
+     "tolerance": "1",
+     "paths": [
+      "line_items[9].amount",
+      "meters[9].gross_units"
+     ]
+    },
+    {
+     "id": "R:avvnl.tod_surcharge",
+     "description": "TOD surcharge = rate x peak-hour kVAh (morning and evening peak slots)",
+     "status": "pass",
+     "expected": "1018999.7",
+     "actual": "1018999.7",
+     "tolerance": "1",
+     "paths": [
+      "line_items[4].amount",
+      "meters[6].gross_units",
+      "meters[7].gross_units"
+     ]
+    },
+    {
+     "id": "R:avvnl.meter_rent",
+     "description": "meter rent = the fixed monthly rent",
+     "status": "pass",
+     "expected": "1500",
+     "actual": "1500",
+     "tolerance": "1",
+     "paths": [
+      "line_items[10].amount"
+     ]
+    }
+   ],
+   "passed": false,
+   "unread_reason": "model_not_allowed",
+   "notes": []
+  }
+ ],
+ "usage": [],
+ "seconds": "0.169"
+}

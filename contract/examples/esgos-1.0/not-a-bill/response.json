@@ -1,0 +1,207 @@
+{
+ "contract_version": "1.0",
+ "engine_version": "0.2.1",
+ "schema_version": "2.0",
+ "file": {
+  "sha256": "9c8ff001268e5b816fb81b6cfafb0233765008336e4d73ca21521168c7f5dc45",
+  "pages": 1,
+  "media_type": "application/pdf"
+ },
+ "bills": [
+  {
+   "index": 0,
+   "pages": [
+    1
+   ],
+   "bill_type": null,
+   "utility": {
+    "id": null,
+    "name_as_printed": null,
+    "state": null
+   },
+   "profile": {
+    "id": null,
+    "version": null,
+    "status": "none"
+   },
+   "route": "none",
+   "fields": {
+    "utility": {
+     "name": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    },
+    "consumer": {
+     "account_number": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    },
+    "meter": {
+     "number": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    },
+    "connection": {
+     "tariff_category": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    },
+    "period": {
+     "from": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     },
+     "to": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     },
+     "bill_date": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     },
+     "bill_month": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    },
+    "readings": [],
+    "energy": {
+     "kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     },
+     "kvah": {
+      "value": null,
+      "unit": "kVAh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     },
+     "tod": [],
+     "power_factor": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    },
+    "demand": {
+     "max_kva": {
+      "value": null,
+      "unit": "kVA",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     },
+     "contract_kva": {
+      "value": null,
+      "unit": "kVA",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    },
+    "net_metering": {
+     "export_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     },
+     "import_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    },
+    "charges": {
+     "energy": {
+      "value": null,
+      "unit": "INR",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     },
+     "demand": {
+      "value": null,
+      "unit": "INR",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    },
+    "totals": {
+     "net_payable": {
+      "value": null,
+      "unit": "INR",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null
+     }
+    }
+   },
+   "data": null,
+   "checks": [],
+   "passed": false,
+   "unread_reason": "not_a_bill",
+   "notes": [
+    "document_type:not_a_bill"
+   ]
+  }
+ ],
+ "usage": [],
+ "seconds": "0.054"
+}

@@ -1,0 +1,11 @@
+# Punjab State Power Corporation Limited (Punjab). Drafted in Stage 3.2 from public knowledge of the name; no version
+# yet: bills are read by the generic ladder (profile.status none) until the team's
+# confirmed sample bills exist and a version is drafted from them (build prompt section 7).
+id: pspcl
+name: Punjab State Power Corporation Limited
+state: Punjab
+bill_type: electricity
+match:
+  - "\\bPSPCL\\b"
+  - "Punjab State Power Corporation"
+  - "ਪੰਜਾਬ ਸਟੇਟ ਪਾਵਰ ਕਾਰਪੋਰੇਸ਼ਨ"

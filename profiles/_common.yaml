@@ -1,0 +1,226 @@
+# Shared by every profile (build prompt 5.7, 5.3, 7). Versioned: a change is a new
+# `version` and a note in docs/decisions.md.
+version: 1
+
+# Label synonyms for the label rule (5.3): for each guaranteed field, the printed labels
+# (case-insensitive, regex) whose value sits right of or below them. A profile version may
+# add to these in its own `labels` key. Order matters only for reporting.
+labels:
+  utility.name:
+    - "^(ajmer|jaipur|jodhpur|paschimanchal|madhyanchal|dakshinanchal|purvanchal) vidyut vitran nigam"
+    - "vidyut vitran nigam"
+    - "electricity (board|company|distribution)"
+  consumer.account_number:
+    - "^(KNO|K ?No\\.?|Consumer (No\\.?|Number|ID)|Account (No\\.?|Number|ID)|AC-?No\\.?|A/?C ?No\\.?|CA (No\\.?|Number)|Service (No\\.?|Number)|Connection (No\\.?|ID))$"
+  consumer.name:
+    - "^(Name|Consumer Name|Name & Address of Consumer|Name of Consumer|(Consumer )?Name ?& ?Address\\.?)$"
+  meter.number:
+    - "^(Meter-?No\\.?|Meter (No|Number|Sl\\. ?No))$"
+  connection.tariff_category:
+    - "^(Tariff (Code|Cd|Category|Type)|Category|Tariff)$"
+  tariff.category:
+    - "^(Tariff (Code|Cd|Category|Type)|Category|Tariff)$"
+  period.from:
+    - "^(Reading Date \\(Past\\)|Previous Reading Date|Period From|From Date|Reading Period|Supply From|Period Start|Billing From)$"
+  period.to:
+    - "^(Reading Date \\(Present\\)|Present Reading Date|Current Reading Date|Period To|To Date|Supply To|Period End|Billing To)$"
+  period.bill_date:
+    - "^(Bill Date|Bill Issue Date|Date of Bill|Issue Date)$"
+  period.due_date:
+    - "^(Due ?Date|Due Date of Payment|Pay By|Last Date of Payment)$"
+  period.bill_month:
+    - "^(Bill Month|Billing Month|Month|Bill Period|Billing Period)$"
+    - "^((Bill for the )?Supply of Electrical Energy )?for the Month of$"
+  energy.kwh:
+    - "^(Total Units|Units Consumed|Total KWH|KWH TOTAL|Consumption \\(KWH\\)|Billed Units|Net Units)$"
+  energy.kvah:
+    - "^(Total KVAH|KVAH TOTAL|Consumption \\(KVAH\\)|Billed KVAH|KVAH Units)$"
+  energy.billed_units:
+    - "^(Net Billed Units|Billed Units|Units Billed|Total Billed Units|Units billed by [A-Z]+)$"
+  demand.max_kva:
+    - "^(Recorded MD \\(KVA\\)|Recorded MD|Maximum Demand|MD \\(KVA\\)|Max Demand|Highest Recorded Demand)$"
+  demand.contract_kva:
+    - "^(Contract Demand \\(KVA\\)|Contracted Demand \\(KVA\\)|Contract Demand|CD \\(KVA\\)|Sanctioned Load \\(KVA\\)|Cont\\.? ?Demand( \\(KVA\\))?|Sanction(ed)? Load)$"
+  energy.power_factor:
+    - "^(Power Factor|PF|Avg PF|Average PF|Av\\.? ?P\\.? ?F\\.?)$"
+  charges.energy:
+    - "^(Energy Charges?)$"
+  charges.demand:
+    - "^(Demand Charges?|Fixed Charges? \\(on Billing Demand\\)|Fixed Charges?)$"
+  totals.current_charges:
+    - "^(Current Charges( \\(A\\))?|CURRENT DUES|Current Bill Amount|Current Month Charges)$"
+  totals.arrears:
+    - "^(Arrears( \\(B\\))?|ARREARS|Previous Dues|Outstanding)$"
+  totals.net_payable:
+    - "^(Net Payable( \\(A\\+B\\))?|NET PAYABLE|Net Amount Payable|Total Amount Payable|Amount Payable|Payable by Due Date)$"
+    - "^(Net Payable Amount on or before Due Date|Amount Payable before Due Date( \\(Rebate@ ?\\d+(\\.\\d+)? ?%\\))?)$"
+    - "^(Payable (before|by|within) Due ?Date( Amount)?|DueDateAmount)( ?\\(?Rs\\.?\\)?)?$"
+  totals.due_date_rebate:
+    - "^(Due Date Rebate|Rebate for Payment by Due Date|Rebate if Paid by Due Date|Prompt Payment Rebate( Amount)?)( \\((Rs\\.?|₹|INR)? ?\\))?$"
+  # gas
+  consumer.customer_id:
+    - "^(Customer (ID|No|Number|Code)|Consumer (ID|No)|BP (No|Number)|CA (No|Number))$"
+  readings.previous:
+    - "^(Previous Reading|Prev\\.? Reading|Opening Reading|Meter Index|Meter Reading)$"
+  readings.current:
+    - "^(Present Reading|Current Reading|Closing Reading|Meter Index|Meter Reading)$"
+  volume.scm:
+    - "^(Volume \\(SCM\\)|SCM Consumed|Consumption \\(SCM\\)|Gas Consumed \\(SCM\\)|Quantity \\(SCM\\))$"
+  gas.gcv_kcal_per_scm:
+    - "^((Avg\\.? |Average )?GCV|(Avg\\.? |Average )?GCV \\(kcal/SCM\\)|Gross Calorific Value)$"
+  energy.mmbtu:
+    - "^(Energy \\(MMBtu\\)|Quantity \\(MMBtu\\)|Energy Consumed \\(MMBtu\\)|MMBtu)$"
+  totals.amount:
+    - "^(Total Amount|Net Amount|Amount Payable|Net Payable|Total Payable|Grand Total|Invoice Total|Total Invoice (Value|Amount)|Total Amount Payable)$"
+
+# The element catalogue (5.7). `codes` is the closed list; `label_map` maps a regex on
+# "<group> :: <label>" (case-insensitive search) to a code, first match wins. A line no
+# pattern matches is `other`.
+codes:
+  - energy_charge
+  - demand_charge
+  - fixed_charge
+  - excess_demand_penalty
+  - minimum_charge_difference
+  - fppca
+  - electricity_duty
+  - cess
+  - tod_rebate
+  - tod_surcharge
+  - pf_incentive
+  - pf_penalty
+  - load_factor_rebate
+  - voltage_rebate
+  - prompt_payment_rebate
+  - digital_payment_rebate
+  - other_rebate
+  - subsidy
+  - regulatory_surcharge
+  - cross_subsidy_surcharge
+  - additional_surcharge
+  - wheeling_charge
+  - transmission_charge
+  - open_access_banking
+  - green_tariff_premium
+  - net_metering_credit
+  - meter_rent
+  - transformer_rent
+  - late_payment_surcharge
+  - arrears
+  - security_deposit_interest
+  - tds
+  - tcs
+  - rounding
+  - gas_charge
+  - transport
+  - vat
+  - other
+label_map:
+  - {pattern: "tod (surcharge|charge)|peak (hour )?surcharge", code: tod_surcharge}
+  - {pattern: "tod rebate|off[- ]peak rebate", code: tod_rebate}
+  - {pattern: "energy charge|units? charge|consumption charge", code: energy_charge}
+  - {pattern: "gas price|gas charge|commodity charge", code: gas_charge}
+  - {pattern: "demand charge|fixed charge|fixed/demand", code: demand_charge}
+  - {pattern: "excess demand|penalty for exceeding", code: excess_demand_penalty}
+  - {pattern: "minimum charge", code: minimum_charge_difference}
+  - {pattern: "fppca|fppa|fuel (and power purchase )?(cost )?(adjustment|surcharge)|fuel surcharge|fac\\b|fsa\\b|vca\\b", code: fppca}
+  - {pattern: "electricity duty|elec\\.? duty|\\bed\\b", code: electricity_duty}
+  - {pattern: "cess", code: cess}
+  - {pattern: "p\\.?f\\.? (incentive|rebate)|power factor (incentive|rebate)", code: pf_incentive}
+  - {pattern: "p\\.?f\\.? (penalty|surcharge)|power factor (penalty|surcharge)", code: pf_penalty}
+  - {pattern: "load factor (rebate|incentive)", code: load_factor_rebate}
+  - {pattern: "voltage rebate|hv rebate", code: voltage_rebate}
+  - {pattern: "prompt payment|timely payment|early payment", code: prompt_payment_rebate}
+  - {pattern: "digital payment|online payment rebate", code: digital_payment_rebate}
+  - {pattern: "rebate", code: other_rebate}
+  - {pattern: "subsid", code: subsidy}
+  - {pattern: "regulatory (surcharge|asset)", code: regulatory_surcharge}
+  - {pattern: "cross[- ]subsidy", code: cross_subsidy_surcharge}
+  - {pattern: "additional surcharge", code: additional_surcharge}
+  - {pattern: "wheeling", code: wheeling_charge}
+  - {pattern: "transmission", code: transmission_charge}
+  - {pattern: "banking", code: open_access_banking}
+  - {pattern: "green (tariff|energy|power)", code: green_tariff_premium}
+  - {pattern: "net metering|export credit|solar credit", code: net_metering_credit}
+  - {pattern: "meter rent|meter charge|metering charge", code: meter_rent}
+  - {pattern: "transformer rent", code: transformer_rent}
+  - {pattern: "late payment|lps\\b|delayed payment|interest on arrear", code: late_payment_surcharge}
+  - {pattern: "arrear|previous dues|outstanding", code: arrears}
+  - {pattern: "security deposit|interest on sd", code: security_deposit_interest}
+  - {pattern: "\\btds\\b", code: tds}
+  - {pattern: "\\btcs\\b", code: tcs}
+  - {pattern: "round(ing|ed)? ?off|rounding", code: rounding}
+  - {pattern: "transport|pipeline tariff|network tariff", code: transport}
+  - {pattern: "\\bvat\\b|\\bgst\\b|tax @", code: vat}
+
+# The default field map (Developer Guide section 5): how the contract's guaranteed fields
+# are produced from the core schema. A version overrides entries under `field_map`.
+field_map:
+  utility.name: discom.name_as_printed
+  consumer.account_number: consumer.account_number
+  consumer.name: consumer.name
+  meter.number: connection.meter_number
+  connection.tariff_category: connection.tariff_code
+  tariff.category: connection.tariff_code
+  period.from: period.reading_from
+  period.to: period.reading_to
+  period.bill_date: period.bill_date
+  period.due_date: period.due_date
+  period.bill_month: period.bill_month
+  energy.kwh: energy.gross_kwh
+  energy.kvah: energy.gross_kvah
+  energy.power_factor: energy.power_factor
+  energy.billed_units: energy.billed_units
+  open_access.re_kwh: energy.open_access_re_kwh
+  open_access.non_re_kwh: energy.open_access_non_re_kwh
+  open_access.banked_kwh: energy.open_access_banked_kwh
+  green_tariff.kwh: energy.green_tariff_kwh
+  net_metering.import_kwh: energy.net_metering_import_kwh
+  net_metering.export_kwh: energy.net_metering_export_kwh
+  demand.max_kva: demand.recorded_kva
+  demand.contract_kva: connection.contract_demand_kva
+  charges.energy: line_items[code=energy_charge].amount
+  charges.demand: line_items[code=demand_charge].amount
+  totals.current_charges: totals.current_charges
+  totals.arrears: totals.arrears_total
+  totals.net_payable: totals.net_payable
+  totals.due_date_rebate: totals.due_date_rebate
+  consumer.customer_id: gas.customer_id
+  readings.previous: gas.reading_previous
+  readings.current: gas.reading_current
+  volume.scm: gas.volume_scm
+  gas.gcv_kcal_per_scm: gas.gcv_kcal_per_scm
+  energy.mmbtu: gas.energy_mmbtu
+  totals.amount: totals.net_payable
+
+# Words the document-type gate (5.0) looks for in the page's words, per type. A page's
+# type is the one with the highest weighted score; `min_score` is the floor below which
+# the page is `type_unclear`.
+document_signals:
+  min_score: 3
+  electricity_bill:
+    - {pattern: "\\bkwh\\b|\\bkvah\\b|\\bkva\\b", weight: 3}
+    - {pattern: "vidyut|vitran|electricity (bill|board|company|distribution|supply)|bijli|power distribution", weight: 2}
+    - {pattern: "meter reading|present reading|past reading|previous reading", weight: 1}
+    - {pattern: "contract demand|recorded md|maximum demand|billing demand|billable demand", weight: 2}
+    - {pattern: "units consumed|energy charge|electricity duty|fppca|\\btod\\b", weight: 1}
+  gas_bill:
+    - {pattern: "\\bscm\\b|\\bmmbtu\\b|kcal/scm|\\bgcv\\b", weight: 3}
+    - {pattern: "natural gas|\\bpng\\b|\\bcng\\b|gas (bill|supply|price|charge|sales|consumed)|gas (limited|ltd|corporation|grid)", weight: 2}
+    - {pattern: "pipeline|calorific", weight: 1}
+  water_bill:
+    - {pattern: "kilolit(re|er)s?|\\bkl\\b", weight: 2}
+    - {pattern: "water (bill|supply|charge|board|works)|jal board|jal nigam|sewerage", weight: 3}
+  telecom_bill:
+    - {pattern: "broadband|mobile|telecom|postpaid|data usage|\\bgb\\b|call charges", weight: 3}
+    - {pattern: "airtel|jio|bsnl|vodafone|\\bvi\\b", weight: 2}
+  other_invoice:
+    - {pattern: "tax invoice|proforma invoice|invoice total", weight: 3}
+    - {pattern: "invoice no|invoice number|invoice date", weight: 1}
+    - {pattern: "\\bhsn\\b|\\bigst\\b|\\bcgst\\b|\\bsgst\\b|place of supply", weight: 2}
+    - {pattern: "quotation|purchase order|challan", weight: 1}
+  not_a_bill:
+    - {pattern: "payment receipt|received with thanks|cash receipt|receipt no", weight: 3}
+    - {pattern: "receipt", weight: 1}
+    - {pattern: "dear (sir|madam)", weight: 2}
+    - {pattern: "yours (faithfully|sincerely|truly)|with regards|kind regards", weight: 2}

@@ -1,0 +1,82 @@
+# The billx engine as esgOS runs it (build prompt 5.0, Stage 2.5; developer guide section 12).
+#
+# One service, `bill-engine`, from the image in the GitLab registry (or a local build), on the
+# internal network, port 8080, bearer token from BILLX_TOKEN. Values come from a `.env` file
+# beside this compose file (compose reads it for the ${...} below); nothing is written here.
+#
+#   cp ../.env.example .env     # then set BILLX_TOKEN (a long random string; the only required value)
+#   docker compose up -d        # from this folder; `docker compose config` shows the resolved file
+#
+# How esgOS wires it (contract 1.0, section 3): esgOS's own compose file includes this service
+# on the same network and sets, for its app,
+#     BILL_ENGINE_URL=http://bill-engine:8080      the service name resolves on the compose network
+#     BILL_ENGINE_TOKEN=<the same value as BILLX_TOKEN here>   held in Secret Manager in production
+# esgOS polls GET /v1/jobs/{job_id} every 5 seconds for at most 10 minutes, and calls DELETE once
+# it has stored the result. The engine calls nothing outside its container except its configured
+# model provider, and only when the request allows it (allow_cloud_model). Memory: each release
+# states the figure measured with 4 jobs at once (tools/image/measure_memory.sh); mem_limit below
+# is the ceiling the release notes assume.
+
+name: billx
+
+services:
+  bill-engine:
+    # The release image; BILLX_IMAGE overrides it (a commit tag, or `billx:local` from a build).
+    image: ${BILLX_IMAGE:-registry.gitlab.com/icac1/ocr-bill-extraction/billx:latest}
+    # `docker compose build` rebuilds from the repository when the image is not wanted from the registry.
+    build:
+      context: ..
+      dockerfile: docker/engine.Dockerfile
+    container_name: bill-engine
+    restart: unless-stopped
+    environment:
+      # The bearer token every request must carry (contract 1.0 section 3). No default on purpose.
+      BILLX_TOKEN: ${BILLX_TOKEN:?set BILLX_TOKEN in .env}
+      # esgos-1.0 serves contract 1.0 exactly; esgos-1.1 (the default) adds 1.1's optional fields.
+      BILLX_API_MODE: ${BILLX_API_MODE:-esgos-1.1}
+      # The one writable path: the SQLite job store, a folder per job, the OCR word cache.
+      BILLX_DATA_DIR: /data
+      # Jobs read at once (the contract asks for at least 4) and the queue beyond which 429 is answered.
+      BILLX_MAX_JOBS: ${BILLX_MAX_JOBS:-2}
+      BILLX_QUEUE_LIMIT: ${BILLX_QUEUE_LIMIT:-50}
+      # Threads one OCR engine may use; two engines on one machine thrash each other above this.
+      BILLX_OCR_THREADS: ${BILLX_OCR_THREADS:-4}
+      # Model keys, only when the product allows cloud reading; empty means not configured.
+      BILLX_OPENAI_API_KEY: ${BILLX_OPENAI_API_KEY:-}
+      BILLX_ANTHROPIC_API_KEY: ${BILLX_ANTHROPIC_API_KEY:-}
+      # The `docling` reader: Docling's layout and tables from the docling service below (an
+      # empty URL leaves the reader out). LlamaParse's key, for the `llamaparse` reader.
+      BILLX_DOCLING_URL: ${BILLX_DOCLING_URL:-}
+      LLAMA_CLOUD_API_KEY: ${LLAMA_CLOUD_API_KEY:-}
+    ports:
+      # Published on the loopback only by default; esgOS reaches the service by name on the network.
+      - "${BILLX_BIND:-127.0.0.1}:${BILLX_PORT:-8080}:8080"
+    volumes:
+      # Bills, page images and results live here for at most 24 hours. The container runs as uid
+      # 10001, so on a Linux host the folder must be writable by it (`chown 10001:10001 data`).
+      - ./data:/data
+    # The root filesystem is read-only (developer guide section 12); only /data and a tmpfs /tmp
+    # take writes. The OCR models are inside the image and need no download.
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m
+    # The memory ceiling the release notes assume for 4 jobs at once; measured per release.
+    mem_limit: 2g
+    pids_limit: 512
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    # The image's own HEALTHCHECK calls GET /v1/health with the token; `docker compose ps` shows it.
+
+  # Docling (docling-serve, CPU image) for the `docling` reader; started with
+  # `docker compose --profile readers up -d` and wired with BILLX_DOCLING_URL=http://docling:5001.
+  # It reads the file the engine sends it and calls nothing outside the network once its models
+  # are in the image.
+  docling:
+    profiles: [readers]
+    image: ${DOCLING_IMAGE:-quay.io/docling-project/docling-serve-cpu:v1.38.2}
+    restart: unless-stopped
+    environment:
+      DOCLING_SERVE_MAX_SYNC_WAIT: "900"
+      DOCLING_SERVE_ENG_LOC_NUM_WORKERS: "1"
+    mem_limit: 4g

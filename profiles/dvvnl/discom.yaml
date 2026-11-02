@@ -1,0 +1,15 @@
+# Dakshinanchal Vidyut Vitran Nigam Limited (Uttar Pradesh). Drafted in Stage 3.2 from public knowledge of the name; no version
+# yet: bills are read by the generic ladder (profile.status none) until the team's
+# confirmed sample bills exist and a version is drafted from them (build prompt section 7).
+id: dvvnl
+name: Dakshinanchal Vidyut Vitran Nigam Limited
+state: Uttar Pradesh
+bill_type: electricity
+extends: pvvnl  # a sister discom on the same billing system
+match:
+  - "\\bDVVNL\\b"
+  - "Dakshinanchal Vidyut Vitran Nigam"
+  - "दक्षिणांचल विद्युत वितरण निगम"
+  - "\\bDakshinanchal\\b"
+  - "दक्षिणांचल"
+  - "(?<![A-Za-z])D\\.?V\\.?V\\.?N\\.?L(?![A-Za-z])"

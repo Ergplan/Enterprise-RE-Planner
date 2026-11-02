@@ -1,0 +1,12 @@
+# Southern Power Distribution Company of Telangana Limited (Telangana). Drafted in Stage 3.2 from public knowledge of the name; no version
+# yet: bills are read by the generic ladder (profile.status none) until the team's
+# confirmed sample bills exist and a version is drafted from them (build prompt section 7).
+id: tgspdcl
+name: Southern Power Distribution Company of Telangana Limited
+state: Telangana
+bill_type: electricity
+match:
+  - "\\bTGSPDCL\\b"
+  - "\\bTSSPDCL\\b"
+  - "Southern Power Distribution Company of Telangana"
+  - "తెలంగాణ దక్షిణ ప్రాంత విద్యుత్ పంపిణీ సంస్థ"

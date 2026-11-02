@@ -1,0 +1,21 @@
+# Copy profiles/_template/ to profiles/<id>/ to onboard a discom (Developer Guide section 7).
+# Folders starting with "_" are never loaded. Every key here:
+#
+# id         the folder name; reported as profile.id
+# name       the legal name
+# state      the state (its duty and cess rules come from here)
+# bill_type  electricity | gas
+# match      regex patterns (case-insensitive search over the page text) that identify this
+#            discom: the full name and the abbreviation, in English and the local script.
+#            The longest match wins when several discoms match.
+# extends    optional: another discom id whose labels, label_map, rules, params, field_map and
+#            template this one inherits; a version here overrides only the keys that differ.
+# label_map  optional: discom-wide label patterns -> catalogue code (see _common.yaml), tried
+#            after the version's own label_map and before the common one.
+id: _template
+name: Example Vidyut Vitran Nigam Limited
+state: Example State
+bill_type: electricity
+match:
+  - "\\bEVVNL\\b"
+  - "Example Vidyut Vitran Nigam"
