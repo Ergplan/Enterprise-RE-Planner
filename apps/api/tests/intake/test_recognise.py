@@ -129,3 +129,25 @@ def test_a_stated_arrangement_must_be_a_known_one(billx: FakeBillx) -> None:
         )
         with pytest.raises(ValueError):
             site_intake.from_bills(s, [b["id"]], {"open_access": "barter"})
+
+
+def test_a_charge_on_exchange_units_is_open_access_and_the_word_alone_is_not(billx: FakeBillx) -> None:
+    def with_line(label: str, amount: str) -> dict[str, Any]:
+        res = copy.deepcopy(result("pvvnl_passed"))
+        res["bills"][0]["elements"] = [
+            {
+                "index": 0,
+                "label": label,
+                "code": "other",
+                "kind": "item",
+                "stage": "current",
+                "amount": _fo(amount),
+            }
+        ]
+        return res
+
+    [charged] = _upload(billx, "rec-iex", with_line("E Tax on consumption from IEX", "512.00"))
+    r = _recognition(charged["id"])
+    assert r["open_access"] == "open_access" and r["open_access_kinds"] == ["exchange"]
+    [zero] = _upload(billx, "rec-iex0", with_line("E Tax on consumption from IEX", "0.00"))
+    assert _recognition(zero["id"])["open_access"] == "none_seen"

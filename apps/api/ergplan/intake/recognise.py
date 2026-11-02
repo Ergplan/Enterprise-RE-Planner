@@ -151,7 +151,7 @@ def discom_of(bill: Bill) -> _Found:
 def _open_access(bill: Bill, b: dict[str, Any]) -> tuple[OpenAccess, list[str], list[Evidence]]:
     fields = b.get("fields") or {}
     evidence: list[Evidence] = []
-    texts: list[tuple[str, SourceRef]] = []
+    texts: list[tuple[str, SourceRef, bool]] = []  # (text, its page, printed with an amount)
     oa_seen = False
     for path, finding in (
         ("open_access.re_kwh", "renewable open-access or captive units set off"),
@@ -205,8 +205,9 @@ def _open_access(bill: Bill, b: dict[str, Any]) -> tuple[OpenAccess, list[str], 
             f"elements[{e.get('index')}].amount",
             amount.get("page") if isinstance(amount, dict) else None,
         )
-        texts.append((label, ref))
-        if (_num(amount) or 0) == 0:
+        charged = (_num(amount) or 0) != 0
+        texts.append((label, ref, charged))
+        if not charged:
             continue
         code = e.get("code")
         if code in OA_CODES:
@@ -219,12 +220,15 @@ def _open_access(bill: Bill, b: dict[str, Any]) -> tuple[OpenAccess, list[str], 
         slot = item.get("slot") if isinstance(item, dict) else None
         text = slot.get("value") if isinstance(slot, dict) else slot
         if text:
-            texts.append((str(text), _ref(bill, f"energy.tod.{item_i}.slot", None)))
+            texts.append((str(text), _ref(bill, f"energy.tod.{item_i}.slot", None), False))
     kinds: list[str] = []
     for kind, rx in KIND_WORDS:
-        hit = next(((t, r) for t, r in texts if rx.search(t)), None)
+        hit = next(((t, r, c) for t, r, c in texts if rx.search(t)), None)
         if hit and kind not in kinds:
             kinds.append(kind)
+            # a charge on units bought on the exchange ("E-tax on consumption from IEX") is
+            # open access; the word alone elsewhere is not
+            oa_seen = oa_seen or (kind == "exchange" and hit[2])
             evidence.append(Evidence(finding=f"the bill names {KIND_LABEL[kind]} ('{hit[0]}')", ref=hit[1]))
     if oa_seen or (kinds and kinds != ["exchange"]):
         status: OpenAccess = "open_access"
@@ -282,7 +286,8 @@ def recognise(session: Session, bill: Bill, on: date | None = None) -> Recogniti
         s = session.get(Jurisdiction, state) if state else None
         state_name = s.name if s else state
     status, kinds, evidence = _open_access(bill, b)
-    when = on or bill.bill_month or date.today()
+    # the next stage settles new sources from now on: today's approved rules, not the bill month's
+    when = on or date.today()
     routes = settlement_routes(session, found.discom, when) if found.discom else []
     notes: list[str] = []
     if not found.discom:
