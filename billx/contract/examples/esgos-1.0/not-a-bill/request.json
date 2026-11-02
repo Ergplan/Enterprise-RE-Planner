@@ -1,0 +1,10 @@
+{
+ "file": "letter-synth-v1.digital.pdf",
+ "options": {
+  "request_id": "example-not-a-bill",
+  "product": "esgos",
+  "kind": "bill",
+  "allow_cloud_model": false
+ },
+ "note": "a letter: not_a_bill"
+}

@@ -1,0 +1,10 @@
+{
+ "file": "pvvnl-hv2-synth-v1_01.digital.pdf",
+ "options": {
+  "request_id": "example-kind-text",
+  "product": "esgos",
+  "kind": "text",
+  "allow_cloud_model": false
+ },
+ "note": "pages and words only"
+}

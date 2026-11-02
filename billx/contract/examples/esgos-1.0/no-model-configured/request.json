@@ -1,0 +1,11 @@
+{
+ "file": "avvnl-ht-synth-v1_01.scan.pdf",
+ "options": {
+  "request_id": "example-no-model-configured",
+  "product": "esgos",
+  "kind": "bill",
+  "allow_cloud_model": true,
+  "max_cost_usd": "1.00"
+ },
+ "note": "a scan with cloud allowed but no key configured: unreadable (no_model_configured)"
+}

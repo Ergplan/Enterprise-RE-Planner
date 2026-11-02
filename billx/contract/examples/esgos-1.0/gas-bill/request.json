@@ -1,0 +1,10 @@
+{
+ "file": "gas-citygas-synth-v1.digital.pdf",
+ "options": {
+  "request_id": "example-gas-bill",
+  "product": "esgos",
+  "kind": "bill",
+  "allow_cloud_model": false
+ },
+ "note": "a gas bill read generically"
+}

@@ -1,0 +1,75 @@
+{
+ "note": "Synthetic examples from billx synth --seed 1; one per route and per failure.",
+ "cases": [
+  {
+   "name": "route-cloud-model-passed",
+   "file": "avvnl-ht-synth-v1_01.digital.pdf",
+   "kind": "bill",
+   "replay": true,
+   "note": "a digital PDF verified by the text layer and one model family agreeing (replayed)"
+  },
+  {
+   "name": "route-cloud-model-passed-pvvnl",
+   "file": "pvvnl-hv2-synth-v1_01.digital.pdf",
+   "kind": "bill",
+   "replay": true,
+   "note": "the second synthetic layout"
+  },
+  {
+   "name": "printed-inconsistency",
+   "file": "avvnl-ht-synth-v1_01.planted-G09.pdf",
+   "kind": "bill",
+   "replay": true,
+   "note": "the bill's own numbers don't add up: 1.1 passes with a flag, 1.0 fails with a note"
+  },
+  {
+   "name": "digital-without-a-model",
+   "file": "avvnl-ht-synth-v1_01.digital.pdf",
+   "kind": "bill",
+   "replay": false,
+   "note": "a digital PDF with allow_cloud_model false: refused (proof rule 2), with its reading and checks"
+  },
+  {
+   "name": "model-not-allowed",
+   "file": "avvnl-ht-synth-v1_01.scan.pdf",
+   "kind": "bill",
+   "replay": false,
+   "note": "a scan with allow_cloud_model false: refused, never passed on one reading"
+  },
+  {
+   "name": "no-model-configured",
+   "file": "avvnl-ht-synth-v1_01.scan.pdf",
+   "kind": "bill",
+   "replay": false,
+   "note": "a scan with cloud allowed but no key configured: unreadable (no_model_configured)"
+  },
+  {
+   "name": "not-a-bill",
+   "file": "letter-synth-v1.digital.pdf",
+   "kind": "bill",
+   "replay": false,
+   "note": "a letter: not_a_bill"
+  },
+  {
+   "name": "wrong-document-type",
+   "file": "water-municipal-synth-v1.digital.pdf",
+   "kind": "bill",
+   "replay": false,
+   "note": "a water bill: not_a_bill with the type named in the note"
+  },
+  {
+   "name": "gas-bill",
+   "file": "gas-citygas-synth-v1.digital.pdf",
+   "kind": "bill",
+   "replay": false,
+   "note": "a gas bill read generically"
+  },
+  {
+   "name": "kind-text",
+   "file": "pvvnl-hv2-synth-v1_01.digital.pdf",
+   "kind": "text",
+   "replay": false,
+   "note": "pages and words only"
+  }
+ ]
+}

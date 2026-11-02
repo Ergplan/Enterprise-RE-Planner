@@ -1,0 +1,10 @@
+{
+ "file": "water-municipal-synth-v1.digital.pdf",
+ "options": {
+  "request_id": "example-wrong-document-type",
+  "product": "esgos",
+  "kind": "bill",
+  "allow_cloud_model": false
+ },
+ "note": "a water bill: not_a_bill with the type named in the note"
+}

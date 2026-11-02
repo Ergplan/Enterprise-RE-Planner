@@ -1,0 +1,14 @@
+# Gulbarga Electricity Supply Company Limited (Karnataka). Drafted in Stage 3.2 from public knowledge of the name; no version
+# yet: bills are read by the generic ladder (profile.status none) until the team's
+# confirmed sample bills exist and a version is drafted from them (build prompt section 7).
+id: gescom
+name: Gulbarga Electricity Supply Company Limited
+state: Karnataka
+bill_type: electricity
+match:
+  - "\\bGESCOM\\b"
+  - "Gulbarga Electricity Supply Company"
+  - "ಗುಲಬರ್ಗಾ ವಿದ್ಯುತ್ ಸರಬರಾಜು ಕಂಪನಿ"
+  - "\\bGulbarga\\s+Electricity\\b"
+  - "ಗುಲಬರ್ಗಾ"
+  - "\\bKalaburagi\\s+Electricity\\b"

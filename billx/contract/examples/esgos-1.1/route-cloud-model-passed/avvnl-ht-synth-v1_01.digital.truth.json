@@ -1,0 +1,356 @@
+{
+  "truth_version": "1",
+  "generator": "billx synth",
+  "seed": 1,
+  "file": "avvnl-ht-synth-v1_01.digital.pdf",
+  "input_kind": "digital_pdf",
+  "variant": "clean",
+  "derived_from": null,
+  "document_type": "electricity_bill",
+  "layout": "avvnl-ht-synth-v1",
+  "fields": {
+    "utility.name": "AVVNL",
+    "consumer.account_number": "992492780193",
+    "meter.number": null,
+    "connection.tariff_category": "HT-5",
+    "period.from": "2025-04-01",
+    "period.to": "2025-04-30",
+    "period.bill_date": "2025-05-08",
+    "period.bill_month": "2025-04",
+    "energy.kwh": "2477850.00",
+    "energy.kvah": "2660310.00",
+    "energy.billed_units": null,
+    "demand.max_kva": "5562.50",
+    "demand.contract_kva": "6250",
+    "energy.power_factor": null,
+    "net_metering.export_kwh": null,
+    "net_metering.import_kwh": null,
+    "charges.energy": "19420263.00",
+    "charges.demand": "1835625.00",
+    "totals.net_payable": "25230114.71",
+    "consumer.name": "Placeholder Textile Mills Ltd",
+    "period.due_date": "2025-05-23",
+    "totals.current_charges": "24454874.20",
+    "totals.due_date_rebate": null,
+    "totals.arrears": "775240.51",
+    "tariff.category": "HT-5",
+    "open_access.re_kwh": null,
+    "open_access.non_re_kwh": null,
+    "open_access.banked_kwh": null,
+    "green_tariff.kwh": null
+  },
+  "printed": {
+    "utility.name": "AVVNL",
+    "consumer.account_number": "992492780193",
+    "connection.tariff_category": "HT-5",
+    "period.from": "01-04-2025",
+    "period.to": "30-04-2025",
+    "period.bill_date": "08-05-2025",
+    "period.bill_month": "APR-2025",
+    "energy.kwh": "24,77,850.00",
+    "energy.kvah": "26,60,310.00",
+    "demand.max_kva": "5562.50",
+    "demand.contract_kva": "6250",
+    "charges.energy": "1,94,20,263.00",
+    "charges.demand": "18,35,625.00",
+    "totals.net_payable": "2,52,30,114.71",
+    "consumer.name": "Placeholder Textile Mills Ltd",
+    "period.due_date": "23-05-2025",
+    "totals.current_charges": "2,44,54,874.20",
+    "totals.arrears": "7,75,240.51",
+    "tariff.category": "HT-5"
+  },
+  "tod": {
+    "kwh": [
+      {
+        "slot": "Normal",
+        "present": "56545.82",
+        "past": "56082.94",
+        "difference": "462.88",
+        "mf": "1000",
+        "consumption": "462880.00",
+        "printed": {
+          "present": "56545.82",
+          "past": "56082.94",
+          "difference": "462.88",
+          "mf": "1000",
+          "consumption": "4,62,880.00"
+        }
+      },
+      {
+        "slot": "Morning Peak",
+        "present": "28860.76",
+        "past": "28191.60",
+        "difference": "669.16",
+        "mf": "1000",
+        "consumption": "669160.00",
+        "printed": {
+          "present": "28860.76",
+          "past": "28191.60",
+          "difference": "669.16",
+          "mf": "1000",
+          "consumption": "6,69,160.00"
+        }
+      },
+      {
+        "slot": "Evening Peak",
+        "present": "38256.63",
+        "past": "37607.09",
+        "difference": "649.54",
+        "mf": "1000",
+        "consumption": "649540.00",
+        "printed": {
+          "present": "38256.63",
+          "past": "37607.09",
+          "difference": "649.54",
+          "mf": "1000",
+          "consumption": "6,49,540.00"
+        }
+      },
+      {
+        "slot": "Off Peak",
+        "present": "19132.33",
+        "past": "18436.06",
+        "difference": "696.27",
+        "mf": "1000",
+        "consumption": "696270.00",
+        "printed": {
+          "present": "19132.33",
+          "past": "18436.06",
+          "difference": "696.27",
+          "mf": "1000",
+          "consumption": "6,96,270.00"
+        }
+      }
+    ],
+    "kvah": [
+      {
+        "slot": "Normal",
+        "present": "44071.62",
+        "past": "43576.56",
+        "difference": "495.06",
+        "mf": "1000",
+        "consumption": "495060.00",
+        "printed": {
+          "present": "44071.62",
+          "past": "43576.56",
+          "difference": "495.06",
+          "mf": "1000",
+          "consumption": "4,95,060.00"
+        }
+      },
+      {
+        "slot": "Morning Peak",
+        "present": "12243.29",
+        "past": "11526.84",
+        "difference": "716.45",
+        "mf": "1000",
+        "consumption": "716450.00",
+        "printed": {
+          "present": "12243.29",
+          "past": "11526.84",
+          "difference": "716.45",
+          "mf": "1000",
+          "consumption": "7,16,450.00"
+        }
+      },
+      {
+        "slot": "Evening Peak",
+        "present": "46403.30",
+        "past": "45723.86",
+        "difference": "679.44",
+        "mf": "1000",
+        "consumption": "679440.00",
+        "printed": {
+          "present": "46403.30",
+          "past": "45723.86",
+          "difference": "679.44",
+          "mf": "1000",
+          "consumption": "6,79,440.00"
+        }
+      },
+      {
+        "slot": "Off Peak",
+        "present": "51087.39",
+        "past": "50318.03",
+        "difference": "769.36",
+        "mf": "1000",
+        "consumption": "769360.00",
+        "printed": {
+          "present": "51087.39",
+          "past": "50318.03",
+          "difference": "769.36",
+          "mf": "1000",
+          "consumption": "7,69,360.00"
+        }
+      }
+    ],
+    "kwh_total": {
+      "slot": "Total",
+      "present": "285861.14",
+      "past": "283383.29",
+      "difference": "2477.85",
+      "mf": "1000",
+      "consumption": "2477850.00",
+      "printed": {
+        "present": "285861.14",
+        "past": "283383.29",
+        "difference": "2477.85",
+        "mf": "1000",
+        "consumption": "24,77,850.00"
+      }
+    },
+    "kvah_total": {
+      "slot": "Total",
+      "present": "646189.13",
+      "past": "643528.82",
+      "difference": "2660.31",
+      "mf": "1000",
+      "consumption": "2660310.00",
+      "printed": {
+        "present": "646189.13",
+        "past": "643528.82",
+        "difference": "2660.31",
+        "mf": "1000",
+        "consumption": "26,60,310.00"
+      }
+    }
+  },
+  "charges": [
+    {
+      "label": "Energy Charges",
+      "code": "energy_charge",
+      "unit": "kVAh",
+      "quantity": "2660310.00",
+      "rate": "7.30",
+      "amount": "19420263.00",
+      "printed": {
+        "quantity": "26,60,310.00",
+        "rate": "7.30",
+        "amount": "1,94,20,263.00"
+      }
+    },
+    {
+      "label": "Fixed Charges (on Billing Demand)",
+      "code": "demand_charge",
+      "unit": "kVA",
+      "quantity": "5562.50",
+      "rate": "330.00",
+      "amount": "1835625.00",
+      "printed": {
+        "quantity": "5,562.50",
+        "rate": "330.00",
+        "amount": "18,35,625.00"
+      }
+    },
+    {
+      "label": "TOD Surcharge (Peak Hours)",
+      "code": "tod_surcharge",
+      "unit": "kVAh",
+      "quantity": "1395890.00",
+      "rate": "0.73",
+      "amount": "1018999.70",
+      "printed": {
+        "quantity": "13,95,890.00",
+        "rate": "0.73",
+        "amount": "10,18,999.70"
+      }
+    },
+    {
+      "label": "TOD Rebate (Off Peak Hours)",
+      "code": "tod_rebate",
+      "unit": "kVAh",
+      "quantity": "769360.00",
+      "rate": "-0.73",
+      "amount": "-561632.80",
+      "printed": {
+        "quantity": "7,69,360.00",
+        "rate": "-0.73",
+        "amount": "-5,61,632.80"
+      }
+    },
+    {
+      "label": "Fuel Surcharge",
+      "code": "fppca",
+      "unit": "kVAh",
+      "quantity": "2660310.00",
+      "rate": "0.38",
+      "amount": "1010917.80",
+      "printed": {
+        "quantity": "26,60,310.00",
+        "rate": "0.38",
+        "amount": "10,10,917.80"
+      }
+    },
+    {
+      "label": "Electricity Duty",
+      "code": "electricity_duty",
+      "unit": "kVAh",
+      "quantity": "2660310.00",
+      "rate": "0.40",
+      "amount": "1064124.00",
+      "printed": {
+        "quantity": "26,60,310.00",
+        "rate": "0.40",
+        "amount": "10,64,124.00"
+      }
+    },
+    {
+      "label": "Water Conservation Cess",
+      "code": "cess",
+      "unit": "kVAh",
+      "quantity": "2660310.00",
+      "rate": "0.10",
+      "amount": "266031.00",
+      "printed": {
+        "quantity": "26,60,310.00",
+        "rate": "0.10",
+        "amount": "2,66,031.00"
+      }
+    },
+    {
+      "label": "Urban Cess",
+      "code": "cess",
+      "unit": "kVAh",
+      "quantity": "2660310.00",
+      "rate": "0.15",
+      "amount": "399046.50",
+      "printed": {
+        "quantity": "26,60,310.00",
+        "rate": "0.15",
+        "amount": "3,99,046.50"
+      }
+    },
+    {
+      "label": "Meter Rent",
+      "code": "meter_rent",
+      "unit": "month",
+      "quantity": "1",
+      "rate": "1500.00",
+      "amount": "1500.00",
+      "printed": {
+        "quantity": "1",
+        "rate": "1500.00",
+        "amount": "1,500.00"
+      }
+    }
+  ],
+  "facts": {
+    "bill_number": {
+      "value": "SYN645653820",
+      "printed": "SYN645653820"
+    }
+  },
+  "header": {
+    "A/c No": "SYN/2672/727",
+    "Area Code": "A627",
+    "Feeder Code": "FDR-SYN-51",
+    "Voltage of Supply": "11 KV",
+    "Metering side": "HT",
+    "Sanction Load": "5625.0 KW",
+    "75% of CD": "4687.50",
+    "Billing Demand (KVA)": "5562.50",
+    "Address": "Plot 39, Synthetic Industrial Area, Fakegarh - 999626",
+    "GSTIN": "08SYNTH3900T1ZX"
+  }
+}

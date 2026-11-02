@@ -1,0 +1,22 @@
+# Model prices, used for the cost estimate before every call and the cost in every usage
+# record (rule 9). All money is a quoted string so it loads as Decimal, never float.
+#
+# PLACEHOLDER NUMBERS. None of these is a published price: they only let the cost
+# estimate and the per-call ceiling work before the team confirms each model's price.
+# Replace them with the provider's published per-million-token prices, set
+# `placeholder: false`, and record the change in docs/decisions.md. Every usage record
+# carries `prices_placeholder` so spend reported from these numbers is marked as such.
+placeholder: true
+currency: USD
+# Rough token counts for the estimate made before a call (the actual tokens come back in
+# the provider's usage and are what the usage record's cost uses).
+estimate:
+  chars_per_token: 4
+  tokens_per_image: 1600
+models:
+  "openai:gpt-6.1-sol":
+    input_per_million_tokens: "5.00"     # PLACEHOLDER
+    output_per_million_tokens: "20.00"   # PLACEHOLDER
+  "anthropic:claude-sonnet-5-5":
+    input_per_million_tokens: "3.00"     # PLACEHOLDER
+    output_per_million_tokens: "15.00"   # PLACEHOLDER

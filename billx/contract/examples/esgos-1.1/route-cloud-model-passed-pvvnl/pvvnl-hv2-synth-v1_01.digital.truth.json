@@ -1,0 +1,285 @@
+{
+  "truth_version": "1",
+  "generator": "billx synth",
+  "seed": 1,
+  "file": "pvvnl-hv2-synth-v1_01.digital.pdf",
+  "input_kind": "digital_pdf",
+  "variant": "clean",
+  "derived_from": null,
+  "document_type": "electricity_bill",
+  "layout": "pvvnl-hv2-synth-v1",
+  "fields": {
+    "utility.name": "PVVNL",
+    "consumer.account_number": "9986364691",
+    "meter.number": "SYNM8749105",
+    "connection.tariff_category": "HV-2",
+    "period.from": "2026-08-01",
+    "period.to": "2026-08-31",
+    "period.bill_date": "2026-09-03",
+    "period.bill_month": "2026-09",
+    "energy.kwh": "1972620.00",
+    "energy.kvah": "2059020.00",
+    "energy.billed_units": null,
+    "demand.max_kva": "3250.00",
+    "demand.contract_kva": "5000",
+    "energy.power_factor": null,
+    "net_metering.export_kwh": null,
+    "net_metering.import_kwh": null,
+    "charges.energy": "14619042.00",
+    "charges.demand": "1125000.00",
+    "totals.net_payable": "17830236.00",
+    "consumer.name": "Fictional Cement Works Pvt Ltd",
+    "period.due_date": "2026-09-18",
+    "totals.current_charges": "17262975.60",
+    "totals.due_date_rebate": null,
+    "totals.arrears": "567260.40",
+    "tariff.category": "HV-2",
+    "open_access.re_kwh": null,
+    "open_access.non_re_kwh": null,
+    "open_access.banked_kwh": null,
+    "green_tariff.kwh": null
+  },
+  "printed": {
+    "utility.name": "PVVNL",
+    "consumer.account_number": "9986364691",
+    "meter.number": "SYNM8749105",
+    "connection.tariff_category": "HV-2",
+    "period.from": "01-AUG-2026",
+    "period.to": "31-AUG-2026",
+    "period.bill_date": "03-SEP-2026",
+    "period.bill_month": "09/2026",
+    "energy.kwh": "1972620.00",
+    "energy.kvah": "2059020.00",
+    "demand.max_kva": "3250.00",
+    "demand.contract_kva": "5000",
+    "charges.energy": "14619042.00",
+    "charges.demand": "1125000.00",
+    "totals.net_payable": "1,78,30,236.00",
+    "consumer.name": "Fictional Cement Works Pvt Ltd",
+    "period.due_date": "18-SEP-2026",
+    "totals.current_charges": "17262975.60",
+    "totals.arrears": "567260.40",
+    "tariff.category": "HV-2"
+  },
+  "tod": {
+    "kwh": [
+      {
+        "slot": "TOD-1",
+        "present": "41771.56",
+        "past": "41731.27",
+        "difference": "40.29",
+        "mf": "18000",
+        "consumption": "725220.00",
+        "printed": {
+          "present": "41771.56",
+          "past": "41731.27",
+          "difference": "40.29",
+          "mf": "18000",
+          "consumption": "725220.00"
+        }
+      },
+      {
+        "slot": "TOD-2",
+        "present": "15335.97",
+        "past": "15293.01",
+        "difference": "42.96",
+        "mf": "18000",
+        "consumption": "773280.00",
+        "printed": {
+          "present": "15335.97",
+          "past": "15293.01",
+          "difference": "42.96",
+          "mf": "18000",
+          "consumption": "773280.00"
+        }
+      },
+      {
+        "slot": "TOD-3",
+        "present": "9475.73",
+        "past": "9449.39",
+        "difference": "26.34",
+        "mf": "18000",
+        "consumption": "474120.00",
+        "printed": {
+          "present": "9475.73",
+          "past": "9449.39",
+          "difference": "26.34",
+          "mf": "18000",
+          "consumption": "474120.00"
+        }
+      }
+    ],
+    "kvah": [
+      {
+        "slot": "TOD-1",
+        "present": "15275.23",
+        "past": "15232.23",
+        "difference": "43.00",
+        "mf": "18000",
+        "consumption": "774000.00",
+        "printed": {
+          "present": "15275.23",
+          "past": "15232.23",
+          "difference": "43.00",
+          "mf": "18000",
+          "consumption": "774000.00"
+        }
+      },
+      {
+        "slot": "TOD-2",
+        "present": "29950.74",
+        "past": "29906.85",
+        "difference": "43.89",
+        "mf": "18000",
+        "consumption": "790020.00",
+        "printed": {
+          "present": "29950.74",
+          "past": "29906.85",
+          "difference": "43.89",
+          "mf": "18000",
+          "consumption": "790020.00"
+        }
+      },
+      {
+        "slot": "TOD-3",
+        "present": "46295.58",
+        "past": "46268.08",
+        "difference": "27.50",
+        "mf": "18000",
+        "consumption": "495000.00",
+        "printed": {
+          "present": "46295.58",
+          "past": "46268.08",
+          "difference": "27.50",
+          "mf": "18000",
+          "consumption": "495000.00"
+        }
+      }
+    ],
+    "kwh_total": {
+      "slot": "Total",
+      "present": "861911.27",
+      "past": "861801.68",
+      "difference": "109.59",
+      "mf": "18000",
+      "consumption": "1972620.00",
+      "printed": {
+        "present": "861911.27",
+        "past": "861801.68",
+        "difference": "109.59",
+        "mf": "18000",
+        "consumption": "1972620.00"
+      }
+    },
+    "kvah_total": {
+      "slot": "Total",
+      "present": "258594.27",
+      "past": "258479.88",
+      "difference": "114.39",
+      "mf": "18000",
+      "consumption": "2059020.00",
+      "printed": {
+        "present": "258594.27",
+        "past": "258479.88",
+        "difference": "114.39",
+        "mf": "18000",
+        "consumption": "2059020.00"
+      }
+    }
+  },
+  "charges": [
+    {
+      "label": "Demand Charge",
+      "code": "demand_charge",
+      "unit": "kVA",
+      "quantity": "3750.00",
+      "rate": "300.00",
+      "amount": "1125000.00",
+      "printed": {
+        "quantity": "3750.00",
+        "rate": "300.00",
+        "amount": "1125000.00"
+      }
+    },
+    {
+      "label": "Energy Charge",
+      "code": "energy_charge",
+      "unit": "kVAh",
+      "quantity": "2059020.00",
+      "rate": "7.10",
+      "amount": "14619042.00",
+      "printed": {
+        "quantity": "2059020.00",
+        "rate": "7.10",
+        "amount": "14619042.00"
+      }
+    },
+    {
+      "label": "TOD Surcharge (TOD-3)",
+      "code": "tod_surcharge",
+      "unit": "kVAh",
+      "quantity": "495000.00",
+      "rate": "1.10",
+      "amount": "544500.00",
+      "printed": {
+        "quantity": "495000.00",
+        "rate": "1.10",
+        "amount": "544500.00"
+      }
+    },
+    {
+      "label": "TOD Rebate (TOD-1)",
+      "code": "tod_rebate",
+      "unit": "kVAh",
+      "quantity": "774000.00",
+      "rate": "-0.55",
+      "amount": "-425700.00",
+      "printed": {
+        "quantity": "774000.00",
+        "rate": "-0.55",
+        "amount": "-425700.00"
+      }
+    },
+    {
+      "label": "FPPCA",
+      "code": "fppca",
+      "unit": "kVAh",
+      "quantity": "2059020.00",
+      "rate": "0.18",
+      "amount": "370623.60",
+      "printed": {
+        "quantity": "2059020.00",
+        "rate": "0.18",
+        "amount": "370623.60"
+      }
+    },
+    {
+      "label": "Electricity Duty",
+      "code": "electricity_duty",
+      "unit": "kVAh",
+      "quantity": "2059020.00",
+      "rate": "0.50",
+      "amount": "1029510.00",
+      "printed": {
+        "quantity": "2059020.00",
+        "rate": "0.50",
+        "amount": "1029510.00"
+      }
+    }
+  ],
+  "facts": {
+    "bill_number": {
+      "value": "SB1405337001",
+      "printed": "SB1405337001"
+    }
+  },
+  "header": {
+    "Discont-Dt": "03-OCT-2026",
+    "CT Ratio": "300/5",
+    "PT Ratio": "33000/110",
+    "Sup. Volt (KV)": "33",
+    "Billable Demand (KVA) (75%)": "3750.00",
+    "Division": "Synthetic Test Division, Fakegarh",
+    "Address": "Khasra 225, Mock Industrial Estate, Synthnagar"
+  }
+}

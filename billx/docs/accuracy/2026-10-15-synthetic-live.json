@@ -1,0 +1,1724 @@
+{
+  "set": "synthetic-seed-1",
+  "set_kind": "synthetic",
+  "unmeasured": false,
+  "date": "2026-10-15",
+  "engine_version": "0.1.0",
+  "allow_cloud_model": true,
+  "max_cost_usd": "1.00",
+  "total": {
+    "layout": "all",
+    "input_kind": "all",
+    "route": "all",
+    "n": 90,
+    "bills": 32,
+    "non_bills": 10,
+    "planted": 48,
+    "passed": 13,
+    "needs_review": 17,
+    "declined": 0,
+    "errors": 0,
+    "coverage": "0.4063",
+    "silent_errors": 0,
+    "silent_error_paths": [],
+    "silent_error_bound": "0.2308",
+    "correct_refusals": 10,
+    "false_refusals": 2,
+    "false_refusal_ids": [
+      "pvvnl-hv2-synth-v1_01.photo-lowres.jpg",
+      "pvvnl-hv2-synth-v1_02.photo-lowres.jpg"
+    ],
+    "non_bills_read_as_bills": 0,
+    "non_bills_read_as_bills_ids": [],
+    "field_accuracy": {
+      "charges.demand": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "charges.energy": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "connection.tariff_category": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "consumer.account_number": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "consumer.customer_id": {
+        "correct": 3,
+        "attempted": 3,
+        "accuracy": "1.0000"
+      },
+      "consumer.name": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "demand.contract_kva": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "demand.max_kva": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "energy.kvah": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "energy.kwh": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "energy.mmbtu": {
+        "correct": 3,
+        "attempted": 3,
+        "accuracy": "1.0000"
+      },
+      "gas.gcv_kcal_per_scm": {
+        "correct": 3,
+        "attempted": 3,
+        "accuracy": "1.0000"
+      },
+      "meter.number": {
+        "correct": 4,
+        "attempted": 4,
+        "accuracy": "1.0000"
+      },
+      "period.bill_date": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "period.bill_month": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "period.due_date": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "period.from": {
+        "correct": 13,
+        "attempted": 13,
+        "accuracy": "1.0000"
+      },
+      "period.to": {
+        "correct": 13,
+        "attempted": 13,
+        "accuracy": "1.0000"
+      },
+      "readings.current": {
+        "correct": 3,
+        "attempted": 3,
+        "accuracy": "1.0000"
+      },
+      "readings.previous": {
+        "correct": 3,
+        "attempted": 3,
+        "accuracy": "1.0000"
+      },
+      "tariff.category": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "totals.amount": {
+        "correct": 3,
+        "attempted": 3,
+        "accuracy": "1.0000"
+      },
+      "totals.arrears": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "totals.current_charges": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "totals.net_payable": {
+        "correct": 10,
+        "attempted": 10,
+        "accuracy": "1.0000"
+      },
+      "utility.name": {
+        "correct": 11,
+        "attempted": 11,
+        "accuracy": "1.0000"
+      },
+      "volume.scm": {
+        "correct": 3,
+        "attempted": 3,
+        "accuracy": "1.0000"
+      }
+    },
+    "elements": 373,
+    "elements_computable": 233,
+    "formula_coverage": "0.6247",
+    "planted_caught": 48,
+    "planted_missed": 0,
+    "planted_missed_ids": [],
+    "error_ids": [],
+    "cost_usd": {
+      "median": "0.0000",
+      "p95": "0.0996"
+    },
+    "seconds": {
+      "median": "21.343",
+      "p95": "66.421"
+    }
+  },
+  "groups": [
+    {
+      "layout": "avvnl-ht-synth-v1",
+      "input_kind": "digital_pdf",
+      "route": "template",
+      "n": 22,
+      "bills": 2,
+      "non_bills": 0,
+      "planted": 20,
+      "passed": 2,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": "1.0000",
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": "1.5000",
+      "correct_refusals": 0,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {
+        "charges.demand": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "charges.energy": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "connection.tariff_category": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "consumer.account_number": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "consumer.name": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "demand.contract_kva": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "demand.max_kva": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "energy.kvah": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "energy.kwh": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.bill_date": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.bill_month": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.due_date": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.from": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.to": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "tariff.category": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "totals.arrears": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "totals.current_charges": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "totals.net_payable": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "utility.name": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        }
+      },
+      "elements": 28,
+      "elements_computable": 18,
+      "formula_coverage": "0.6429",
+      "planted_caught": 20,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "24.121",
+        "p95": "24.695"
+      }
+    },
+    {
+      "layout": "avvnl-ht-synth-v1",
+      "input_kind": "photo_jpeg",
+      "route": "cloud_model",
+      "n": 10,
+      "bills": 10,
+      "non_bills": 0,
+      "planted": 0,
+      "passed": 2,
+      "needs_review": 8,
+      "declined": 0,
+      "errors": 0,
+      "coverage": "0.2000",
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": "1.5000",
+      "correct_refusals": 0,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {
+        "charges.demand": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "charges.energy": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "connection.tariff_category": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "consumer.account_number": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "consumer.name": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "demand.contract_kva": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "demand.max_kva": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "energy.kvah": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "energy.kwh": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.bill_date": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.bill_month": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.due_date": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.from": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.to": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "tariff.category": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "totals.arrears": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "totals.current_charges": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "totals.net_payable": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "utility.name": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        }
+      },
+      "elements": 148,
+      "elements_computable": 86,
+      "formula_coverage": "0.5811",
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0962",
+        "p95": "0.1228"
+      },
+      "seconds": {
+        "median": "64.883",
+        "p95": "86.735"
+      }
+    },
+    {
+      "layout": "avvnl-ht-synth-v1",
+      "input_kind": "scan_pdf",
+      "route": "cloud_model",
+      "n": 2,
+      "bills": 2,
+      "non_bills": 0,
+      "planted": 0,
+      "passed": 2,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": "1.0000",
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": "1.5000",
+      "correct_refusals": 0,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {
+        "charges.demand": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "charges.energy": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "connection.tariff_category": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "consumer.account_number": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "consumer.name": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "demand.contract_kva": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "demand.max_kva": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "energy.kvah": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "energy.kwh": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.bill_date": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.bill_month": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.due_date": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.from": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.to": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "tariff.category": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "totals.arrears": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "totals.current_charges": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "totals.net_payable": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "utility.name": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        }
+      },
+      "elements": 28,
+      "elements_computable": 18,
+      "formula_coverage": "0.6429",
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0935",
+        "p95": "0.0939"
+      },
+      "seconds": {
+        "median": "53.895",
+        "p95": "58.136"
+      }
+    },
+    {
+      "layout": "gas-citygas-synth-v1",
+      "input_kind": "digital_pdf",
+      "route": "template",
+      "n": 5,
+      "bills": 1,
+      "non_bills": 0,
+      "planted": 4,
+      "passed": 1,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": "1.0000",
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": "3.0000",
+      "correct_refusals": 0,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {
+        "consumer.customer_id": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "energy.mmbtu": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "gas.gcv_kcal_per_scm": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.from": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.to": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "readings.current": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "readings.previous": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "totals.amount": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "volume.scm": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        }
+      },
+      "elements": 4,
+      "elements_computable": 2,
+      "formula_coverage": "0.5000",
+      "planted_caught": 4,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "11.721",
+        "p95": "11.785"
+      }
+    },
+    {
+      "layout": "gas-citygas-synth-v1",
+      "input_kind": "photo_jpeg",
+      "route": "cloud_model",
+      "n": 1,
+      "bills": 1,
+      "non_bills": 0,
+      "planted": 0,
+      "passed": 0,
+      "needs_review": 1,
+      "declined": 0,
+      "errors": 0,
+      "coverage": "0.0000",
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": null,
+      "correct_refusals": 0,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {},
+      "elements": 8,
+      "elements_computable": 3,
+      "formula_coverage": "0.3750",
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0578",
+        "p95": "0.0578"
+      },
+      "seconds": {
+        "median": "14.015",
+        "p95": "14.015"
+      }
+    },
+    {
+      "layout": "gas-gridsales-synth-v1",
+      "input_kind": "digital_pdf",
+      "route": "template",
+      "n": 5,
+      "bills": 1,
+      "non_bills": 0,
+      "planted": 4,
+      "passed": 1,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": "1.0000",
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": "3.0000",
+      "correct_refusals": 0,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {
+        "consumer.customer_id": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "energy.mmbtu": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "gas.gcv_kcal_per_scm": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.from": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.to": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "readings.current": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "readings.previous": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "totals.amount": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "volume.scm": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        }
+      },
+      "elements": 4,
+      "elements_computable": 2,
+      "formula_coverage": "0.5000",
+      "planted_caught": 4,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "11.975",
+        "p95": "12.113"
+      }
+    },
+    {
+      "layout": "gas-gridsales-synth-v1",
+      "input_kind": "photo_jpeg",
+      "route": "cloud_model",
+      "n": 1,
+      "bills": 1,
+      "non_bills": 0,
+      "planted": 0,
+      "passed": 1,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": "1.0000",
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": "3.0000",
+      "correct_refusals": 0,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {
+        "consumer.customer_id": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "energy.mmbtu": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "gas.gcv_kcal_per_scm": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.from": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.to": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "readings.current": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "readings.previous": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "totals.amount": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "utility.name": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "volume.scm": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        }
+      },
+      "elements": 4,
+      "elements_computable": 2,
+      "formula_coverage": "0.5000",
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0560",
+        "p95": "0.0560"
+      },
+      "seconds": {
+        "median": "15.573",
+        "p95": "15.573"
+      }
+    },
+    {
+      "layout": "invoice-supplies-synth-v1",
+      "input_kind": "digital_pdf",
+      "route": "none",
+      "n": 1,
+      "bills": 0,
+      "non_bills": 1,
+      "planted": 0,
+      "passed": 0,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": null,
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": null,
+      "correct_refusals": 1,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {},
+      "elements": 0,
+      "elements_computable": 0,
+      "formula_coverage": null,
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "10.566",
+        "p95": "10.566"
+      }
+    },
+    {
+      "layout": "invoice-supplies-synth-v1",
+      "input_kind": "photo_jpeg",
+      "route": "none",
+      "n": 1,
+      "bills": 0,
+      "non_bills": 1,
+      "planted": 0,
+      "passed": 0,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": null,
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": null,
+      "correct_refusals": 1,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {},
+      "elements": 0,
+      "elements_computable": 0,
+      "formula_coverage": null,
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "2.756",
+        "p95": "2.756"
+      }
+    },
+    {
+      "layout": "letter-synth-v1",
+      "input_kind": "digital_pdf",
+      "route": "none",
+      "n": 1,
+      "bills": 0,
+      "non_bills": 1,
+      "planted": 0,
+      "passed": 0,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": null,
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": null,
+      "correct_refusals": 1,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {},
+      "elements": 0,
+      "elements_computable": 0,
+      "formula_coverage": null,
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "0.049",
+        "p95": "0.049"
+      }
+    },
+    {
+      "layout": "letter-synth-v1",
+      "input_kind": "photo_jpeg",
+      "route": "none",
+      "n": 1,
+      "bills": 0,
+      "non_bills": 1,
+      "planted": 0,
+      "passed": 0,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": null,
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": null,
+      "correct_refusals": 1,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {},
+      "elements": 0,
+      "elements_computable": 0,
+      "formula_coverage": null,
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "8.662",
+        "p95": "8.662"
+      }
+    },
+    {
+      "layout": "pvvnl-hv2-synth-v1",
+      "input_kind": "digital_pdf",
+      "route": "template",
+      "n": 22,
+      "bills": 2,
+      "non_bills": 0,
+      "planted": 20,
+      "passed": 1,
+      "needs_review": 1,
+      "declined": 0,
+      "errors": 0,
+      "coverage": "0.5000",
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": "3.0000",
+      "correct_refusals": 0,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {
+        "charges.demand": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "charges.energy": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "connection.tariff_category": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "consumer.account_number": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "consumer.name": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "demand.contract_kva": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "demand.max_kva": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "energy.kvah": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "energy.kwh": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "meter.number": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.bill_date": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.bill_month": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.due_date": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.from": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.to": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "tariff.category": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "totals.arrears": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "totals.current_charges": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "totals.net_payable": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "utility.name": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        }
+      },
+      "elements": 18,
+      "elements_computable": 12,
+      "formula_coverage": "0.6667",
+      "planted_caught": 20,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "21.199",
+        "p95": "21.415"
+      }
+    },
+    {
+      "layout": "pvvnl-hv2-synth-v1",
+      "input_kind": "photo_jpeg",
+      "route": "cloud_model",
+      "n": 8,
+      "bills": 8,
+      "non_bills": 0,
+      "planted": 0,
+      "passed": 2,
+      "needs_review": 6,
+      "declined": 0,
+      "errors": 0,
+      "coverage": "0.2500",
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": "1.5000",
+      "correct_refusals": 0,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {
+        "charges.demand": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "charges.energy": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "connection.tariff_category": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "consumer.account_number": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "consumer.name": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "demand.contract_kva": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "demand.max_kva": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "energy.kvah": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "energy.kwh": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "meter.number": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.bill_date": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.bill_month": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.due_date": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.from": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "period.to": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "tariff.category": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "totals.arrears": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "totals.current_charges": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "totals.net_payable": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        },
+        "utility.name": {
+          "correct": 2,
+          "attempted": 2,
+          "accuracy": "1.0000"
+        }
+      },
+      "elements": 110,
+      "elements_computable": 76,
+      "formula_coverage": "0.6909",
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0884",
+        "p95": "0.0994"
+      },
+      "seconds": {
+        "median": "52.277",
+        "p95": "62.636"
+      }
+    },
+    {
+      "layout": "pvvnl-hv2-synth-v1",
+      "input_kind": "photo_jpeg",
+      "route": "none",
+      "n": 2,
+      "bills": 2,
+      "non_bills": 0,
+      "planted": 0,
+      "passed": 0,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": "0.0000",
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": null,
+      "correct_refusals": 0,
+      "false_refusals": 2,
+      "false_refusal_ids": [
+        "pvvnl-hv2-synth-v1_01.photo-lowres.jpg",
+        "pvvnl-hv2-synth-v1_02.photo-lowres.jpg"
+      ],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {},
+      "elements": 0,
+      "elements_computable": 0,
+      "formula_coverage": null,
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "10.282",
+        "p95": "10.517"
+      }
+    },
+    {
+      "layout": "pvvnl-hv2-synth-v1",
+      "input_kind": "scan_pdf",
+      "route": "cloud_model",
+      "n": 2,
+      "bills": 2,
+      "non_bills": 0,
+      "planted": 0,
+      "passed": 1,
+      "needs_review": 1,
+      "declined": 0,
+      "errors": 0,
+      "coverage": "0.5000",
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": "3.0000",
+      "correct_refusals": 0,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {
+        "charges.demand": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "charges.energy": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "connection.tariff_category": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "consumer.account_number": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "consumer.name": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "demand.contract_kva": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "demand.max_kva": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "energy.kvah": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "energy.kwh": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "meter.number": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.bill_date": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.bill_month": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.due_date": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.from": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "period.to": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "tariff.category": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "totals.arrears": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "totals.current_charges": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "totals.net_payable": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        },
+        "utility.name": {
+          "correct": 1,
+          "attempted": 1,
+          "accuracy": "1.0000"
+        }
+      },
+      "elements": 21,
+      "elements_computable": 14,
+      "formula_coverage": "0.6667",
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0820",
+        "p95": "0.0822"
+      },
+      "seconds": {
+        "median": "49.517",
+        "p95": "50.413"
+      }
+    },
+    {
+      "layout": "receipt-store-synth-v1",
+      "input_kind": "digital_pdf",
+      "route": "none",
+      "n": 1,
+      "bills": 0,
+      "non_bills": 1,
+      "planted": 0,
+      "passed": 0,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": null,
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": null,
+      "correct_refusals": 1,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {},
+      "elements": 0,
+      "elements_computable": 0,
+      "formula_coverage": null,
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "7.659",
+        "p95": "7.659"
+      }
+    },
+    {
+      "layout": "receipt-store-synth-v1",
+      "input_kind": "photo_jpeg",
+      "route": "none",
+      "n": 1,
+      "bills": 0,
+      "non_bills": 1,
+      "planted": 0,
+      "passed": 0,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": null,
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": null,
+      "correct_refusals": 1,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {},
+      "elements": 0,
+      "elements_computable": 0,
+      "formula_coverage": null,
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "6.334",
+        "p95": "6.334"
+      }
+    },
+    {
+      "layout": "telecom-fictional-synth-v1",
+      "input_kind": "digital_pdf",
+      "route": "none",
+      "n": 1,
+      "bills": 0,
+      "non_bills": 1,
+      "planted": 0,
+      "passed": 0,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": null,
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": null,
+      "correct_refusals": 1,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {},
+      "elements": 0,
+      "elements_computable": 0,
+      "formula_coverage": null,
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "11.085",
+        "p95": "11.085"
+      }
+    },
+    {
+      "layout": "telecom-fictional-synth-v1",
+      "input_kind": "photo_jpeg",
+      "route": "none",
+      "n": 1,
+      "bills": 0,
+      "non_bills": 1,
+      "planted": 0,
+      "passed": 0,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": null,
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": null,
+      "correct_refusals": 1,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {},
+      "elements": 0,
+      "elements_computable": 0,
+      "formula_coverage": null,
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "7.872",
+        "p95": "7.872"
+      }
+    },
+    {
+      "layout": "water-municipal-synth-v1",
+      "input_kind": "digital_pdf",
+      "route": "none",
+      "n": 1,
+      "bills": 0,
+      "non_bills": 1,
+      "planted": 0,
+      "passed": 0,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": null,
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": null,
+      "correct_refusals": 1,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {},
+      "elements": 0,
+      "elements_computable": 0,
+      "formula_coverage": null,
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "0.034",
+        "p95": "0.034"
+      }
+    },
+    {
+      "layout": "water-municipal-synth-v1",
+      "input_kind": "photo_jpeg",
+      "route": "none",
+      "n": 1,
+      "bills": 0,
+      "non_bills": 1,
+      "planted": 0,
+      "passed": 0,
+      "needs_review": 0,
+      "declined": 0,
+      "errors": 0,
+      "coverage": null,
+      "silent_errors": 0,
+      "silent_error_paths": [],
+      "silent_error_bound": null,
+      "correct_refusals": 1,
+      "false_refusals": 0,
+      "false_refusal_ids": [],
+      "non_bills_read_as_bills": 0,
+      "non_bills_read_as_bills_ids": [],
+      "field_accuracy": {},
+      "elements": 0,
+      "elements_computable": 0,
+      "formula_coverage": null,
+      "planted_caught": 0,
+      "planted_missed": 0,
+      "planted_missed_ids": [],
+      "error_ids": [],
+      "cost_usd": {
+        "median": "0.0000",
+        "p95": "0.0000"
+      },
+      "seconds": {
+        "median": "5.142",
+        "p95": "5.142"
+      }
+    }
+  ],
+  "all_planted_caught": true
+}

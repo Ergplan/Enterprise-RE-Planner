@@ -1,0 +1,11 @@
+# Studio confirmation mode (Stage 0.5).
+render_scale: 2                 # pypdfium2 scale for page images (2 = 144 dpi)
+prefill_max_pages: 6            # pages sent to the model for pre-fill
+bill_suffixes: [".pdf", ".jpg", ".jpeg", ".png"]
+# Tuning / held-out split (section 12.1). The split function exists from Stage 0, but
+# every bill is recorded as `tuning` until Stage 11 turns `held_out_enabled` on.
+split:
+  seed: 20261012
+  held_out_enabled: false
+# The most one pre-fill reading may spend on model calls (build prompt 5.3 step 7).
+max_cost_usd: "1.00"

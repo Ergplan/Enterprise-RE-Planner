@@ -1,0 +1,52 @@
+# One version = one layout and tariff period. The file name is the version id and its
+# effective_from month (YYYY-MM). select_version takes the latest effective_from on or before
+# the bill month; final beats draft on a tie; a bill older than every version gets the
+# earliest, flagged out of range. Saves go through check_version: unknown keys, a bad status,
+# a param without unit and source, a rule expression outside the allow-list, or a final
+# version without tariff_order are refused.
+version: "2026-01"          # the file name: YYYY-MM
+effective_from: "2026-01"   # the first bill month this version applies to
+status: draft                   # draft | final (final files are frozen and need tariff_order)
+layout_ids: [example-layout-v1] # the synthetic or learned layout ids this version describes
+tod_complete: false             # true when the layout prints every TOD slot (G15 fails on a mismatch)
+bill_month_offset: [0, 1]       # G18: bill month in [from month + lo, to month + hi]
+prompt_hints: []                # layout quirks added to the extraction prompt
+
+# Tariff numbers used by the rules and by T01-T05, each with its unit and source note.
+params:
+  energy_rate_kvah: 7.00
+  ed_rate_kvah: 0.40
+params_notes:
+  energy_rate_kvah: {unit: INR/kVAh, source: "<regulator> tariff order <number> dated <date>, <link>"}
+  ed_rate_kvah: {unit: INR/kVAh, source: "<state> electricity duty notification <number>"}
+# tariff_order: {regulator: RERC, number: "...", date: "YYYY-MM-DD", link: "https://..."}
+# params_history:               # dated params inside one version; the latest from <= bill month applies
+#   - {from: "YYYY-MM", params: {energy_rate_kvah: 7.10}}
+# generic_tolerances: {qty_x_rate_rel: 0.0005}   # loosen G05 for layouts that print rounded rates
+
+# label_map: regex on "<group> :: <label>" -> catalogue code, ahead of _common.yaml
+label_map: []
+# field_map: overrides of the default contract <- schema map in _common.yaml
+field_map: {}
+
+# The discom's own arithmetic: two expressions compared within a tolerance. Allowed:
+# arithmetic, numeric constants, parentheses and the helpers field(), param(), item(),
+# items_sum(), subtotal(), meter(), meters_sum(), abs, min, max, round. Regexes are
+# case-insensitive searches. Every rule declares what it detects.
+rules:
+  - id: example.electricity_duty
+    description: electricity duty = ED rate x total kVAh
+    severity: error               # error -> fail (an equality check), warning -> warn
+    tolerance: 1                  # absolute; or rel_tolerance as a share of expected
+    actual: item("Electricity Duty")
+    expected: param("ed_rate_kvah") * meter("Total", quantity="kVAh", attr="gross_units")
+    detects: "Rs 1 in the duty amount, or 3 kVAh in the total register"
+
+# The finalised layout (S01-S06 run when present):
+# template:
+#   required_fields: [consumer.account_number, period.bill_month, totals.net_payable]
+#   line_items:
+#     - {label_pattern: "energy charge", code: energy_charge, kind: item, stage: current, required: true}
+#   meters:
+#     - {label_pattern: "total", quantity: kVAh}
+#   drift_threshold: 3

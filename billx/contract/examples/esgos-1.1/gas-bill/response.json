@@ -1,0 +1,738 @@
+{
+ "contract_version": "1.1",
+ "engine_version": "0.2.1",
+ "schema_version": "2.0",
+ "file": {
+  "sha256": "09289a0c62a6a75796e2f3e56dcbafc40b7c3908b3c2f440f6181a64821e17d0",
+  "pages": 1,
+  "media_type": "application/pdf"
+ },
+ "bills": [
+  {
+   "index": 0,
+   "pages": [
+    1
+   ],
+   "bill_type": "gas",
+   "utility": {
+    "id": null,
+    "name_as_printed": null,
+    "state": null
+   },
+   "profile": {
+    "id": null,
+    "version": null,
+    "status": "none"
+   },
+   "route": "none",
+   "fields": {
+    "utility": {
+     "name": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "consumer": {
+     "customer_id": {
+      "value": "SYNCG25192002",
+      "unit": null,
+      "printed": "SYNCG25192002",
+      "page": 1,
+      "region": {
+       "x": "0.3597",
+       "y": "0.1125",
+       "w": "0.0930",
+       "h": "0.0062"
+      },
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     }
+    },
+    "meter": {
+     "number": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "period": {
+     "from": {
+      "value": "2026-01-01",
+      "unit": null,
+      "printed": "01-01-2026",
+      "page": 1,
+      "region": {
+       "x": "0.6614",
+       "y": "0.1305",
+       "w": "0.0591",
+       "h": "0.0060"
+      },
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     },
+     "to": {
+      "value": "2026-01-31",
+      "unit": null,
+      "printed": "31-01-2026",
+      "page": 1,
+      "region": {
+       "x": "0.7379",
+       "y": "0.1305",
+       "w": "0.0591",
+       "h": "0.0060"
+      },
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     }
+    },
+    "readings": {
+     "previous": {
+      "value": "796830.78",
+      "unit": "SCM",
+      "printed": "796830.78",
+      "page": 1,
+      "region": {
+       "x": "0.3598",
+       "y": "0.1483",
+       "w": "0.0545",
+       "h": "0.0060"
+      },
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     },
+     "current": {
+      "value": "944013.99",
+      "unit": "SCM",
+      "printed": "944013.99",
+      "page": 1,
+      "region": {
+       "x": "0.6614",
+       "y": "0.1483",
+       "w": "0.0546",
+       "h": "0.0060"
+      },
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     }
+    },
+    "volume": {
+     "scm": {
+      "value": "147183.21",
+      "unit": "SCM",
+      "printed": "1,47,183.21",
+      "page": 1,
+      "region": {
+       "x": "0.3605",
+       "y": "0.1661",
+       "w": "0.0587",
+       "h": "0.0071"
+      },
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     }
+    },
+    "gas": {
+     "gcv_kcal_per_scm": {
+      "value": "8703",
+      "unit": "kcal/SCM",
+      "printed": "8703",
+      "page": 1,
+      "region": {
+       "x": "0.6614",
+       "y": "0.1661",
+       "w": "0.0251",
+       "h": "0.0061"
+      },
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     }
+    },
+    "energy": {
+     "mmbtu": {
+      "value": "5083.077",
+      "unit": "MMBtu",
+      "printed": "5083.077",
+      "page": 1,
+      "region": {
+       "x": "0.3597",
+       "y": "0.1839",
+       "w": "0.0480",
+       "h": "0.0061"
+      },
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     }
+    },
+    "totals": {
+     "amount": {
+      "value": "9399266.97",
+      "unit": "INR",
+      "printed": "93,99,266.97",
+      "page": 1,
+      "region": {
+       "x": "0.8502",
+       "y": "0.2864",
+       "w": "0.0678",
+       "h": "0.0073"
+      },
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     }
+    }
+   },
+   "data": {
+    "schema_version": "2.0",
+    "bill_type": "gas",
+    "discom": {
+     "name_as_printed": null,
+     "short_code": null,
+     "state": null,
+     "office": null
+    },
+    "consumer": {
+     "name": null,
+     "address": null,
+     "account_number": null,
+     "service_connection_number": null,
+     "gstin": null,
+     "pan": null
+    },
+    "connection": {
+     "tariff_code": null,
+     "tariff_category": null,
+     "supply_kv": null,
+     "metering_side": null,
+     "meter_number": null,
+     "contract_demand_kva": null,
+     "minimum_billable_kva": null,
+     "sanctioned_load": null,
+     "sanctioned_load_unit": null
+    },
+    "period": {
+     "bill_month": null,
+     "bill_number": null,
+     "bill_date": null,
+     "due_date": null,
+     "disconnection_date": null,
+     "reading_from": "2026-01-01",
+     "reading_to": "2026-01-31",
+     "billing_days": null,
+     "reading_type": null,
+     "bill_kind": null
+    },
+    "meters": [],
+    "demand": {
+     "recorded_kva": null,
+     "billing_kva": null
+    },
+    "energy": {
+     "billed_units": null,
+     "billed_unit": null,
+     "gross_kwh": null,
+     "gross_kvah": null,
+     "open_access_kwh": null,
+     "open_access_re_kwh": null,
+     "open_access_non_re_kwh": null,
+     "open_access_banked_kwh": null,
+     "open_access_unit": null,
+     "green_tariff_kwh": null,
+     "net_metering_import_kwh": null,
+     "net_metering_export_kwh": null,
+     "off_peak_kwh": null,
+     "power_factor": null,
+     "load_factor": null,
+     "tod": []
+    },
+    "gas": {
+     "customer_id": "SYNCG25192002",
+     "volume_scm": "147183.21",
+     "gcv_kcal_per_scm": "8703",
+     "energy_mmbtu": "5083.077",
+     "correction_factor": null,
+     "reading_previous": "796830.78",
+     "reading_current": "944013.99"
+    },
+    "line_items": [
+     {
+      "index": 0,
+      "group": null,
+      "label": "GAS CHARGES",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "147183.21",
+      "rate": "59.57",
+      "rate_unit": null,
+      "unit": "SCM",
+      "amount": "8767703.82",
+      "tod_slot": null,
+      "code": "gas_charge",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 1,
+      "group": null,
+      "label": "TRANSPORTATION CHARGES",
+      "kind": "item",
+      "stage": "current",
+      "quantity": "147183.21",
+      "rate": "1.25",
+      "rate_unit": null,
+      "unit": "SCM",
+      "amount": "183979.01",
+      "tod_slot": null,
+      "code": "transport",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 2,
+      "group": null,
+      "label": "VAT @ 5%",
+      "kind": "item",
+      "stage": "current",
+      "quantity": null,
+      "rate": null,
+      "rate_unit": null,
+      "unit": null,
+      "amount": "447584.14",
+      "tod_slot": null,
+      "code": "vat",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     },
+     {
+      "index": 3,
+      "group": null,
+      "label": "TOTAL AMOUNT PAYABLE(RS.)",
+      "kind": "subtotal",
+      "stage": "current",
+      "quantity": null,
+      "rate": null,
+      "rate_unit": null,
+      "unit": null,
+      "amount": "9399266.97",
+      "tod_slot": null,
+      "code": "other",
+      "signed": false,
+      "detail_of": null,
+      "page": null
+     }
+    ],
+    "totals": {
+     "current_charges": null,
+     "arrears_total": null,
+     "adjustments_total": null,
+     "net_payable": "9399266.97",
+     "due_date_rebate": null,
+     "payable_after_due": null
+    },
+    "payments": {
+     "previous_bill_amount": null,
+     "last_payment_amount": null,
+     "last_payment_date": null
+    },
+    "history": [],
+    "extra": [],
+    "extraction_notes": []
+   },
+   "checks": [
+    {
+     "id": "GG01",
+     "description": "customer id, period, net amount and volume or energy are present",
+     "status": "pass",
+     "expected": null,
+     "actual": null,
+     "tolerance": null,
+     "paths": [
+      "gas.customer_id",
+      "consumer.customer_id",
+      "period.reading_from",
+      "period.reading_to",
+      "totals.net_payable",
+      "totals.amount",
+      "gas.volume_scm",
+      "volume.scm",
+      "gas.energy_mmbtu",
+      "energy.mmbtu"
+     ]
+    },
+    {
+     "id": "GG02",
+     "description": "(current reading - previous reading) x correction factor = volume (factor 1 when not printed)",
+     "status": "pass",
+     "expected": "147183.21",
+     "actual": "147183.21",
+     "tolerance": "735.91605",
+     "paths": [
+      "gas.reading_previous",
+      "readings.previous",
+      "gas.reading_current",
+      "readings.current",
+      "gas.volume_scm",
+      "volume.scm"
+     ]
+    },
+    {
+     "id": "GG03",
+     "description": "volume x GCV / 251,995.76 = MMBtu, where all three are printed",
+     "status": "pass",
+     "expected": "5083.162814445766865283765092",
+     "actual": "5083.077",
+     "tolerance": "25.415385",
+     "paths": [
+      "gas.volume_scm",
+      "volume.scm",
+      "gas.gcv_kcal_per_scm",
+      "gas.energy_mmbtu",
+      "energy.mmbtu"
+     ]
+    },
+    {
+     "id": "GG04",
+     "description": "quantity x rate = amount, per line that prints both",
+     "status": "pass",
+     "expected": "183979.0125",
+     "actual": "183979.01",
+     "tolerance": "1",
+     "paths": [
+      "line_items[0].quantity",
+      "line_items[0].rate",
+      "line_items[0].amount",
+      "line_items[1].quantity",
+      "line_items[1].rate",
+      "line_items[1].amount"
+     ]
+    },
+    {
+     "id": "GG05",
+     "description": "items + taxes = net amount",
+     "status": "pass",
+     "expected": "9399266.97",
+     "actual": "9399266.97",
+     "tolerance": "1",
+     "paths": [
+      "line_items[0].amount",
+      "line_items[1].amount",
+      "line_items[2].amount",
+      "totals.net_payable",
+      "totals.amount"
+     ]
+    }
+   ],
+   "passed": false,
+   "unread_reason": "model_not_allowed",
+   "notes": [],
+   "status": "model_not_allowed",
+   "review_reasons": [],
+   "flags": [],
+   "accepted": false,
+   "accepted_by": null,
+   "proof_rule_version": "2",
+   "routes_used": [
+    "text_layer",
+    "local_ocr"
+   ],
+   "document_type": "gas_bill",
+   "audit_status": "not_audited",
+   "elements": [
+    {
+     "index": 0,
+     "label": "GAS CHARGES",
+     "group": null,
+     "kind": "item",
+     "stage": "current",
+     "code": "gas_charge",
+     "quantity": "147183.21",
+     "rate": "59.57",
+     "unit": "SCM",
+     "tod_slot": null,
+     "amount": {
+      "value": "8767703.82",
+      "unit": "INR",
+      "printed": "87,67,703.82",
+      "page": null,
+      "region": null,
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     },
+     "formula_recheck": {
+      "status": "match",
+      "computed": "8767703.8197",
+      "billed": "8767703.82",
+      "difference": "0.0003",
+      "reason": null,
+      "formula": "quantity x rate"
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    },
+    {
+     "index": 1,
+     "label": "TRANSPORTATION CHARGES",
+     "group": null,
+     "kind": "item",
+     "stage": "current",
+     "code": "transport",
+     "quantity": "147183.21",
+     "rate": "1.25",
+     "unit": "SCM",
+     "tod_slot": null,
+     "amount": {
+      "value": "183979.01",
+      "unit": "INR",
+      "printed": "1,83,979.01",
+      "page": null,
+      "region": null,
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     },
+     "formula_recheck": {
+      "status": "match",
+      "computed": "183979.0125",
+      "billed": "183979.01",
+      "difference": "-0.0025",
+      "reason": null,
+      "formula": "quantity x rate"
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    },
+    {
+     "index": 2,
+     "label": "VAT @ 5%",
+     "group": null,
+     "kind": "item",
+     "stage": "current",
+     "code": "vat",
+     "quantity": null,
+     "rate": null,
+     "unit": null,
+     "tod_slot": null,
+     "amount": {
+      "value": "447584.14",
+      "unit": "INR",
+      "printed": "4,47,584.14",
+      "page": null,
+      "region": null,
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     },
+     "formula_recheck": {
+      "status": "not_computable",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "reason": "no_quantity_or_rate",
+      "formula": null
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    },
+    {
+     "index": 3,
+     "label": "TOTAL AMOUNT PAYABLE(RS.)",
+     "group": null,
+     "kind": "subtotal",
+     "stage": "current",
+     "code": "other",
+     "quantity": null,
+     "rate": null,
+     "unit": null,
+     "tod_slot": null,
+     "amount": {
+      "value": "9399266.97",
+      "unit": "INR",
+      "printed": "93,99,266.97",
+      "page": null,
+      "region": null,
+      "source": "ocr",
+      "verification": "unverified",
+      "proof": [
+       "single"
+      ],
+      "readers": [
+       "text_layer",
+       "local_ocr"
+      ]
+     },
+     "formula_recheck": {
+      "status": "not_computable",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "reason": "subtotal",
+      "formula": null
+     },
+     "tariff_recheck": {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    }
+   ],
+   "tariff_recheck": {
+    "status": "not_computable",
+    "reason": "tariff_engine_pending",
+    "elements": [
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     },
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     },
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     },
+     {
+      "status": "not_computable",
+      "reason": "tariff_engine_pending",
+      "computed": null,
+      "billed": null,
+      "difference": null,
+      "citations": []
+     }
+    ]
+   },
+   "insights": []
+  }
+ ],
+ "usage": [],
+ "seconds": "0.051"
+}

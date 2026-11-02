@@ -1,0 +1,12 @@
+# Tamil Nadu Generation and Distribution Corporation Limited (Tamil Nadu). Drafted in Stage 3.2 from public knowledge of the name; no version
+# yet: bills are read by the generic ladder (profile.status none) until the team's
+# confirmed sample bills exist and a version is drafted from them (build prompt section 7).
+id: tangedco
+name: Tamil Nadu Generation and Distribution Corporation Limited
+state: Tamil Nadu
+bill_type: electricity
+match:
+  - "\\bTANGEDCO\\b"
+  - "Tamil Nadu Generation and Distribution"
+  - "\\bTNEB\\b"
+  - "தமிழ்நாடு மின்சார வாரியம்"

@@ -1,0 +1,405 @@
+{
+ "contract_version": "1.1",
+ "engine_version": "0.2.1",
+ "schema_version": "2.0",
+ "file": {
+  "sha256": "177af7d963c82b7296ad63ff235f8637b75647fb5cc5663bf1da0f25ebaf003a",
+  "pages": 1,
+  "media_type": "application/pdf"
+ },
+ "bills": [
+  {
+   "index": 0,
+   "pages": [
+    1
+   ],
+   "bill_type": null,
+   "utility": {
+    "id": null,
+    "name_as_printed": null,
+    "state": null
+   },
+   "profile": {
+    "id": null,
+    "version": null,
+    "status": "none"
+   },
+   "route": "none",
+   "fields": {
+    "utility": {
+     "name": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "consumer": {
+     "account_number": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "name": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "meter": {
+     "number": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "connection": {
+     "tariff_category": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "period": {
+     "from": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "to": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "bill_date": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "bill_month": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "due_date": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "readings": [],
+    "energy": {
+     "kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "kvah": {
+      "value": null,
+      "unit": "kVAh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "billed_units": {
+      "value": null,
+      "unit": "kVAh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "tod": [],
+     "power_factor": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "demand": {
+     "max_kva": {
+      "value": null,
+      "unit": "kVA",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "contract_kva": {
+      "value": null,
+      "unit": "kVA",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "net_metering": {
+     "export_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "import_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "charges": {
+     "energy": {
+      "value": null,
+      "unit": "INR",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "demand": {
+      "value": null,
+      "unit": "INR",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "by_code": []
+    },
+    "totals": {
+     "net_payable": {
+      "value": null,
+      "unit": "INR",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "current_charges": {
+      "value": null,
+      "unit": "INR",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "due_date_rebate": {
+      "value": null,
+      "unit": "INR",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "arrears": {
+      "value": null,
+      "unit": "INR",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "tariff": {
+     "category": {
+      "value": null,
+      "unit": null,
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "open_access": {
+     "re_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "non_re_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     },
+     "banked_kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    },
+    "green_tariff": {
+     "kwh": {
+      "value": null,
+      "unit": "kWh",
+      "printed": null,
+      "page": null,
+      "region": null,
+      "source": null,
+      "verification": "unverified",
+      "proof": [],
+      "readers": []
+     }
+    }
+   },
+   "data": null,
+   "checks": [],
+   "passed": false,
+   "unread_reason": "not_a_bill",
+   "notes": [
+    "document_type:water_bill"
+   ],
+   "status": "not_a_bill",
+   "review_reasons": [],
+   "flags": [],
+   "accepted": false,
+   "accepted_by": null,
+   "proof_rule_version": "2",
+   "routes_used": [],
+   "document_type": "water_bill",
+   "audit_status": "not_audited",
+   "elements": [],
+   "tariff_recheck": {
+    "status": "not_computable",
+    "reason": "tariff_engine_pending",
+    "elements": []
+   },
+   "insights": []
+  }
+ ],
+ "usage": [],
+ "seconds": "0.035"
+}

@@ -1,0 +1,95 @@
+# The guaranteed fields: contract 1.0 section 6 (contract/esgos-1.0/contract.md), with its
+# paths and required flags, plus build prompt 6.4's additions (optional, served in
+# esgos-1.1 mode only). tests/unit/test_guaranteed_fields.py checks this file against the
+# contract's section 6 tables. `critical` marks the 4.2 section 13.1 fields.
+version: contract-1.0+6.4
+electricity:
+  - {path: utility.name,                  type: text,       required: false, critical: true,
+     description: "the distribution company that issued the bill, as printed in its header (English form)"}
+  - {path: consumer.account_number,       type: identifier, required: true,  critical: true,
+     description: "the consumer's own account or consumer number (KNO, Account No., Consumer No., Service/Connection No., A/C No.) printed beside its label; never a label, a bill number, a meter number or a voltage"}
+  - {path: meter.number,                  type: identifier, required: false,
+     description: "the energy meter's number or serial, as printed"}
+  - {path: connection.tariff_category,    type: text,       required: false,
+     description: "the tariff category or code the bill is charged under, as printed beside 'Tariff', 'Category' or 'Tariff Code' (for example HV-2, HT-I A, LIPS - Two Part); never a load, a label or a heading"}
+  - {path: period.from,                   type: date,       required: true,  critical: true,
+     description: "the first day of the period billed: the previous meter reading date, or the 'from' date of the billing period"}
+  - {path: period.to,                     type: date,       required: true,  critical: true,
+     description: "the last day of the period billed: the present meter reading date, or the 'to' date of the billing period"}
+  - {path: period.bill_date,              type: date,       required: false,
+     description: "the date the bill was issued (Bill Date, Issue Date)"}
+  - {path: period.bill_month,             type: month,      required: true,  critical: true,
+     description: "the month the bill is for, as printed beside 'Bill Month' or 'Billing Month'"}
+  - {path: "readings[]",                  type: array,      required: false,
+     items: [{path: register, type: text}, {path: previous, type: number}, {path: current, type: number},
+             {path: multiplying_factor, type: number}, {path: tod_slot, type: text}]}
+  - {path: energy.kwh,                    type: number, unit: kWh,  required: true,  critical: true, or: energy.kvah,
+     description: "total active energy consumed in the period, in kWh, before any open-access or captive units are set off (on a bill without open access, the billed kWh)"}
+  - {path: energy.kvah,                   type: number, unit: kVAh, required: false, critical: true,
+     description: "total apparent energy consumed in the period, in kVAh, before any open-access or captive units are set off (on a bill without open access, the billed kVAh, often 'Net Billed Units' or 'Billed Units (kVAh)'; on an open-access bill the month's total consumption, not the units billed by the discom)"}
+  - {path: energy.billed_units,           type: number, unit: kVAh, required: false, contract: "1.1",
+     description: "the units the discom bills, supplied by the grid: the consumption left after open-access, captive or banked units are set off, e.g. 'Billable Consumption at Distribution Licensee', 'Net Billed Units', 'Units billed by MSEDCL'; give it as printed, in the unit printed (kVAh or kWh)"}
+  - {path: "energy.tod[]",                type: array,      required: false,
+     items: [{path: slot, type: text}, {path: kwh, type: number, unit: kWh}]}
+  - {path: demand.max_kva,                type: number, unit: kVA,  required: false, critical: true,
+     description: "the maximum demand recorded in the period in kVA AFTER the meter's multiplying factor (recorded MD in kVA, 'Recorded Demand' x M.F.); never the raw meter reading"}
+  - {path: demand.contract_kva,           type: number, unit: kVA,  required: false, critical: true,
+     description: "the contract or sanctioned demand in kVA"}
+  - {path: energy.power_factor,           type: number,     required: false,
+     description: "the average power factor printed for the period"}
+  - {path: net_metering.export_kwh,       type: number, unit: kWh,  required: false,
+     description: "units exported to the grid under net metering in the period"}
+  - {path: net_metering.import_kwh,       type: number, unit: kWh,  required: false,
+     description: "units imported from the grid under net metering in the period"}
+  - {path: charges.energy,                type: number, unit: INR,  required: false,
+     description: "the energy charge amount (Energy Charges) for the period, in rupees"}
+  - {path: charges.demand,                type: number, unit: INR,  required: false,
+     description: "the demand or fixed charge amount (Demand Charges, Fixed Charges) for the period, in rupees"}
+  - {path: totals.net_payable,            type: number, unit: INR,  required: true,  critical: true,
+     description: "the amount payable for this bill when paid by the due date, after any due-date (prompt payment) rebate ('Net Payable', 'Payable by Due Date', 'Amount Payable before Due Date', 'Net Payable Amount on or before Due Date'); on a bill with no such rebate, the amount payable ('Net Payable', 'Total Amount Payable'); never the amount payable after the due date"}
+  # build prompt 6.4 (contract 1.1 additions, optional)
+  - {path: consumer.name,                 type: text,       required: false, contract: "1.1",
+     description: "the consumer's (company's or person's) name as printed, e.g. 'M/S ...'; never a label such as 'Name' or 'Address'"}
+  - {path: period.due_date,               type: date,       required: false, contract: "1.1",
+     description: "the last date for payment (Due Date)"}
+  - {path: totals.current_charges,        type: number, unit: INR,  required: false, critical: true, contract: "1.1",
+     description: "the total of this period's charges before arrears (Current Charges, Net Current Bill, Total Current Bill)"}
+  - {path: totals.due_date_rebate,        type: number, unit: INR,  required: false, contract: "1.1",
+     description: "the rebate for paying by the due date that the bill deducts from the amount payable to give the net payable (due-date or prompt payment rebate), as a positive amount; not a rebate already counted in the current charges, and not a time-of-day, load-factor or other tariff rebate"}
+  - {path: totals.arrears,                type: number, unit: INR,  required: false, contract: "1.1",
+     description: "arrears or previous balance carried into this bill, with its printed sign (an advance or credit is negative)"}
+  - {path: "charges.by_code[]",           type: array,      required: false, contract: "1.1",
+     items: [{path: code, type: text}, {path: amount, type: number, unit: INR}]}
+  - {path: tariff.category,               type: text,       required: false, contract: "1.1",
+     description: "the tariff category or code the bill is charged under, as printed (same as connection.tariff_category)"}
+  - {path: open_access.re_kwh,            type: number, unit: kWh,  required: false, contract: "1.1",
+     description: "renewable (solar, wind, hydro) open-access or captive units set off against this bill's consumption in the period; open-access units the bill sets off without naming their source belong here too; give the figure as printed, in kWh or kVAh, e.g. 'Units Offset Against Current Month Generation', 'Final Adjustable Units' or 'Final Adjustable Adjusted Units' (total row), 'RE units adjusted', 'Solar units set off'"}
+  - {path: open_access.non_re_kwh,        type: number, unit: kWh,  required: false, contract: "1.1",
+     description: "conventional (non-renewable) open-access units set off against this bill's consumption in the period"}
+  - {path: open_access.banked_kwh,        type: number, unit: kWh,  required: false, contract: "1.1",
+     description: "previously banked units drawn against this bill's consumption in the period, e.g. 'Offset Against Last Month Banked Units', 'Banked Energy'"}
+  - {path: green_tariff.kwh,              type: number, unit: kWh,  required: false, contract: "1.1",
+     description: "units billed under a green tariff in the period (not the green tariff amount)"}
+gas:
+  - {path: utility.name,                  type: text,       required: false, critical: true,
+     description: "the gas supplier that issued the bill, as printed in its header"}
+  - {path: consumer.customer_id,          type: identifier, required: true,  critical: true,
+     description: "the customer's own id or number (Customer ID, BP No., CA No.)"}
+  - {path: meter.number,                  type: identifier, required: false,
+     description: "the gas meter's number, as printed"}
+  - {path: period.from,                   type: date,       required: true,  critical: true,
+     description: "the first day of the period billed"}
+  - {path: period.to,                     type: date,       required: true,  critical: true,
+     description: "the last day of the period billed"}
+  - {path: readings.previous,             type: number, unit: SCM,  required: false,
+     description: "the previous meter reading in SCM"}
+  - {path: readings.current,              type: number, unit: SCM,  required: false,
+     description: "the present meter reading in SCM"}
+  - {path: volume.scm,                    type: number, unit: SCM,  required: true,  critical: true, or: energy.mmbtu,
+     description: "gas consumed in the period in SCM"}
+  - {path: gas.gcv_kcal_per_scm,          type: number, unit: kcal/SCM, required: false,
+     description: "the gross calorific value in kcal per SCM"}
+  - {path: energy.mmbtu,                  type: number, unit: MMBtu, required: true, or: volume.scm,
+     description: "gas consumed in the period in MMBtu"}
+  - {path: totals.amount,                 type: number, unit: INR,  required: true,  critical: true,
+     description: "the total amount payable for the bill"}

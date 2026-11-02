@@ -1,0 +1,12 @@
+# Maharashtra State Electricity Distribution Company Limited (Maharashtra). Drafted in Stage 3.2 from public knowledge of the name; no version
+# yet: bills are read by the generic ladder (profile.status none) until the team's
+# confirmed sample bills exist and a version is drafted from them (build prompt section 7).
+id: msedcl
+name: Maharashtra State Electricity Distribution Company Limited
+state: Maharashtra
+bill_type: electricity
+match:
+  - "\\bMSEDCL\\b"
+  - "Maharashtra State Electricity Distribution"
+  - "Mahavitaran"
+  - "महावितरण"

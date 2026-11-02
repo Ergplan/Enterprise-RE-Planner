@@ -1,0 +1,11 @@
+# Andhra Pradesh Central Power Distribution Corporation Limited (Andhra Pradesh). Drafted in Stage 3.2 from public knowledge of the name; no version
+# yet: bills are read by the generic ladder (profile.status none) until the team's
+# confirmed sample bills exist and a version is drafted from them (build prompt section 7).
+id: apcpdcl
+name: Andhra Pradesh Central Power Distribution Corporation Limited
+state: Andhra Pradesh
+bill_type: electricity
+match:
+  - "\\bAPCPDCL\\b"
+  - "Andhra Pradesh Central Power Distribution"
+  - "ఆంధ్రప్రదేశ్ సెంట్రల్ పవర్ డిస్ట్రిబ్యూషన్"

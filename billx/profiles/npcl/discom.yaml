@@ -1,0 +1,13 @@
+# Noida Power Company Limited (Uttar Pradesh). Drafted in Stage 3.2 from public knowledge of the name; no version
+# yet: bills are read by the generic ladder (profile.status none) until the team's
+# confirmed sample bills exist and a version is drafted from them (build prompt section 7).
+id: npcl
+name: Noida Power Company Limited
+state: Uttar Pradesh
+bill_type: electricity
+match:
+  - "\\bNPCL\\b"
+  - "Noida Power Company"
+  - "नोएडा पावर कंपनी"
+  - "Noida\\s+Power"
+  - "नोएडा\\s+पावर"

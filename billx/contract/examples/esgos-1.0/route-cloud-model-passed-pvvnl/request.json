@@ -1,0 +1,12 @@
+{
+ "file": "pvvnl-hv2-synth-v1_01.digital.pdf",
+ "options": {
+  "request_id": "example-route-cloud-model-passed-pvvnl",
+  "product": "esgos",
+  "kind": "bill",
+  "allow_cloud_model": true,
+  "max_cost_usd": "1.00"
+ },
+ "note": "the second synthetic layout",
+ "models": "replay"
+}
