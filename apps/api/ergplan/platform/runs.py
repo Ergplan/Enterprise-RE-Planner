@@ -76,6 +76,7 @@ class CandMeta:
     delivered: SourcedValue | None = None
     cuf: SourcedValue | None = None
     waterfalls: dict[str, list[SourcedValue]] = field(default_factory=dict)  # slot → lines (as-of month)
+    chains: dict[str, list[dict[str, Any]]] = field(default_factory=dict)  # slot → steps, for the audit
     totals: list[SourcedValue] = field(default_factory=list)  # every landed total used
     capex_inr: Decimal = ZERO  # per kW (rooftop) or per kWh (battery)
     crf: SourcedValue | None = None
@@ -83,6 +84,7 @@ class CandMeta:
     inputs: list[SourcedValue] = field(default_factory=list)
     rule: RuleView | None = None
     gaps: list[str] = field(default_factory=list)
+    ownership: str | None = None
 
 
 @dataclass
@@ -347,6 +349,7 @@ def assemble(
         cid = f"{cs.kind}_{idx}" if sum(1 for x in spec.candidates if x.kind == cs.kind) > 1 else cs.kind
         meta = CandMeta(spec=cs, cid=cid, label=src.label)
         ownership = cs.ownership or ("group_captive" if cs.kind == "group_captive" else "third_party")
+        meta.ownership = ownership
         if cs.kind == "btm_bess":
             st = lcoe.default_bess()
             f = lcoe.crf(st.discount_pct, st.life_years)
@@ -458,7 +461,7 @@ def assemble(
                 p = _sv(
                     cs.price_inr_per_kwh,
                     Unit.INR_PER_KWH,
-                    SourceRef(kind=RefKind.CLIENT_STATED),
+                    SourceRef(kind=RefKind.CLIENT_STATED, note=cs.stated_in),
                     "PPA tariff",
                 )
             else:
@@ -524,6 +527,7 @@ def assemble(
                 delivered = delivered or wf.delivered
                 if mo == as_of.month:
                     meta.waterfalls[nm] = wf.lines
+                    meta.chains[nm] = [st.to_json() for st in wf.steps]
         meta.delivered = delivered
         keep = delivered.value if delivered else Decimal(1)
         if oa_shape is None:
@@ -560,7 +564,14 @@ def assemble(
         if m.spec.max_mw:
             limit_words[f"max_kw:{m.cid}"] = (
                 f"{m.label}: the most you allowed ({m.spec.max_mw} MW)",
-                [_sv(m.spec.max_mw, Unit.MW, SourceRef(kind=RefKind.CLIENT_STATED), "Maximum")],
+                [
+                    _sv(
+                        m.spec.max_mw,
+                        Unit.MW,
+                        SourceRef(kind=RefKind.CLIENT_STATED, note=m.spec.stated_in),
+                        "Maximum",
+                    )
+                ],
             )
         else:
             limit_words[f"max_kw:{m.cid}"] = (
@@ -798,6 +809,9 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
                 ins,
             ),
             "waterfall": {k: [x.model_dump(mode="json") for x in v] for k, v in m.waterfalls.items()},
+            "chain": m.chains,
+            "delivered_share": m.delivered.model_dump(mode="json") if m.delivered else None,
+            "ownership": m.ownership,
             "gaps": m.gaps,
         }
         if m.spec.kind != "rooftop_pv":
@@ -837,12 +851,15 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
             ),
         },
         "settlement": {
+            "load_kwh": sv(grid_before, Unit.KWH, "Consumption for the year", [a.profile_ref]),
             "grid_kwh": sv(grid_after, Unit.KWH, "Drawn from the DISCOM", all_inputs),
             "lapsed_kwh": sv(lapsed, Unit.KWH, "Lapsed", all_inputs),
             "withdrawn_kwh": sv(
                 sum(rs.result.withdrawn_kwh, ZERO), Unit.KWH, "Withdrawn from the bank", all_inputs
             ),
             "rule": a.rule.label if a.rule else None,
+            "rule_id": a.rule.id if a.rule else None,
+            "rule_ref": a.rule.ref().model_dump(mode="json") if a.rule else None,
         },
         "contract_demand_kva": sv(Decimal(str(sol.cd_kva)), Unit.KVA, "Contract demand", grid_inputs),
         "binding": binding,

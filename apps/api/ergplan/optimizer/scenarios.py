@@ -33,6 +33,8 @@ class CandidateSpec(BaseModel):
     max_mw: Decimal | None = Field(default=None, gt=0)  # the most the client would take (or the exchange cap)
     min_mw: Decimal = Field(default=Decimal(0), ge=0)
     commissioned: date | None = None
+    # where the client stated the price or capacity (their working's page and words), for its ref
+    stated_in: str | None = Field(default=None, max_length=300)
 
 
 class ContractDemandSpec(BaseModel):

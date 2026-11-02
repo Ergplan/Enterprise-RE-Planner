@@ -506,3 +506,114 @@ class AuthSession(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class Working(Base):
+    """A client's (or analyst's) own working of the landed cost or saving, uploaded on the audit
+    screen to be reconciled with the plan's chain. The file is kept; its text by page (a sheet of a
+    workbook is a page) is what figures are grounded in."""
+
+    __tablename__ = "workings"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    connection_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("connections.id", name="workings_connection_fk"), index=True
+    )
+    scenario_id: Mapped[str | None] = mapped_column(String(36))
+    run_id: Mapped[str | None] = mapped_column(String(36))  # the run it was compared against
+    filename: Mapped[str] = mapped_column(Text)
+    sha256: Mapped[str] = mapped_column(String(64), index=True)
+    content_type: Mapped[str] = mapped_column(String(128))
+    path: Mapped[str] = mapped_column(Text)
+    pages: Mapped[list[dict[str, Any]]] = mapped_column(JSONType, default=list)  # [{page, name, text}]
+    uploaded_by: Mapped[str] = mapped_column(String(254))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class WorkingLine(Base):
+    """One figure of a working set against one link of the chain. The figure is transcribed (by the
+    audit assistant or by hand) with the words it stands in; the API checks those words are on that
+    page and computes the difference itself."""
+
+    __tablename__ = "working_lines"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    working_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("workings.id", name="working_lines_working_fk"), index=True
+    )
+    chain_key: Mapped[str | None] = mapped_column(String(128), index=True)
+    compare: Mapped[str] = mapped_column(String(8), default="value")  # value | rate
+    label: Mapped[str] = mapped_column(Text)
+    value: Mapped[Decimal] = mapped_column(Numeric(24, 6))  # as written, before scale and unit
+    scale: Mapped[str] = mapped_column(String(16), default="units")
+    unit: Mapped[str] = mapped_column(String(32))
+    page: Mapped[int] = mapped_column(Integer)
+    quote: Mapped[str] = mapped_column(Text)
+    theirs: Mapped[Decimal | None] = mapped_column(Numeric(24, 6))  # in our unit
+    ours: Mapped[Decimal | None] = mapped_column(Numeric(24, 6))
+    ours_unit: Mapped[str | None] = mapped_column(String(32))
+    status: Mapped[str] = mapped_column(String(16), default="open", index=True)
+    note: Mapped[str | None] = mapped_column(Text)
+    created_by: Mapped[str] = mapped_column(String(254))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        CheckConstraint(
+            "status in ('open','matches','differs','unmatched','ours_accepted','stated','proposed',"
+            "'rule_changed','rejected')",
+            name="working_lines_status",
+        ),
+    )
+
+
+class AuditMessage(Base):
+    """The audit chat of a connection: what was asked, answered and done, in order."""
+
+    __tablename__ = "audit_messages"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    connection_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("connections.id", name="audit_messages_connection_fk"), index=True
+    )
+    role: Mapped[str] = mapped_column(String(16))  # user | assistant | action
+    content: Mapped[str] = mapped_column(Text)
+    data: Mapped[dict[str, Any]] = mapped_column(JSONType, default=dict)
+    actor: Mapped[str] = mapped_column(String(254))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class RuleProposal(Base):
+    """A regulatory figure a working says differently from the approved rule: a proposed change for
+    an analyst to accept (a new draft rulebook version, through rulebook.service, which then needs
+    approval as any draft does) or reject. Never a write to `rules` by itself."""
+
+    __tablename__ = "rule_proposals"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    connection_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("connections.id", name="rule_proposals_connection_fk"), index=True
+    )
+    working_line_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("working_lines.id", name="rule_proposals_line_fk")
+    )
+    rule_id: Mapped[str] = mapped_column(String(36), index=True)
+    family: Mapped[str] = mapped_column(String(64))
+    jurisdiction_id: Mapped[str] = mapped_column(String(32))
+    rule_label: Mapped[str | None] = mapped_column(Text)
+    pointer: Mapped[str] = mapped_column(Text)
+    current: Mapped[Decimal | None] = mapped_column(Numeric(24, 6))
+    proposed: Mapped[Decimal] = mapped_column(Numeric(24, 6))
+    unit: Mapped[str] = mapped_column(String(32))
+    reason: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(16), default="open", index=True)
+    proposed_by: Mapped[str] = mapped_column(String(254))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    decided_by: Mapped[str | None] = mapped_column(String(254))
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    decision_note: Mapped[str | None] = mapped_column(Text)
+    draft_version_id: Mapped[str | None] = mapped_column(String(36))
+
+    __table_args__ = (
+        CheckConstraint("status in ('open','accepted','rejected')", name="rule_proposals_status"),
+    )

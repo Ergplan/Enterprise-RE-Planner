@@ -17,6 +17,10 @@ from sqlalchemy import text
 from ergplan.db.base import get_engine
 
 APP_TABLES = [
+    "rule_proposals",
+    "audit_messages",
+    "working_lines",
+    "workings",
     "auth_sessions",
     "login_tokens",
     "users",

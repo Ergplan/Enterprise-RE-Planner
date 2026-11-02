@@ -208,3 +208,24 @@ States with approved tariffs: **7 of the 10** the plan names (UP, MH, KA, TS, PB
 
 **Open:** ten states (Karnataka, Telangana, Punjab, Andhra Pradesh, Gujarat, Rajasthan, Tamil Nadu, Haryana, Himachal Pradesh, Assam) have no approved settlement rules; billx per-layout templates (profile versions) for the team's layouts; the billx team's merge of the branch into GitLab.
 
+
+
+## Addendum, 2 Nov 2026 — the audit of a plan
+
+**Asked:** the whole chain of charges and losses to the landed cost; a screen where users audit the chain and the savings; a chat where they upload their own working and keep closing the landed cost, the savings and each state's settlement rules. The person chose: differences close by kind (the client's own figures become plan inputs marked "you said"; a regulatory figure becomes a proposed rule change for an analyst), and the screen serves clients and analysts.
+
+**Built:**
+- The engine records every link of the landed-cost waterfall (`engine.landed_cost.Step`: price, each charge at injection, each exemption, each loss stage as the energy lost and paid for, capacity charges, each charge at drawal, banking), with the rate as the rule states it, the rule id and the JSON pointer of the field; lines and totals unchanged, and a test asserts the links add up to the landed cost for every source.
+- Each run stores the links (`sizes[].chain`), the delivered share, the ownership, the year's consumption and the settlement rule's id and citation.
+- `GET /connections/{id}/chain`: per source, landed cost link by link with a running total; the energy settled (at the meter, set off, banked, not banked); the site's consumption, withdrawals, lapse and grid draw; the money for the year line by line before and with the plan; the saving and the grid energy cost avoided per kWh displaced. Read from the run's stored summary only; every value a `SourcedValue`.
+- Workings (`.xlsx`, `.csv`, `.pdf`, `.txt`) stored with their text by page; a figure is set against a link with the words it stands in, which the API checks are on that page and print the figure; the API converts and computes the difference.
+- Closing by kind: the client's price or capacity becomes the input of a scenario "… (your figures)", cited to their working, and the plan is run again; the open-access arrangement likewise; a regulatory rate becomes a `rule_proposals` row; accepting it (analyst, with the regulation's page and a quote that prints the figure) drafts a new rulebook version through `rulebook.service`, which reaches plans only after approval with golden tests; a computed figure is explained or accepted.
+- The audit chat (OpenAI through `providers/`, prompt `audit_v1`) transcribes and closes through typed tools; it computes nothing.
+- Web: `/plan/audit?c=` linked from the plan (the chain tables with "yours" and "difference" columns, figures not in the plan, the workings line by line with their actions, the chat with upload; analysts also see the proposals), `/proposals` for analysts across connections.
+- Migration 0012: `workings`, `working_lines`, `audit_messages`, `rule_proposals`.
+
+**Tests:** the chain adds up to the plan (sources, money, energy); a named scenario and the misses; a run without the stored chain; grounding refusals (words not on the page, a figure not in the words, units that do not compare, a page that does not exist); closing by kind with a real re-run whose price carries `client_stated` and the working's citation; a proposal accepted into a draft (field ref to the regulation page) while the client's chain is unchanged (invariant 2); a proposal rejected; the chat with the model mocked (a quote the working does not have is refused); the ownership endpoint; web helpers.
+
+**Open questions:**
+1. Should an accepted "(your figures)" scenario become the plan's recommendation when its saving is the best, or always be shown beside the jouleWise plan?
+2. Should clients see the proposals they raised and their outcome on the audit screen (today they see their own connection's proposals, without the analyst's queue controls)?

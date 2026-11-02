@@ -33,6 +33,11 @@ What is not yet right, and the stage that fixes it.
 | IEX purchases priced at the month-slot mean, not block by block | When block prices matter for a client |
 | Land area does not bound any candidate (no on-site ground-mount source yet) | When one is added |
 | Generation for settlement comes from normative CUF curves unless a 15-minute injection is supplied | Developer profiles |
+| The audit shows one time-of-day slot's landed cost per source (the first; "slots differ" is shown when they do); a working's per-slot figures are set against that slot only | When a client's working is per slot |
+| Runs made before 2 Nov 2026 have no stored chain: the audit shows their waterfall lines without rates or rules until the plan is run again | Next run of each plan |
+| A scanned working has no text to ground figures in; its figures are typed against the chain by hand (the quote check then fails) | OCR for workings, if needed |
+| The audit compares annual money lines and site energy, not month by month | When a client's working is monthly |
+| Accepting a proposal needs the regulation registered as a source document; an analyst gives its id by hand (no search in the queue yet) | Next analyst UI pass |
 
 ## Named rule gaps used by the bill replay (Stage 3)
 

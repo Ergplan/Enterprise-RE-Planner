@@ -13,8 +13,8 @@ from starlette.middleware.base import RequestResponseEndpoint
 from ..core.settings import get_settings
 from ..db.base import session_scope
 from .auth import guard, production
-from .routers import auth as auth_routes
 from .routers import (
+    audit,
     cost,
     documents,
     intake,
@@ -28,6 +28,7 @@ from .routers import (
     settle,
     voice,
 )
+from .routers import auth as auth_routes
 
 log = logging.getLogger("ergplan.app")
 
@@ -79,6 +80,7 @@ def create_app() -> FastAPI:
     app.include_router(runs.router)
     app.include_router(plan.router)
     app.include_router(voice.router)
+    app.include_router(audit.router)
     return app
 
 

@@ -313,3 +313,42 @@ def test_wheeling_levied_in_kind_grosses_up_like_a_loss() -> None:
     # 3.00 / (0.98 × 0.9781) − 3.00
     assert _r4(loss.value) == _r4(Decimal("3.00") / (Decimal("0.98") * Decimal("0.9781")) - Decimal("3.00"))
     assert "oa_wheeling" not in wf.gaps
+
+
+@pytest.mark.parametrize("row", _cases(), ids=lambda r: r["consumer"])
+def test_the_chain_steps_add_up_to_the_landed_cost(row: dict[str, str], committed: None) -> None:
+    """The audit chain: every link with its rate and effect; losses one stage at a time, adding up
+    to the single loss line; the links add up to the landed cost."""
+    oa, settle = _rows(row["discom"])
+    spec = lc.SOURCE_BY_ID[row["source"]]
+    ctx = _ctx(row["discom"], int(row["voltage_kv"]))
+    sc = lc.Scenario(price=sv(row["price"], Unit.INR_PER_KWH), ownership=row["ownership"])
+    rule = next(
+        (
+            r
+            for r in settle
+            if lc.matches(
+                r.scope,
+                {**ctx, "source": spec.source, "ownership": row["ownership"], "connection": spec.connection},
+            )
+        ),
+        None,
+    )
+    wf = lc.evaluate(spec, ctx, sc, oa, settlement=rule)
+    assert wf.steps[0].kind == "price"
+    total = sum((st.per_kwh.value for st in wf.steps), Decimal(0))
+    assert abs(total - wf.total.value) < Decimal("0.000001"), [
+        (st.label, st.per_kwh.value) for st in wf.steps
+    ]
+    loss_line = next(
+        (x.value for x in wf.lines if str(x.label).startswith(("Losses", "Losses and charges"))), None
+    )
+    loss_steps = [st for st in wf.steps if st.kind == "loss"]
+    if loss_line is not None:
+        assert loss_steps and abs(sum(st.per_kwh.value for st in loss_steps) - loss_line) < Decimal(
+            "0.000001"
+        )
+        assert all(st.rate is not None and st.rate.unit == Unit.PERCENT and st.rule_id for st in loss_steps)
+    for st in wf.steps:
+        if st.kind in ("charge", "drawal", "loss", "capacity", "exemption", "banking"):
+            assert st.rule_id and st.pointer and st.rate is not None, st.label

@@ -106,6 +106,33 @@ class Scenario:
     ] = ()  # source-specific additions (group-captive equity cost, charging energy)
 
 
+@dataclass(frozen=True)
+class Step:
+    """One link of the chain from the generator to the meter, as the audit screen shows it: what it
+    is (price, charge, loss, capacity, drawal, exemption, banking, extra), the rate as the rule
+    states it (INR/kWh, percent, INR/MW/month) and its effect on the landed cost per kWh, with the
+    rule row and field it comes from (so a correction can be proposed against that field)."""
+
+    kind: str
+    component: str
+    label: str
+    per_kwh: SourcedValue
+    rate: SourcedValue | None = None
+    rule_id: str | None = None
+    pointer: str | None = None
+
+    def to_json(self) -> dict[str, Any]:
+        return {
+            "kind": self.kind,
+            "component": self.component,
+            "label": self.label,
+            "per_kwh": self.per_kwh.model_dump(mode="json"),
+            "rate": self.rate.model_dump(mode="json") if self.rate is not None else None,
+            "rule_id": self.rule_id,
+            "pointer": self.pointer,
+        }
+
+
 @dataclass
 class Waterfall:
     source: str
@@ -116,6 +143,7 @@ class Waterfall:
     notes: list[str] = field(default_factory=list)
     rules_used: list[str] = field(default_factory=list)
     delivered: SourcedValue | None = None  # share of injected energy that reaches the meter (after losses)
+    steps: list[Step] = field(default_factory=list)  # the same chain, link by link, for the audit
 
     def coefficient(self) -> tuple[Decimal, Decimal]:
         """total = a × P + b: the price multiplier and the price-independent rest (for block series)."""
@@ -203,16 +231,18 @@ def evaluate(
     if sc.commissioned is not None:
         ctx["commissioned"] = sc.commissioned
     lines: list[SourcedValue] = [sc.price]
+    steps: list[Step] = [Step("price", "price", str(sc.price.label or "Price"), sc.price)]
     gaps: list[str] = []
     notes: list[str] = []
     used: list[str] = []
     a = Decimal(1)
     if not spec.open_access:
         lines.extend(sc.extra)
+        steps.extend(Step("extra", "extra", str(x.label or "Other cost"), x) for x in sc.extra)
         total = derive(
             sum((x.value for x in lines), Decimal(0)), Unit.INR_PER_KWH, lines, label="Landed cost"
         )
-        return Waterfall(spec.id, spec.label, lines, total, gaps, notes, used)
+        return Waterfall(spec.id, spec.label, lines, total, gaps, notes, used, steps=steps)
 
     applicable = [r for r in oa_rows if matches(r.scope, ctx)]
     by_comp: dict[str, RuleView] = {}
@@ -244,13 +274,16 @@ def evaluate(
         line = _sv(r, ptr, v, Unit.INR_PER_KWH, str(r.label or comp))
         injection.append(line)
         lines.append(line)
+        steps.append(Step("charge", comp, str(line.label), line, line, r.id, ptr))
         used.append(r.id)
         ex_lines, ex_used = _exemptions(r, line, ctx, sc)
         lines.extend(ex_lines)
         injection.extend(ex_lines)
         used.extend(ex_used)
+        steps.extend(_exemption_steps(r, comp, ex_lines, ex_used))
     keep = Decimal(1)
     loss_inputs: list[SourcedValue] = []
+    loss_rules: list[tuple[str, str, str]] = []
     for comp, r in [
         *((c, by_comp.get(c)) for c in LOSS_COMPONENTS),
         *((str(k.body["component"]), k) for k in in_kind),
@@ -278,6 +311,7 @@ def evaluate(
             used.append(wr.id)
         keep *= 1 - loss.value / HUNDRED
         loss_inputs.append(loss)
+        loss_rules.append((comp, r.id, ptr))
         used.append(r.id)
     delivered = (
         derive(keep, Unit.RATIO, loss_inputs, label="Delivered share after losses") if loss_inputs else None
@@ -295,6 +329,27 @@ def evaluate(
                 label=f"{head} ({', '.join(str(x.label) for x in loss_inputs)})",
             )
         )
+        # the same gross-up stage by stage: each loss adds base × (1/kept after it − 1/kept before)
+        before = Decimal(1)
+        for loss, (comp, rid, ptr) in zip(loss_inputs, loss_rules, strict=True):
+            after = before * (1 - loss.value / HUNDRED)
+            steps.append(
+                Step(
+                    "loss",
+                    comp,
+                    str(loss.label),
+                    derive(
+                        base * (1 / after - 1 / before),
+                        Unit.INR_PER_KWH,
+                        [sc.price, *injection, *loss_inputs],
+                        label=f"{loss.label}: energy lost, paid for",
+                    ),
+                    loss,
+                    rid,
+                    ptr,
+                )
+            )
+            before = after
 
     # 3. capacity charges over scheduled energy
     for comp, r in by_comp.items():
@@ -325,6 +380,7 @@ def evaluate(
         if comp in ISTS_COMPONENTS and waiver is not None:
             line = _waive(line, waiver, "charges_waived_pct", used)
         lines.append(line)
+        steps.append(Step("capacity", comp, str(line.label), line, rate, r.id, ptr))
         used.append(r.id)
 
     # 4. drawal charges
@@ -347,20 +403,25 @@ def evaluate(
         if v is None:
             continue
         if basis == "percent_of_price":
+            pct = _sv(r, ptr, v, Unit.PERCENT, str(r.label))
             line = derive(
                 sc.price.value * v / HUNDRED,
                 Unit.INR_PER_KWH,
-                [sc.price, _sv(r, ptr, v, Unit.PERCENT, str(r.label))],
+                [sc.price, pct],
                 label=str(r.label or comp),
             )
             a += v / HUNDRED
+            rate_sv = pct
         else:
             line = _sv(r, ptr, v, Unit.INR_PER_KWH, str(r.label or comp))
+            rate_sv = line
         lines.append(line)
+        steps.append(Step("drawal", comp, str(line.label), line, rate_sv, r.id, ptr))
         used.append(r.id)
         ex_lines, ex_used = _exemptions(r, line, ctx, sc)
         lines.extend(ex_lines)
         used.extend(ex_used)
+        steps.extend(_exemption_steps(r, comp, ex_lines, ex_used))
     if settlement is not None and sc.ownership in ("captive", "group_captive", "third_party"):
         ch = (settlement.body.get("banking") or {}).get("charge") or {}
         if ch.get("kind") == "in_kind_percent" and ch.get("value") not in (None, ""):
@@ -376,6 +437,17 @@ def evaluate(
                     label="Banking charge, upper bound (all energy banked)",
                 )
             )
+            steps.append(
+                Step(
+                    "banking",
+                    "banking_charge",
+                    str(lines[-1].label),
+                    lines[-1],
+                    c,
+                    settlement.id,
+                    "/banking/charge/value",
+                )
+            )
             a *= 1 / (1 - c.value / HUNDRED)
             notes.append(
                 "the banking charge is shown as if every unit were banked; the settlement simulator "
@@ -383,11 +455,19 @@ def evaluate(
             )
             used.append(settlement.id)
     lines.extend(sc.extra)
+    steps.extend(Step("extra", "extra", str(x.label or "Other cost"), x) for x in sc.extra)
     total = derive(
         sum((x.value for x in lines), Decimal(0)), Unit.INR_PER_KWH, lines, label="Landed cost at the meter"
     )
     wf = Waterfall(
-        spec.id, spec.label, lines, total, list(dict.fromkeys(gaps)), notes, list(dict.fromkeys(used))
+        spec.id,
+        spec.label,
+        lines,
+        total,
+        list(dict.fromkeys(gaps)),
+        notes,
+        list(dict.fromkeys(used)),
+        steps=steps,
     )
     wf._a = a
     wf.delivered = delivered
@@ -403,6 +483,18 @@ def _waive(
     return derive(
         line.value * (1 - w.value / HUNDRED), Unit.INR_PER_KWH, [line, w], label=f"{line.label} after waiver"
     )
+
+
+def _exemption_steps(r: RuleView, comp: str, ex_lines: list[SourcedValue], ex_used: list[str]) -> list[Step]:
+    """An exemption line as a step, with the waived share it applies (the row's field)."""
+    out = []
+    for line, key in zip(ex_lines, ex_used, strict=True):
+        ptr = key.split("#", 1)[1] + "/waived_pct"
+        i = int(ptr.split("/")[2])
+        ex = (r.body.get("exemptions") or [])[i]
+        rate = _sv(r, ptr, Decimal(str(ex["waived_pct"])), Unit.PERCENT, f"Waived ({ex['condition']})")
+        out.append(Step("exemption", comp, str(line.label), line, rate, r.id, ptr))
+    return out
 
 
 def _exemptions(
