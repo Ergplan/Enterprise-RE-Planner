@@ -102,7 +102,14 @@ TOOLS: list[dict[str, Any]] = [
 
 
 def _n(d: Decimal | None) -> str:
-    return "—" if d is None else format(d.normalize(), "f")
+    """A figure as the assistant reads it: at most six decimals (a loss's effect per kWh is an
+    exact quotient with many more)."""
+    if d is None:
+        return "—"
+    exp = d.as_tuple().exponent
+    if isinstance(exp, int) and exp < -6:
+        d = d.quantize(Decimal("0.000001"))
+    return format(d.normalize(), "f")
 
 
 def _step_line(st: chain_data.ChainStep) -> str:

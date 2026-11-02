@@ -19,5 +19,6 @@ describe("audit helpers", () => {
     expect(fmt("41236770.27", "INR")).toBe("₹4,12,36,770");
     expect(fmt("4.5", "percent")).toBe("4.5%");
     expect(fmt(null, "INR")).toBe("—");
+    expect(fmt("-0.38", "INR/kWh")).toBe("−₹0.380");
   });
 });

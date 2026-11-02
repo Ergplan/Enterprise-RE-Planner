@@ -317,14 +317,19 @@ a.eg-btn { text-decoration: none; }
 .ep-recognised__sub { font-size: 14px; margin: var(--space-3) 0 var(--space-2); }
 
 /* the audit screen: the chain beside the chat */
-.ep-audit { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 380px); gap: var(--space-4); align-items: start; }
-.ep-audit__main { display: grid; gap: var(--space-4); min-width: 0; }
+.ep-audit { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 340px); gap: var(--space-4); align-items: start; }
+.ep-audit__main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-width: 0; }
+.ep-audit__main > section { min-width: 0; }
+.ep-audit__chat textarea { font: inherit; width: 100%; resize: vertical; background: transparent; color: inherit; border: 0; }
 .ep-audit__chat { position: sticky; top: var(--space-4); display: grid; gap: var(--space-3); }
 .ep-audit__log { max-height: 55vh; }
 .ep-audit__head { justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: var(--space-4); }
 .ep-scroll { overflow-x: auto; }
-.ep-chain td:first-child { min-width: 220px; }
+.ep-chain td:first-child { min-width: 180px; }
 .ep-chain__kind { display: block; font-size: 0.65rem; }
+.ep-chain .ep-refs { display: flex; flex-wrap: wrap; gap: 4px; }
+.ep-chain__src { min-width: 200px; }
+.ep-chain td.num { white-space: nowrap; }
 .ep-msg { display: grid; gap: 2px; }
 .ep-msg__text { white-space: pre-wrap; }
 .ep-msg--action { opacity: 0.8; font-size: 0.82rem; }

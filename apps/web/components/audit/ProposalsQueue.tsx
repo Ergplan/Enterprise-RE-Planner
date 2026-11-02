@@ -19,7 +19,9 @@ export function ProposalsQueue() {
       setError((e as Error).message);
     }
   }, []);
-  useEffect(() => void load(), [load]);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   async function act<T>(fn: () => Promise<T>): Promise<T | null> {
     try {

@@ -96,6 +96,7 @@ export function fmt(v: string | number | null | undefined, unit?: string | null)
   if (v === null || v === undefined || v === "") return "—";
   const n = Number(v);
   if (!Number.isFinite(n)) return String(v);
+  if (n < 0 && (unit === "INR" || unit === "INR/kWh")) return `−${fmt(-n, unit)}`;
   if (unit === "INR") return `₹${n.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
   if (unit === "INR/kWh") return `₹${n.toFixed(3)}`;
   if (unit === "percent") return `${n.toLocaleString("en-IN", { maximumFractionDigits: 3 })}%`;

@@ -454,3 +454,10 @@ def test_an_accepted_value_is_a_decimal_string_never_a_float() -> None:
     assert body["n"] == 4 and body["rows"][0]["v"] == "1.25"
     with pytest.raises(AuditError):
         _set_pointer(body, "/f", Decimal("0.75"))
+
+
+def test_the_assistant_reads_at_most_six_decimals() -> None:
+    from ergplan.report.audit_chat import _n
+
+    assert _n(Decimal("0.1425219376161950010328444532")) == "0.142522"
+    assert _n(Decimal("3.10")) == "3.1" and _n(Decimal("100")) == "100" and _n(None) == "—"

@@ -7,7 +7,7 @@ import {
   KIND_WORDS, STATUS_LABEL, STATUS_TONE, fmt, linesByKey,
   type AuditOut, type Chain, type ChainStep, type Proposal, type RerunOut, type WorkingLine,
 } from "@/lib/audit";
-import { clientFetch } from "@/lib/intake";
+import { clientFetch, type Ref } from "@/lib/intake";
 
 type ScenarioChoice = { scenario_id: string; name: string };
 const UNITS = ["INR/kWh", "paise/kWh", "percent", "INR/MW/month", "INR/kW/month", "INR", "kWh", "MWh", "kW", "MW"];
@@ -167,6 +167,17 @@ export function AuditScreen({ connectionId, initialChain, initialAudit, scenario
   );
 }
 
+// a computed figure carries the refs of every input: show its pages and one chip per other kind
+function compactRefs(refs: Ref[]): Ref[] {
+  const seen = new Set<string>();
+  return refs.filter((r) => {
+    if ((r.kind === "order" || r.kind === "regulation") && r.document_id) return true;
+    if (seen.has(r.kind)) return false;
+    seen.add(r.kind);
+    return true;
+  });
+}
+
 function ChainTable({ steps, theirs, running = false }: { steps: ChainStep[]; theirs: Record<string, WorkingLine>; running?: boolean }) {
   if (steps.length === 0) return <p className="eg-muted ep-small">Nothing settled here.</p>;
   return (
@@ -192,7 +203,7 @@ function ChainTable({ steps, theirs, running = false }: { steps: ChainStep[]; th
                 <td className="num">{st.rate ? fmt(st.rate.value, st.rate.unit) : ""}</td>
                 <td className="num">{fmt(st.value.value, st.value.unit)}</td>
                 {running && <td className="num">{st.running ? fmt(st.running.value, st.running.unit) : ""}</td>}
-                <td><RefChips refs={st.rate?.source_refs ?? st.value.source_refs} max={2} /></td>
+                <td className="ep-chain__src"><RefChips refs={compactRefs(st.rate?.source_refs ?? st.value.source_refs)} max={st.rate ? 2 : 1} /></td>
                 <td className="num">{l ? fmt(l.theirs, l.ours_unit ?? l.unit) : ""}</td>
                 <td className="num">{l?.difference ? fmt(l.difference, l.ours_unit) : ""}</td>
                 <td>{l && <span className={`eg-chip ${STATUS_TONE[l.status] ?? ""}`} title={l.note ?? `${l.compare === "rate" ? "rate" : "value"} from p. ${l.page}: “${l.quote}”`}>{STATUS_LABEL[l.status]}</span>}</td>
@@ -371,8 +382,12 @@ function AuditChat({ connectionId, scenarioId, audit, onChanged, onRerun }: {
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
-  const endRef = useRef<HTMLLIElement>(null);
-  useEffect(() => endRef.current?.scrollIntoView({ block: "nearest" }), [audit.messages.length]);
+  const logRef = useRef<HTMLOListElement>(null);
+  // keep the latest turn in view inside the log (never scroll the page)
+  useEffect(() => {
+    const el = logRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [audit.messages.length, busy]);
 
   async function send(message: string) {
     if (!message.trim()) return;
@@ -414,7 +429,7 @@ function AuditChat({ connectionId, scenarioId, audit, onChanged, onRerun }: {
     <aside className="eg-card ep-panel ep-audit__chat">
       <h2 className="eg-card__title">Check it with your working</h2>
       <p className="eg-muted ep-small">Upload your own working (a spreadsheet, CSV, PDF or text). The assistant sets each figure against the chain; the plan computes every difference. Your own figures become the plan&apos;s inputs; a different charge or loss goes to a jouleWise analyst.</p>
-      <ol className="ep-transcript ep-audit__log" aria-live="polite">
+      <ol ref={logRef} className="ep-transcript ep-audit__log" aria-live="polite">
         {audit.messages.map((m) => (
           <li key={m.id} className={`ep-msg ep-msg--${m.role}`}>
             <span className="eg-overline">{m.role === "action" ? "done" : m.role === "user" ? m.actor : "assistant"}</span>
@@ -422,7 +437,6 @@ function AuditChat({ connectionId, scenarioId, audit, onChanged, onRerun }: {
           </li>
         ))}
         {busy && <li className="ep-msg ep-msg--action"><span className="eg-overline">working</span> {busy}</li>}
-        <li ref={endRef} aria-hidden />
       </ol>
       {error && <p className="ep-error">{error}</p>}
       <div className="ep-row">
