@@ -236,8 +236,8 @@ def test_a_verified_kvah_is_the_months_energy_when_the_kwh_is_read_once(billx: F
     res = oa_result()
     for b in res["bills"]:
         b["status"], b["accepted"], b["passed"], b["accepted_by"] = "needs_review", False, False, None
-        b["fields"]["energy"]["kwh"] = _fo("1722132", "unverified")
-        b["fields"]["energy"]["kvah"] = _fo("1723860", "verified")
-        b["fields"]["energy"]["billed_units"] = {**_fo("1281974.753", "verified"), "unit": "kVAh"}
+        b["fields"]["energy"]["kwh"] = _fo("1700000", "unverified")
+        b["fields"]["energy"]["kvah"] = _fo("1701500", "verified")
+        b["fields"]["energy"]["billed_units"] = {**_fo("1280000.5", "verified"), "unit": "kVAh"}
     [b, _] = _upload(billx, "kvah-ok", res)
     assert "energy.kwh" not in b["outstanding"] and b["outstanding"] == []
