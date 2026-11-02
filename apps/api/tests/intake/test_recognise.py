@@ -151,3 +151,35 @@ def test_a_charge_on_exchange_units_is_open_access_and_the_word_alone_is_not(bil
     assert r["open_access"] == "open_access" and r["open_access_kinds"] == ["exchange"]
     [zero] = _upload(billx, "rec-iex0", with_line("E Tax on consumption from IEX", "0.00"))
     assert _recognition(zero["id"])["open_access"] == "none_seen"
+
+
+def test_a_bill_printing_two_tod_schemes_gives_one() -> None:
+    from decimal import Decimal
+
+    from ergplan.intake.site_intake import Fact, TodEnergy, one_scheme
+
+    def t(name: str, a: str, b: str, kvah: str) -> TodEnergy:
+        return TodEnergy(start=a, end=b, energy=Fact(value=Decimal(kvah)), slot=name)
+
+    old = [
+        t("TOD-1", "05:00", "11:00", "60"),
+        t("TOD-2", "11:00", "17:00", "90"),
+        t("TOD-3", "17:00", "23:00", "80"),
+    ]
+    new = [
+        t("TOD-5", "05:00", "10:00", "50"),
+        t("TOD-6", "10:00", "19:00", "130"),
+        t("TOD-7", "19:00", "03:00", "90"),
+        t("TOD-8", "03:00", "05:00", "20"),
+    ]
+    # the old scheme lost a slot in reading (23-05): only the new one covers the day
+    assert [x.slot for x in one_scheme(old + new, Decimal(290), set())] == [
+        "TOD-5",
+        "TOD-6",
+        "TOD-7",
+        "TOD-8",
+    ]
+    whole = [*old, t("TOD-4", "23:00", "05:00", "60")]
+    # both cover the day: the approved windows decide
+    assert one_scheme(whole + new, Decimal(290), {("05:00", "11:00"), ("23:00", "05:00")})[0].slot == "TOD-1"
+    assert one_scheme(old, Decimal(10), set()) == []

@@ -323,6 +323,64 @@ def window_of(slot: str | None) -> tuple[str, str] | None:
     return (a, b) if _HHMM.match(a) and _HHMM.match(b) else None
 
 
+def _hours(t: TodEnergy) -> int:
+    """A window's length in quarter hours (23:00–05:00 wraps midnight)."""
+    a = int(t.start[:2]) * 4 + int(t.start[3:]) // 15
+    b = int(t.end[:2]) * 4 + int(t.end[3:]) // 15
+    return (b - a) % 96 or 96
+
+
+def one_scheme(
+    tod: list[TodEnergy], month_energy: Decimal, approved: set[tuple[str, str]]
+) -> list[TodEnergy]:
+    """A bill that prints two ToD schemes for the same month (UPPCL meters register the old four
+    slots and the new four, each adding up to the month) gives one: the printed slots are split,
+    into runs of consecutive windows that cover the day exactly once; of the complete runs, the one whose
+    windows the approved ToD rules name, else the one nearest the month's energy, else the last
+    printed. Empty when no run covers the day (the month's total is then used)."""
+    schemes: list[list[TodEnergy]] = []
+    for i in range(len(tod)):
+        quarters = 0
+        for j in range(i, len(tod)):
+            if j > i and tod[j].start != tod[j - 1].end:
+                break  # the windows must follow on from each other
+            quarters += _hours(tod[j])
+            if quarters > 96:
+                break
+            if quarters == 96 and tod[j].end == tod[i].start:
+                schemes.append(tod[i : j + 1])
+                break
+    if not schemes:
+        return []
+
+    def rank(sc: list[TodEnergy]) -> tuple[int, Decimal, int]:
+        named = sum(1 for t in sc if (t.start, t.end) in approved)
+        gap = abs(sum((t.energy.value for t in sc), Decimal(0)) - month_energy)
+        return (-named, gap, -schemes.index(sc))
+
+    return min(schemes, key=rank)
+
+
+def _approved_windows(session: Session, bill: Bill, month: date) -> set[tuple[str, str]]:
+    """The ToD windows the approved rules name for the bill's DISCOM in that month."""
+    from ..rulebook import repository
+    from ..rulebook.service import UnknownJurisdiction, jurisdiction_chain
+
+    discom = recognise.discom_of(bill).discom
+    if not discom:
+        return set()
+    try:
+        chain = jurisdiction_chain(session, discom)
+    except UnknownJurisdiction:
+        return set()
+    out: set[tuple[str, str]] = set()
+    for r in repository.approved_rules(session, "tod_slots", chain, month):
+        for sl in r.body.get("slots") or []:
+            if not sl.get("months") or month.month in sl["months"]:
+                out.add((str(sl.get("start")), str(sl.get("end"))))
+    return out
+
+
 def month_from_bill(session: Session, bill: Bill) -> MonthFacts:
     v = bill_store.values(session, bill)
     month = parse_month(v["period.bill_month"].value) if "period.bill_month" in v else bill.bill_month
@@ -346,6 +404,9 @@ def month_from_bill(session: Session, bill: Bill) -> MonthFacts:
         tod.append(TodEnergy(start=w[0], end=w[1], energy=from_bill(bv, bv.dec), slot=slot))
     if unmapped:
         tod = []  # a partial split would mislead; the month's total is used until the client types the hours
+    if tod and sum((t.energy.value for t in tod), Decimal(0)) > energy.value * Decimal("1.001"):
+        # no complete day: the month's total is used and the day's shape comes from the pattern
+        tod = one_scheme(tod, energy.value, _approved_windows(session, bill, month))
     return MonthFacts(
         month=month,
         energy=energy,
