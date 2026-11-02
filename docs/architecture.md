@@ -18,7 +18,7 @@ Browser ──► web (Next.js 15, ergOS Harmony, :3000)
             data/documents/<sha256>.pdf   (the regulation corpus, git-ignored)
 ```
 
-Upstream sources: `Ergplan/tariff-oder` (published, reviewed tariff-order facts, Stage 1 adapter), billx (bills, contract esgos-1.1), IEX CSV uploads (Stage 2), the regulation corpus registered from `packages/rulebooks/corpus/tariff-library.json`.
+Upstream sources: `Ergplan/tariff-oder` (published, reviewed tariff-order facts, Stage 1 adapter), billx (bills, contract esgos-1.1; its source lives in `billx/` in this repository and is built into its own container, spoken to over HTTP only), IEX CSV uploads (Stage 2), the regulation corpus registered from `packages/rulebooks/corpus/tariff-library.json`.
 
 ## Data model
 
@@ -154,7 +154,7 @@ ergOS Harmony vendored at `public/vendor/harmony` (origin in `ORIGIN.txt`, re-co
 Stage 8: `docker/compose.prod.yaml` over `docker/compose.yaml` on the VM (only Caddy exposed; automatic TLS for `SITE_ADDRESS`; `ERGPLAN_ENV=prod`; worker concurrency); `tools/dev/backup.sh` nightly (pg_dump + data/ tarball, 14 days, optional bucket); `docs/deploy.md` is the runbook.
 
 
-`docker/compose.yaml`: postgres, api (migrates then serves), web (Next standalone), billx (built from `BILLX_REPO`, default a sibling `billx` checkout), docling (docling-serve CPU, billx's `docling` reader; billx reaches it at `http://docling:5001`), caddy (`:8080`, `/api/*` → api). The images build from the repository root with `.dockerignore`; the whole stack was first built and run in Docker on 1 Nov 2026.
+`docker/compose.yaml`: postgres, api (migrates then serves), web (Next standalone), billx (built from `billx/` in this repository; `BILLX_REPO` points it at another checkout), docling (docling-serve CPU, billx's `docling` reader; billx reaches it at `http://docling:5001`), caddy (`:8080`, `/api/*` → api). The images build from the repository root with `.dockerignore`; the whole stack was first built and run in Docker on 1 Nov 2026.
 
 ## Rulebooks seeded (Stages 1 and 8)
 
@@ -178,6 +178,7 @@ RJ, HR and TN are registered jurisdictions with no approved rules ("not yet sour
 
 ## What changed
 
+- **Stage 8 (2 Nov 2026), billx in the repository**: new top-level folder `billx/`, the billx engine's source (branch `readers-docling-llamaparse` of the team's GitLab repository, brought in with `git subtree` so its history is kept). It has its own `CLAUDE.md`, tests and Dockerfile; compose builds the `billx` container from it (`BILLX_REPO` overrides), the VM and Mac mini installers no longer ship a billx tarball, and the root `.dockerignore` keeps it out of the api and web images. ergPLAN code still never imports it.
 - **Stage 8**: sign-in by email link and access control (`platform/auth.py`, `platform/mail.py`, `routers/auth.py`; tables `users`, `login_tokens`, `auth_sessions`, `bills.uploaded_by`, migration 0009); bills read once per file but owned per uploader; security headers; `/login` and `/login/verify` pages and a signed-in bar; server pages forward the session cookie; approved-rule cache in `rulebook.repository` (cleared when the approved set changes); worker `--concurrency`; `tools/dev/secrets-check.py` in the watcher and CI; `docker/compose.prod.yaml`, Caddy TLS by `SITE_ADDRESS`, `tools/dev/backup.sh`, `docs/deploy.md`. Breadth: Karnataka, Telangana and Punjab rulebooks approved with golden tests (`packages/rulebooks/golden/{ka,ts,pb}`, `states/{ka,ts,pb}`), jurisdictions and DISCOM aliases for 18 more DISCOMs, `seed/stage8-jobs.yaml` (seed script takes a jobs file), `GET /rulebooks/coverage` and the coverage table on `/rulebooks`, "not yet sourced" notes on the options board and the live plan. `docs/release-notes/` (new folder; the 1.0 release note). Plan page response time checked in the suite (cached plan under 1 s).
 - **Stage 7**: `report/` (plan, share, whatif, pdf, explain), `voice/tools.py`, providers `realtime_secret` and `chat_with_tools` with prompts `voice_v1` and `explain_v1`; tables `share_links`, `explanations` (migration 0008); routers `plan` and `voice`; settings `ergplan_web_internal_url`; Playwright (Python) for PDF export (also in the API image); journey step 6, `/p/[token]`, voice on intake, the rail carries the site; `tools/dev/billx_stub.py` and `tools/dev/e2e-journey.sh` (isolated browser end-to-end on real bills); `next.config` `distDir` from `NEXT_DIST_DIR`.
 - **Stage 6**: `optimizer/` (model, highs_solve, resettle, scenarios); `platform/runs.py` and `platform/worker.py`; tables `scenarios`, `runs`, `run_results` with audit triggers on `scenarios` and `runs` (migration 0007, `db/sql/0007_runs_audit.sql`); `rulebook.repository.Reader` and `pinned_rules` (replay); `units` gains years, tCO2, tCO2/MWh; settings `ergplan_optimizer_time_limit_s`, `ergplan_optimizer_mip_gap`; compose service `worker`; pytest marker `slow` (15-minute site solves, run by CI's site step); journey step 5.

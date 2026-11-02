@@ -39,7 +39,7 @@ from billx.reader.read.consensus import RawRead, ReaderOutput
 
 ROOT = Path(__file__).resolve().parents[2]
 PROMPTS = ROOT / "billx" / "reader" / "prompts"
-FAKE_KEY = "sk-test-not-a-real-key-123"
+FAKE_KEY = "sk-test-not-a-real-key-123"  # secrets-check: allow (a fake key)
 FIELDS = [
     {"path": "energy.kwh", "type": "number", "unit": "kWh"},
     {"path": "totals.net_payable", "type": "number", "unit": "INR"},
@@ -244,7 +244,8 @@ def test_factories_return_none_without_keys(tmp_path):
 
 def test_factories_build_the_readers_from_settings(tmp_path, monkeypatch):
     monkeypatch.setenv("BILLX_OPENAI_API_KEY", FAKE_KEY)
-    monkeypatch.setenv("BILLX_ANTHROPIC_API_KEY", "sk-ant-test-not-a-real-key")
+    fake_b = "sk-ant-test-not-a-real-key"  # secrets-check: allow (a fake key)
+    monkeypatch.setenv("BILLX_ANTHROPIC_API_KEY", fake_b)
     a = make_model_a(tmp_path / "a.jsonl")
     b = make_model_b(tmp_path / "b.jsonl")
     assert isinstance(a, OpenAIReader) and a.family == "openai" and a.reader_name == "model_a"

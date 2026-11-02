@@ -2,7 +2,7 @@
 #   cp .env.example .env            # fill keys
 #   docker compose -f docker/compose.yaml up --build
 # Web http://localhost:3000 · API http://localhost:8000 · through Caddy http://localhost:8080
-# billx is built from your billx checkout: BILLX_REPO (default ../../billx, i.e. a sibling of this repo).
+# billx is built from the copy in this repository (billx/); BILLX_REPO points it at another checkout.
 name: ergplan
 
 services:
@@ -56,7 +56,7 @@ services:
     depends_on: { api: { condition: service_healthy } }
 
   billx:
-    build: { context: "${BILLX_REPO:-../../billx}", dockerfile: docker/engine.Dockerfile }
+    build: { context: "${BILLX_REPO:-../billx}", dockerfile: docker/engine.Dockerfile }
     environment:
       BILLX_TOKEN: ${BILLX_TOKEN}
       BILLX_API_MODE: esgos-1.1

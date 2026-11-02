@@ -16,3 +16,4 @@ apps/web/tests
 apps/api/tests
 tools/watch/watch.log
 tools/watch/status.json
+billx

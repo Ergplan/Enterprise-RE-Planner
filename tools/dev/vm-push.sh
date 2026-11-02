@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Deploy ergPLAN to the Google Cloud VM from this Mac (it holds the code bundle, billx, the regulation
-# PDFs, the IEX files and the OpenAI key; the VM gets a copy of each):
+# Deploy ergPLAN to the Google Cloud VM from this Mac (it holds the code bundle, which carries billx,
+# the regulation PDFs, the IEX files and the OpenAI key; the VM gets a copy of each):
 #     bash ~/Downloads/ergplan-server/vm-push.sh
 # Needs the Google Cloud CLI signed in (gcloud auth login) to the project that owns the VM.
 #   ERGPLAN_VM (replanner) · ERGPLAN_ZONE (asia-south2-b) · ERGPLAN_PROJECT (gcloud's current project)
-#   ERGPLAN_HOST (default <ip-with-dashes>.sslip.io, which needs no DNS) · BILLX_DIR (~/billx)
+#   ERGPLAN_HOST (default <ip-with-dashes>.sslip.io, which needs no DNS)
 #   ERGPLAN_ANALYST (venture@aayuda.energy)
 # Safe to run again: the VM keeps its settings and database; code, billx and data are refreshed.
 set -euo pipefail
@@ -12,7 +12,6 @@ KIT="$(cd "$(dirname "$0")" && pwd)"
 DL="$HOME/Downloads"
 VM="${ERGPLAN_VM:-replanner}"
 ZONE="${ERGPLAN_ZONE:-asia-south2-b}"
-BILLX_DIR="${BILLX_DIR:-$HOME/billx}"
 ANALYST="${ERGPLAN_ANALYST:-venture@aayuda.energy}"
 say() { printf '\n== %s\n' "$*"; }
 die() { printf '\nSTOPPED: %s\n' "$*" >&2; exit 1; }
@@ -32,7 +31,6 @@ IP="$(gcloud compute instances describe "$VM" "${G[@]}" --format='value(networkI
 HOST="${ERGPLAN_HOST:-$(echo "$IP" | tr . -).sslip.io}"
 echo "project $PROJECT · VM $VM ($IP) · site https://$HOST"
 [ -f "$KIT/ergplan.bundle" ] && [ -f "$KIT/vm-install.sh" ] || die "ergplan.bundle and vm-install.sh must be beside this script"
-[ -f "$BILLX_DIR/docker/engine.Dockerfile" ] || die "billx not found at $BILLX_DIR (set BILLX_DIR)"
 
 say "2/6 Disk, firewall and address"
 DISK="$(gcloud compute instances describe "$VM" "${G[@]}" --format='value(disks[0].source)' | sed 's|.*/||')"
@@ -73,15 +71,10 @@ for _ in 1 2 3 4 5 6 7 8 9 10 11 12; do
 done
 [ "${OK:-}" = 1 ] || die "cannot SSH to the VM (is the default-allow-ssh firewall rule there?)"
 
-say "3/6 Packing code, billx, regulations, prices and settings"
+say "3/6 Packing code (with billx), regulations, prices and settings"
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 mkdir "$TMP/p"
 cp "$KIT/ergplan.bundle" "$KIT/vm-install.sh" "$TMP/p/"
-if git -C "$BILLX_DIR" rev-parse --git-dir >/dev/null 2>&1; then
-  git -C "$BILLX_DIR" archive --format=tar.gz -o "$TMP/p/billx.tar.gz" HEAD  # the committed billx
-else
-  tar -C "$BILLX_DIR" --exclude .venv --exclude data --exclude node_modules --exclude __pycache__ -czf "$TMP/p/billx.tar.gz" .
-fi
 items=()
 for i in "India_DISCOM_Tariff_Orders_Final_2026" "Tariff Orders" "Banking Rule - Uttar Pradesh.pdf"; do
   [ -e "$DL/$i" ] && items+=("$i")

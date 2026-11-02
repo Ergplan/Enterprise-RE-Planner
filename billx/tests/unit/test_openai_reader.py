@@ -27,7 +27,7 @@ FIELDS = [
     {"path": "energy.kwh", "type": "number", "unit": "kWh"},
     {"path": "totals.net_payable", "type": "number", "unit": "INR"},
 ]
-FAKE_KEY = "sk-test-not-a-real-key-123"
+FAKE_KEY = "sk-test-not-a-real-key-123"  # secrets-check: allow (a fake key)
 SHA = "ab" * 32
 PAGES = [Page("image/png", b"\x89PNG synthetic")]
 

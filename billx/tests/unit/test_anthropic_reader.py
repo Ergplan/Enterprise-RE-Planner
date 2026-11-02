@@ -23,7 +23,7 @@ from billx.reader.providers.base import BudgetExceeded, Page, ProviderError
 from billx.reader.providers.usage import cost
 
 SPEC = "anthropic:claude-sonnet-5-5"
-FAKE_KEY = "sk-ant-test-not-a-real-key-123"
+FAKE_KEY = "sk-ant-test-not-a-real-key-123"  # secrets-check: allow (a fake key)
 SHA = "cd" * 32
 FIELDS = [
     {"path": "utility.name", "type": "text"},

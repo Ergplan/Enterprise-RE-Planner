@@ -5,14 +5,14 @@
 # and only adds what is missing. Nothing it reads or writes leaves this Mac except the OpenAI calls the
 # app makes and the Docker image downloads.
 #   ERGPLAN_DIR   where the app lives          (default ~/apps/ergplan)
-#   BILLX_DIR     your billx checkout          (default ~/billx)
+#   BILLX_DIR     another billx checkout to build (default: billx/ in the code)
 #   ERGPLAN_ANALYST  the first analyst's email (default venture@aayuda.energy)
 #   HTTP_PORT     the port the app is served on (default 80)
 set -euo pipefail
 KIT="$(cd "$(dirname "$0")" && pwd)"
 DL="$HOME/Downloads"
 DEST="${ERGPLAN_DIR:-$HOME/apps/ergplan}"
-BILLX_DIR="${BILLX_DIR:-$HOME/billx}"
+BILLX_DIR="${BILLX_DIR:-}"
 ANALYST="${ERGPLAN_ANALYST:-venture@aayuda.energy}"
 PORT="${HTTP_PORT:-}"
 if [ -z "$PORT" ] && [ -f "$DEST/.env" ]; then PORT="$(grep -E '^HTTP_PORT=' "$DEST/.env" | cut -d= -f2 || true)"; fi
@@ -26,7 +26,7 @@ command -v git >/dev/null || die "git is missing: run  xcode-select --install  a
 command -v docker >/dev/null || die "Docker is not installed. Install Docker Desktop for Mac (Apple silicon) or OrbStack, start it, then run this script again."
 docker info >/dev/null 2>&1 || die "Docker is installed but not running. Open Docker Desktop (or OrbStack), wait until it is running, then run this script again."
 docker compose version >/dev/null 2>&1 || die "Docker Compose v2 is missing: update Docker Desktop."
-[ -f "$BILLX_DIR/docker/engine.Dockerfile" ] || die "billx not found at $BILLX_DIR (run again with BILLX_DIR=/path/to/billx)."
+[ -z "$BILLX_DIR" ] || [ -f "$BILLX_DIR/docker/engine.Dockerfile" ] || die "billx not found at $BILLX_DIR."
 [ -f "$KIT/ergplan.bundle" ] || die "ergplan.bundle is missing beside this script."
 if command -v lsof >/dev/null; then
   busy="$(lsof -nP -iTCP:"$PORT" -sTCP:LISTEN 2>/dev/null | awk 'NR>1 {print $1}' | grep -viE '^(com\.docke|docker|vpnkit|orbstack)' | sort -u | tr '\n' ' ' || true)"
@@ -65,7 +65,7 @@ HTTP_PORT=$PORT
 POSTGRES_USER=ergplan
 POSTGRES_PASSWORD=$(openssl rand -hex 24)
 POSTGRES_DB=ergplan
-BILLX_REPO=$BILLX_DIR
+BILLX_REPO=${BILLX_DIR:-$DEST/billx}
 BILLX_TOKEN=$(openssl rand -hex 32)
 OPENAI_API_KEY=$key
 BILLX_OPENAI_API_KEY=$key

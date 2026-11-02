@@ -32,7 +32,7 @@ See section 5.1 of `docs/MASTER-PROMPT.md`. In short: `apps/web` (Next.js, ergOS
 ```bash
 git clone https://github.com/Ergplan/Enterprise-RE-Planner.git && cd Enterprise-RE-Planner
 cp .env.example .env                       # add OPENAI_API_KEY and BILLX_TOKEN
-BILLX_REPO=~/billx docker compose -f docker/compose.yaml up --build
+docker compose -f docker/compose.yaml up --build   # billx builds from billx/ in this repo
 # register the regulation corpus (PDFs from ~/Downloads/India_DISCOM_Tariff_Orders_Final_2026)
 mkdir -p data/corpus && cp -R ~/Downloads/India_DISCOM_Tariff_Orders_Final_2026 data/corpus/
 docker compose -f docker/compose.yaml exec api python -m ergplan.documents.corpus --root /data/corpus/India_DISCOM_Tariff_Orders_Final_2026

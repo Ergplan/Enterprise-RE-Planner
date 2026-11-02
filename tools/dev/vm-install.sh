@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Installs or updates ergPLAN on the Google Cloud VM (Debian), as root, from a payload directory
 # (tools/dev/vm-push.sh from the Mac, or the builder over SSH from the mini) holding ergplan.bundle and
-# optionally billx.tar.gz, corpus.tar.gz, iex.tar.gz and env (first install only):
+# optionally corpus.tar.gz, iex.tar.gz and env (first install only). billx comes with the code (billx/):
 #   sudo bash /tmp/ergplan-payload/vm-install.sh <hostname> <first analyst email>
 # Safe to run again: keeps /opt/ergplan/.env, the database and data/; updates code and billx.
 set -euo pipefail
@@ -9,7 +9,7 @@ HOST="${1:?hostname}"
 ANALYST="${2:?analyst email}"
 P="$(cd "$(dirname "$0")" && pwd)"
 DEST=/opt/ergplan
-BILLX=/opt/billx
+BILLX="$DEST/billx"  # billx ships inside the repository
 say() { printf '\n== %s\n' "$*"; }
 die() { printf '\nSTOPPED: %s\n' "$*" >&2; exit 1; }
 cleanup() { rm -rf "$P"; }  # the payload carries a copy of the settings: never leave it behind
@@ -52,10 +52,7 @@ else
   git -C "$DEST" remote set-url origin https://github.com/Ergplan/Enterprise-RE-Planner.git
 fi
 echo "ergPLAN at $(git -C "$DEST" log --oneline -1)"
-if [ -f "$P/billx.tar.gz" ]; then  # an update without billx keeps the one there
-  rm -rf "$BILLX.new" && mkdir -p "$BILLX.new" && tar -xzf "$P/billx.tar.gz" -C "$BILLX.new"
-  rm -rf "$BILLX" && mv "$BILLX.new" "$BILLX"
-fi
+[ -f "$P/billx.tar.gz" ] && echo "billx.tar.gz ignored: billx is built from $BILLX, in the repository"
 [ -f "$BILLX/docker/engine.Dockerfile" ] || die "billx is missing at $BILLX"
 cd "$DEST"
 

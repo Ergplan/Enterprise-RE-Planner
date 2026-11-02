@@ -82,7 +82,6 @@ sudo apt-get update && sudo apt-get install -y docker.io docker-compose-v2 git
 sudo usermod -aG docker $USER && newgrp docker
 sudo mkdir -p /opt/ergplan && sudo chown $USER /opt/ergplan
 git clone https://github.com/Ergplan/Enterprise-RE-Planner /opt/ergplan
-git clone <billx repository> /opt/billx      # BILLX_REPO=../../billx relative to docker/
 cd /opt/ergplan && cp .env.example .env      # fill in: see the Stage 8 block
 ```
 
