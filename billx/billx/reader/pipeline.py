@@ -187,13 +187,20 @@ def _layout_reading(document, bill_type):
 
 def _bill_page_groups(document) -> list[tuple[int, ...]]:
     """The file's pages grouped into bills (5.0 page sorting) from each page's local text: the
-    genuine text layer where a page has one, else local OCR (read once and kept on the page)."""
+    genuine text layer where a page has one, else local OCR (read once and kept on the page),
+    page by page."""
     from billx.reader.identify.split import group_pages
-    from billx.reader.read.local import page_texts
+    from billx.reader.read.local import page_texts, page_texts_mixed
 
     if document.page_count < 2:
         return [tuple(range(1, document.page_count + 1))]
-    texts = page_texts(document, "text_layer" if document.has_text_layer() else "local_ocr")
+    # a page without a text layer in a digital file (a photographed bill scanned in with digital
+    # ones) is read by OCR, so its bill number and date can start a bill of its own
+    texts = (
+        page_texts_mixed(document)
+        if document.has_text_layer()
+        else page_texts(document, "local_ocr")
+    )
     if len(texts) != document.page_count:
         return [tuple(range(1, document.page_count + 1))]
     return group_pages(texts)

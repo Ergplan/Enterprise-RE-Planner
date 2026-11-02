@@ -48,6 +48,27 @@ def page_texts(document: Document, reader: LocalReader) -> list[str]:
     return [" ".join(line_text(line) for line in group_lines(words)) for words in pages]
 
 
+MIN_PAGE_TEXT = 40  # characters: a page with less genuine text is read by OCR for page sorting
+
+
+def page_texts_mixed(document: Document) -> list[str]:
+    """Each page's text from its genuine text layer, or from local OCR where the page has none
+    (a file mixing a photographed bill with digital ones): page sorting needs every page's
+    printed bill number and date, not only the digital pages'."""
+    from billx.reader import ocr
+
+    out = []
+    for page in document.pages:
+        words = list(page.text_words or [])
+        text = " ".join(line_text(line) for line in group_lines(words))
+        if len(text.strip()) < MIN_PAGE_TEXT:
+            if page.ocr_words is None:
+                page.ocr_words = ocr.read_words(page.image, page.index)
+            text = " ".join(line_text(line) for line in group_lines(list(page.ocr_words)))
+        out.append(text)
+    return out
+
+
 def read_local(document: Document, reader: LocalReader, bill_kind: str) -> ReaderOutput | None:
     """One reader's output for the whole document: guaranteed fields by the label rule, meter
     rows and printed lines. None when the reader has no words for this document."""

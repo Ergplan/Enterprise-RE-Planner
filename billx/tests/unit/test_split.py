@@ -74,3 +74,36 @@ def test_a_file_of_two_synthetic_bills_reads_as_two_bills(tmp_path: Path):
     assert [bill.index for bill in env.bills] == [0, 1]
     assert env.bills[0].pages == tuple(range(1, counts[0] + 1))
     assert env.bills[1].pages == tuple(range(counts[0] + 1, counts[0] + counts[1] + 1))
+
+
+def test_a_photographed_page_in_a_digital_file_is_read_by_ocr_for_sorting(monkeypatch):
+    D = Decimal
+    """A file of one photographed bill followed by a digital one: the photo has no text layer, so
+    its bill number comes from OCR and the digital page starts a bill of its own."""
+    from types import SimpleNamespace
+
+    from billx.reader import ocr
+    from billx.reader.identify.split import group_pages
+    from billx.reader.read.local import page_texts_mixed
+    from billx.reader.read.words import WordBox
+
+    def words(text, page):
+        return [
+            WordBox(w, page, D(i) / 100, D("0.1"), D(i) / 100 + D("0.01"), D("0.11"))
+            for i, w in enumerate(text.split())
+        ]
+
+    photo = SimpleNamespace(index=0, image=None, text_words=[], ocr_words=None)
+    digital = SimpleNamespace(
+        index=1,
+        image=None,
+        text_words=words("Bill No : 900000000999 Bill Date : 11-JUN-2026 Net Billed Unit 1", 1),
+        ocr_words=None,
+    )
+    monkeypatch.setattr(
+        ocr,
+        "read_words",
+        lambda image, index: words("Bill Number : 900000000641 Bill Date 04-MAY-2026", index),
+    )
+    texts = page_texts_mixed(SimpleNamespace(pages=[photo, digital]))
+    assert group_pages(texts) == [(1,), (2,)]

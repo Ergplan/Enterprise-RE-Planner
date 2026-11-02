@@ -521,3 +521,8 @@ comparison lab of 4.2 section 9B), with a live reading view. Work happens on the
   name pattern, and a second identification pass that uses the utility name one model read when
   the local text named no DISCOM (`pipeline.identity_text`). The profile decides which labels
   and checks apply, never a value: a wrong profile shows as failing checks.
+- **A photographed page in a digital file is sorted by its OCR text (2 Nov 2026).** A DVVNL file
+  of five monthly bills began with a photographed bill and went on with four digital ones; page
+  sorting read only the text layer, found nothing on the photo, and joined it to the next
+  month's bill. Page sorting now reads a page with less than 40 characters of genuine text by
+  local OCR (`local.page_texts_mixed`), so its printed bill number and date start a bill.
