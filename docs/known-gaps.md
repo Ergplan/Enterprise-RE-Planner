@@ -30,7 +30,8 @@ What is not yet right, and the stage that fixes it.
 | Sources of different set-off categories in block-level netting (UP): the rule draws the bank before bilateral supply in a block; the settlement pass maximises direct set-off first, so a captive + third-party mix with banking may fail re-settlement (it is then not shown) | When such a mix is needed |
 | Capacity of a captive thermal plant is not sized (existing units are dispatched with on/off, ramp and minimum up/down times); unit commitment at 15 minutes for a year is slow — use the hourly preview for sites with thermal | Stage 7 if needed |
 | Battery degradation, auxiliary consumption and a depth-of-discharge limit are not in the dispatch | Stage 7 |
-| IEX purchases priced at the month-slot mean, not block by block | When block prices matter for a client |
+| IEX purchases are priced per month and 15-minute block of the day (the mean clearing price over the month's days in the file), not day by day; a year of daily prices is averaged into twelve representative days | When day-to-day price swings matter for a client |
+| The client's mix is one scenario per name ("Your mix"); a second mix needs another name (the API takes one; the page offers one) | When clients ask to compare mixes side by side |
 | Land area does not bound any candidate (no on-site ground-mount source yet) | When one is added |
 | Generation for settlement comes from normative CUF curves unless a 15-minute injection is supplied | Developer profiles |
 | The audit shows one time-of-day slot's landed cost per source (the first; "slots differ" is shown when they do); a working's per-slot figures are set against that slot only | When a client's working is per slot |

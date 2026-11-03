@@ -532,6 +532,8 @@ def _settlement(
     lapse under the ceiling (the higher of two ceilings exactly, by a binary per period)."""
     G = range(len(net.groups))
     ks = list(has_supply)
+    cat = {c.id: c.category for c in p.candidates}
+    prio = {c: i for i, c in enumerate(set_off_order(p))}
     m.so = pyo.Var([(k, g) for k in ks for g in G if has_supply[k][g]], within=pyo.NonNegativeReals)
     bankable = [
         (k, g)
@@ -557,6 +559,21 @@ def _settlement(
         for bk in net.drawable[g] if net.banking else []:
             terms = terms + m.w[bk, g]
         add(terms == group_load(g))
+        # exchange purchases fill only what the sources set off before them leave (the rule's
+        # set-off order): never bought where those sources already cover the netting unit, so the
+        # solver cannot set off the exchange and bank the generation the rule sets off first
+        exch = [k for k in ks if has_supply[k][g] and cat.get(k) == "exchange"]
+        if exch:
+            ahead: Any = 0
+            for k in ks:
+                if has_supply[k][g] and prio.get(cat.get(k, ""), 0) < prio["exchange"]:
+                    ahead = ahead + supplied(k, g)
+            if net.banking and prio["banked_energy"] < prio["exchange"]:
+                for bk in net.drawable[g]:
+                    ahead = ahead + m.w[bk, g]
+            # the settlement pass reads the dispatch to the watt-hour: allow that rounding
+            tol = 0.002 * len(net.groups[g]) * len(ks) if mode == "settle" else 0.0
+            add(sum(supplied(k, g) for k in exch) + ahead <= group_load(g) + tol, "exchange_after_order")
 
     keep_c = 1 - net.charge_pct / 100
     m.inv = pyo.Var([(bk, s) for bk in net.buckets for s in range(net.steps)], within=pyo.NonNegativeReals)
@@ -637,6 +654,16 @@ def _settlement(
     guard = _deposit_guard(p, net)
     cost += sum(guard[g] * m.dep[k, g] for k, g in bankable if guard[g] > 0)
     return cost
+
+
+def set_off_order(p: Problem) -> list[str]:
+    """The rule's set-off order of categories, completed as the judge completes it."""
+    cats = ("captive_generation", "bilateral", "exchange", "banked_energy")
+    body = p.rule.body if p.rule else {}
+    order = [c for c in (body.get("set_off_order") or []) if c in cats]
+    if not order:
+        order = ["captive_generation", "banked_energy", "bilateral", "exchange"]
+    return order + [c for c in cats if c not in order]
 
 
 def _may_bank(p: Problem, k: str) -> bool:

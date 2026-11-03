@@ -342,3 +342,14 @@ a.eg-btn { text-decoration: none; }
   .ep-audit { grid-template-columns: 1fr; }
   .ep-audit__chat { position: static; }
 }
+
+/* step 5: the client's own mix and the year at a glance */
+.ep-mix__group { border: 0; margin: 0 0 var(--space-3); padding: 0; display: grid; gap: var(--space-2); }
+.ep-mix__row { display: grid; gap: var(--space-2); padding: var(--space-2) 0; border-top: 1px solid var(--line, rgba(127, 127, 127, 0.2)); }
+.ep-mix__pick { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; cursor: pointer; }
+.ep-mix__opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-2); padding-left: 26px; }
+.ep-yearmix { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; align-items: end; height: 200px; margin: var(--space-3) 0; }
+.ep-yearmix__col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; }
+.ep-yearmix__bar { width: 100%; display: flex; flex-direction: column-reverse; border-radius: 4px; overflow: hidden; min-height: 2px; }
+.ep-yearmix__bar span { display: block; min-height: 1px; }
+.ep-legend { display: flex; flex-wrap: wrap; gap: var(--space-3); }

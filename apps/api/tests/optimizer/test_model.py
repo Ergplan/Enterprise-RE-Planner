@@ -281,3 +281,27 @@ def test_judge_prices_demand_slabs_and_excess_exactly() -> None:
     out = demand_costs(p, [Decimal(1200), Decimal(900)], Decimal(1000))
     # billing demand 1200 kVA: 500 × 150 + 500 × 260 up to contract; 200 × 555 above it
     assert out == {"demand": Decimal(205000), "excess_demand": Decimal(111000)}
+
+
+def test_exchange_never_bought_where_generation_set_off_first_covers_the_unit() -> None:
+    """ToD-slot netting with banking: the 'day' slot's generation covers its load, so buying cheap
+    exchange energy there to bank the generation for the 'peak' slot would break the rule's set-off
+    order (captive first, then banked energy, then the exchange). The judge agrees with the solver."""
+    rule = {
+        "granularity": "tod_slot_monthly",
+        "banking": {"allowed": True, "buckets": "pooled", "period": "monthly"},
+    }
+    gen = Candidate("pv", shape=[1, 1, 0], energy_inr_per_kwh=[3, 3, 3], min_kw=20, max_kw=20, may_bank=True)
+    iex = Candidate(
+        "iex",
+        shape=[1, 1, 1],
+        energy_inr_per_kwh=[1, 1, 7],
+        max_kw=50,
+        category="exchange",
+        dispatchable=True,
+    )
+    s = check(P([20, 20, 30], [gen, iex], rule, rate=9.0, slots=["day", "day", "peak"]))
+    # the day slot is covered by generation (40 kWh for 40 kWh of load): no exchange there, nothing banked
+    assert s_delivered(s, "iex")[:2] == [0, 0]
+    assert s_delivered(s, "iex")[2] == pytest.approx(30)  # the peak is bought at 7 (< the grid at 9)
+    assert s.settled[APR]["banked"] == pytest.approx(0)

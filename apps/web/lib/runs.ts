@@ -3,7 +3,13 @@ import type { Ref, SourcedValue } from "./intake";
 export type SizeOut = {
   id: string; kind: string; label: string; kw: SourcedValue; kwh: SourcedValue | null; delivered_kwh: SourcedValue | null;
   setoff_kwh: SourcedValue | null; energy_cost: SourcedValue | null; banked_kwh: SourcedValue | null; unbanked_kwh: SourcedValue | null;
-  waterfall: Record<string, SourcedValue[]>; gaps: string[];
+  waterfall: Record<string, SourcedValue[]>; gaps: string[]; ownership?: string | null;
+  exchange?: { segment: string; blocks_bought: number; hours_bought: string; avg_landed: SourcedValue; share_of_load: SourcedValue } | null;
+};
+export type MonthMix = { month: string; load_kwh: SourcedValue; grid_kwh: SourcedValue; withdrawn_kwh: SourcedValue; sources: Record<string, SourcedValue> };
+export type SourceOption = {
+  kind: string; label: string; group: string; connection: string; price_kind: string; default_price_inr_per_kwh: string | null;
+  price_note: string | null; ownerships: string[]; available: boolean; reason: string | null;
 };
 export type SummaryOut = {
   sizes: SizeOut[];
@@ -16,6 +22,7 @@ export type SummaryOut = {
   provenance: { load_profile: string; prices: string[]; profile_ref: SourcedValue };
   sensitivities: { label: string; saving: SourcedValue }[];
   notes: string[];
+  monthly?: MonthMix[];
 };
 export type RunOut = {
   id: string; scenario_id: string; status: "queued" | "running" | "done" | "failed" | "failed_resettle"; resolution_min: number;
@@ -34,6 +41,11 @@ export const refsOf = (...v: (SourcedValue | null | undefined)[]): Ref[] => v.fl
 export function mw(kw: SourcedValue | null | undefined): string {
   if (!kw) return "—";
   return (Number(kw.value) / 1000).toLocaleString("en-IN", { maximumFractionDigits: 2 });
+}
+
+export function mwh(v: SourcedValue | null | undefined): string {
+  if (!v) return "—";
+  return (Number(v.value) / 1000).toLocaleString("en-IN", { maximumFractionDigits: 0 });
 }
 
 export function crore(v: SourcedValue | null | undefined): string {

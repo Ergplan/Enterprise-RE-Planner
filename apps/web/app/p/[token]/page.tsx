@@ -8,7 +8,7 @@ import { apiOrNull } from "@/lib/api";
 import { uniqueRefs } from "@/lib/cost";
 import type { Ref, SourcedValue } from "@/lib/intake";
 import { Citations, type PlanOut } from "@/lib/plan";
-import { crore, mw } from "@/lib/runs";
+import { crore, mw, mwh } from "@/lib/runs";
 
 export const metadata = { title: "Your green power plan · jouleWise" };
 
@@ -67,7 +67,7 @@ export default async function LivePlan({ params, searchParams }: { params: Promi
             <table className="ep-table">
               <tbody>
                 {s.sizes.map((z) => (
-                  <tr key={z.id}><td>{z.label}</td><td className="num">{z.kind === "btm_bess" ? `${mw(z.kw)} MW / ${mw(z.kwh)} MWh` : `${mw(z.kw)} MW`}</td><td>{C([z.kw], 2)}</td></tr>
+                  <tr key={z.id}><td>{z.label}{z.exchange && <div className="ep-small eg-muted">bought in {Number(z.exchange.hours_bought).toLocaleString("en-IN")} hours at ₹{Number(z.exchange.avg_landed.value).toFixed(2)}/kWh landed · {Number(z.exchange.share_of_load.value).toFixed(1)}% of your use</div>}</td><td className="num">{z.kind === "btm_bess" ? `${mw(z.kw)} MW / ${mw(z.kwh)} MWh` : z.exchange ? `${mwh(z.delivered_kwh)} MWh · up to ${mw(z.kw)} MW` : `${mw(z.kw)} MW`}</td><td>{C(z.exchange ? [z.delivered_kwh, z.exchange.avg_landed] : [z.kw], 2)}</td></tr>
                 ))}
                 <tr><td>Payback</td><td className="num">{s.payback_years ? `${Number(s.payback_years.value).toFixed(1)} years` : "—"}</td><td>{s.payback_years && C([s.payback_years], 1)}</td></tr>
                 <tr><td>IRR</td><td className="num">{s.irr_pct ? `${Number(s.irr_pct.value).toFixed(1)}%` : "—"}</td><td /></tr>
@@ -88,7 +88,7 @@ export default async function LivePlan({ params, searchParams }: { params: Promi
                 {d.scenarios.map((x) => (
                   <tr key={x.scenario_id}>
                     <td>{x.name}{x.scenario_id === d.recommended ? " (recommended)" : ""}</td>
-                    <td className="ep-small">{x.summary.sizes.map((z) => `${z.label} ${z.kind === "btm_bess" ? `${mw(z.kw)} MW/${mw(z.kwh)} MWh` : `${mw(z.kw)} MW`}`).join(" · ")}</td>
+                    <td className="ep-small">{x.summary.sizes.map((z) => `${z.label} ${z.kind === "btm_bess" ? `${mw(z.kw)} MW/${mw(z.kwh)} MWh` : z.exchange ? `${mwh(z.delivered_kwh)} MWh bought` : `${mw(z.kw)} MW`}`).join(" · ")}</td>
                     <td className="num">{crore(x.summary.annual.saving)} {C([x.summary.annual.saving], 1)}</td>
                     <td className="num">{crore(x.summary.annual.after)}</td>
                   </tr>

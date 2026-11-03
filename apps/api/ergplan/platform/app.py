@@ -19,6 +19,7 @@ from .routers import (
     documents,
     intake,
     landed,
+    mix,
     plan,
     prices,
     regreader,
@@ -81,6 +82,7 @@ def create_app() -> FastAPI:
     app.include_router(plan.router)
     app.include_router(voice.router)
     app.include_router(audit.router)
+    app.include_router(mix.router)
     return app
 
 

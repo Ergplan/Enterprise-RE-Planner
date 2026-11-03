@@ -49,6 +49,26 @@ class ScenarioIn(BaseModel):
     spec: ScenarioSpec
 
 
+class ExchangeOut(BaseModel):
+    """An exchange purchase: the consumer buys block by block at the clearing price (never sells)."""
+
+    segment: str
+    blocks_bought: int
+    hours_bought: str
+    avg_landed: SourcedValue = _f()
+    share_of_load: SourcedValue = _f()
+
+
+class MonthMixOut(BaseModel):
+    month: date
+    load_kwh: SourcedValue = _f()
+    grid_kwh: SourcedValue = _f()
+    withdrawn_kwh: SourcedValue = _f()
+    sources: dict[str, SourcedValue] = Field(
+        default_factory=dict, json_schema_extra={"owner": "run_results.summary", "ref_kinds": KINDS}
+    )
+
+
 class SizeOut(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
@@ -66,6 +86,8 @@ class SizeOut(BaseModel):
         default_factory=dict, json_schema_extra={"owner": "rules.body + scenarios.spec", "ref_kinds": KINDS}
     )
     gaps: list[str] = Field(default_factory=list)
+    ownership: str | None = None
+    exchange: ExchangeOut | None = None
 
 
 class AnnualOut(BaseModel):
@@ -119,6 +141,7 @@ class SummaryOut(BaseModel):
     provenance: ProvenanceOut
     sensitivities: list[SensitivityOut]
     notes: list[str]
+    monthly: list[MonthMixOut] = Field(default_factory=list)
 
 
 class RunOut(BaseModel):

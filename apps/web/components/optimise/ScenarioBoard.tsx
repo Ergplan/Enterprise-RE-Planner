@@ -4,9 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 import { analystFetch, getAnalyst } from "@/lib/analyst";
 import { uniqueRefs } from "@/lib/cost";
 import type { DispatchOut, RunOut, ScenarioOut } from "@/lib/runs";
-import { crore, mw, presets, refsOf } from "@/lib/runs";
+import { crore, mw, mwh, presets, refsOf } from "@/lib/runs";
+import type { MonthMix, SizeOut } from "@/lib/runs";
 import { RefChips } from "../cost/RefChips";
 import { DispatchWeek } from "./DispatchWeek";
+import { MixBuilder } from "./MixBuilder";
 
 const STATUS: Record<string, string> = {
   queued: "Queued",
@@ -85,6 +87,7 @@ export function ScenarioBoard({ siteId, connectionId, initial, asOf }: { siteId:
   useEffect(() => setAnalyst(Boolean(getAnalystSafe())), []); // after hydration: storage is browser-only
   return (
     <>
+      <MixBuilder connectionId={connectionId} asOf={asOf} defaultOwnership={null} onQueued={() => void refresh()} />
       {analyst && (
         <section className="eg-card ep-panel">
           <div className="ep-row">
@@ -99,7 +102,7 @@ export function ScenarioBoard({ siteId, connectionId, initial, asOf }: { siteId:
           {error && <p className="ep-error">{error}</p>}
         </section>
       )}
-      {scenarios.length === 0 && <p className="ep-empty">No scenarios yet.{analyst ? "" : " Your jouleWise analyst sizes them for you."}</p>}
+      {scenarios.length === 0 && <p className="ep-empty">No scenarios yet. Build your mix above.</p>}
       <div className="ep-scenarios">
         {scenarios.map((sc) => {
           const r = sc.latest_run;
@@ -122,12 +125,7 @@ export function ScenarioBoard({ siteId, connectionId, initial, asOf }: { siteId:
                   </div>
                   <table className="ep-table ep-small">
                     <tbody>
-                      {s.sizes.map((z) => (
-                        <tr key={z.id}>
-                          <td>{z.label}</td>
-                          <td className="num">{z.kind === "btm_bess" ? `${mw(z.kw)} MW / ${mw(z.kwh)} MWh` : `${mw(z.kw)} MW`}</td>
-                        </tr>
-                      ))}
+                      {s.sizes.map((z) => <SizeRow key={z.id} z={z} />)}
                       <tr><td>Cost today → with plan</td><td className="num">{crore(s.annual.before)} → {crore(s.annual.after)}</td></tr>
                       <tr><td>Payback</td><td className="num">{s.payback_years ? `${Number(s.payback_years.value).toFixed(1)} years` : "—"}</td></tr>
                       <tr><td>IRR</td><td className="num">{s.irr_pct ? `${Number(s.irr_pct.value).toFixed(1)}%` : "—"}</td></tr>
@@ -161,6 +159,7 @@ export function ScenarioBoard({ siteId, connectionId, initial, asOf }: { siteId:
             </div>
             {dispatch ? <DispatchWeek d={dispatch} /> : <p className="eg-muted">Loading…</p>}
           </section>
+          {run.summary.monthly && run.summary.monthly.length > 0 && <YearMix months={run.summary.monthly} sizes={run.summary.sizes} />}
           <section className="eg-card ep-panel">
             <div className="eg-overline" style={{ marginBottom: 12 }}>What holds this answer where it is</div>
             {run.summary.binding.length === 0 && <p className="eg-muted ep-small">Nothing binds: the sizes are where the money says.</p>}
@@ -192,6 +191,69 @@ export function ScenarioBoard({ siteId, connectionId, initial, asOf }: { siteId:
         </>
       )}
     </>
+  );
+}
+
+// One source's size: a plant's capacity; a battery's power and energy; an exchange purchase's peak, energy and price.
+function SizeRow({ z }: { z: SizeOut }) {
+  if (z.kind === "btm_bess") return <tr><td>{z.label}</td><td className="num">{mw(z.kw)} MW / {mw(z.kwh)} MWh</td></tr>;
+  if (z.exchange) {
+    return (
+      <tr>
+        <td>{z.label}<div className="ep-small eg-muted">bought in {Number(z.exchange.hours_bought).toLocaleString("en-IN")} hours at ₹{Number(z.exchange.avg_landed.value).toFixed(2)}/kWh landed · {Number(z.exchange.share_of_load.value).toFixed(1)}% of your use</div></td>
+        <td className="num">{mwh(z.delivered_kwh)} MWh<div className="ep-small eg-muted">up to {mw(z.kw)} MW</div></td>
+      </tr>
+    );
+  }
+  return (
+    <tr>
+      <td>{z.label}{z.delivered_kwh && <div className="ep-small eg-muted">{mwh(z.delivered_kwh)} MWh a year at your meter</div>}</td>
+      <td className="num">{mw(z.kw)} MW</td>
+    </tr>
+  );
+}
+
+const MIX_COLORS = ["#f5b544", "#4fb3d9", "#7fc97f", "#c084fc", "#f472b6", "#94a3b8", "#fb923c"];
+
+// Where each month's consumption came from, as the judge settled it.
+function YearMix({ months, sizes }: { months: MonthMix[]; sizes: SizeOut[] }) {
+  const label = Object.fromEntries(sizes.map((z) => [z.id, z.label]));
+  const ids = [...new Set(months.flatMap((m) => Object.keys(m.sources)))].filter((id) => months.some((m) => Number(m.sources[id]?.value ?? 0) > 0));
+  const layers = [
+    ...ids.map((id, i) => ({ key: id, label: label[id] ?? id, color: MIX_COLORS[i % MIX_COLORS.length], v: (m: MonthMix) => Number(m.sources[id]?.value ?? 0) })),
+    { key: "bank", label: "From the bank", color: "#a3e635", v: (m: MonthMix) => Number(m.withdrawn_kwh.value) },
+    { key: "grid", label: "From the DISCOM", color: "#64748b", v: (m: MonthMix) => Number(m.grid_kwh.value) },
+  ];
+  const max = Math.max(...months.map((m) => Number(m.load_kwh.value)), 1);
+  const total = (f: (m: MonthMix) => number) => months.reduce((a, m) => a + f(m), 0);
+  const load = total((m) => Number(m.load_kwh.value));
+  return (
+    <section className="eg-card ep-panel">
+      <div className="eg-card__head">
+        <div>
+          <h2 className="eg-card__title">Your year, month by month</h2>
+          <p className="eg-card__sub">Where each month&apos;s consumption comes from once the year is settled under the state&apos;s rules (MWh).</p>
+        </div>
+      </div>
+      <div className="ep-yearmix" role="img" aria-label="Monthly energy mix">
+        {months.map((m) => (
+          <div key={m.month} className="ep-yearmix__col">
+            <div className="ep-yearmix__bar" style={{ height: `${(Number(m.load_kwh.value) / max) * 100}%` }}>
+              {layers.map((l) => {
+                const v = l.v(m);
+                return v > 0 ? <span key={l.key} title={`${l.label}: ${(v / 1000).toFixed(0)} MWh`} style={{ flexGrow: v, background: l.color }} /> : null;
+              })}
+            </div>
+            <span className="ep-small eg-muted">{new Date(m.month).toLocaleString("en-IN", { month: "short" })}</span>
+          </div>
+        ))}
+      </div>
+      <div className="ep-legend ep-small">
+        {layers.map((l) => (
+          <span key={l.key}><span style={{ display: "inline-block", width: 10, height: 10, background: l.color, borderRadius: 2, marginRight: 4 }} />{l.label} · {(total(l.v) / 1000).toLocaleString("en-IN", { maximumFractionDigits: 0 })} MWh ({load > 0 ? ((total(l.v) / load) * 100).toFixed(1) : "0"}%)</span>
+        ))}
+      </div>
+    </section>
   );
 }
 

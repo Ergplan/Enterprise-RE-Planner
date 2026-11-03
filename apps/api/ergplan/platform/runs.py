@@ -5,6 +5,7 @@ this module reads and writes the database."""
 
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import json
 import math
@@ -119,8 +120,10 @@ def _iex_prices(
     months: list[int],
     slots_of: dict[int, list[str]],
     tod_for: Any,
-) -> tuple[dict[tuple[int, str], SourcedValue], str] | None:
-    """Mean clearing price per (month, ToD slot) from a vintage (the latest live one unless pinned)."""
+) -> tuple[dict[tuple[int, str], SourcedValue], str, dict[int, dict[int, Decimal]]] | None:
+    """Mean clearing price per (month, ToD slot) from a vintage (the latest live one unless pinned),
+    and the mean clearing price per (month, 15-minute block of the day, 1–96) in INR/kWh: the
+    optimizer buys block by block at the second, the slot means carry the citations."""
     q = select(PriceVintage).where(PriceVintage.segment == segment)
     q = (
         q.where(PriceVintage.id == vintage_id)
@@ -161,7 +164,8 @@ def _iex_prices(
                 ),
                 f"IEX {segment.upper()} MCP",
             )
-    return out, v.id
+    per_block = {mo: {b: x / 1000 for b, x in row.items()} for mo, row in by.items()}
+    return out, v.id, per_block
 
 
 def assemble(
@@ -223,7 +227,9 @@ def assemble(
     rate: list[float] = []
     load_d: list[Decimal] = []
     rate_d: list[Decimal] = []
+    qday: list[int] = []  # first 15-minute block of the day (0–95) each block starts at
     for i in range(0, len(kw), step):
+        qday.append(i % 96)
         day = days[i // 96]
         mf = date(day.year, day.month, 1)
         tod = rules_for(mf).tod
@@ -451,7 +457,7 @@ def assemble(
             )
             if got is None:
                 raise RunError(f"no {str(src.iex_segment).upper()} prices loaded")
-            prices, vid = got
+            prices, vid, mcp_block = got
             vintages.append(vid)
             oa_shape: list[float] | None = [hours * 1.0] * n
             mx = cs.max_mw * 1000 if cs.max_mw else cd_kva
@@ -490,6 +496,9 @@ def assemble(
             mx = cs.max_mw * 1000 if cs.max_mw else cd_kva * 3
             oa_shape = None  # after the delivered share is known
         energy: dict[tuple[int, str], Decimal] = {}
+        # IEX: the landed cost is affine in the clearing price (losses scale it, charges add to it),
+        # so each slot's slope and intercept price every block at its own clearing price
+        affine: dict[tuple[int, str], tuple[Decimal, Decimal]] = {}
         delivered = None
         for mo in months:
             mdate = date(as_of.year if mo >= as_of.month else as_of.year + 1, mo, 15)
@@ -498,30 +507,39 @@ def assemble(
                 pr = prices.get((mo, nm))
                 if pr is None:
                     continue
-                wf = landed_cost.evaluate(
-                    src,
-                    ctx,
-                    landed_cost.Scenario(
-                        price=pr,
-                        ownership=ownership,
-                        commissioned=cs.commissioned,
-                        on=as_of,
-                        capacity_mw=_sv(
-                            Decimal(1),
-                            Unit.MW,
-                            SourceRef(
-                                kind=RefKind.ASSUMPTION,
-                                note="per MW, for capacity charges over scheduled energy",
-                            ),
-                            "Capacity",
+
+                base = landed_cost.Scenario(
+                    price=pr,
+                    ownership=ownership,
+                    commissioned=cs.commissioned,
+                    on=as_of,
+                    capacity_mw=_sv(
+                        Decimal(1),
+                        Unit.MW,
+                        SourceRef(
+                            kind=RefKind.ASSUMPTION,
+                            note="per MW, for capacity charges over scheduled energy",
                         ),
-                        cuf_pct=cuf_sv,
+                        "Capacity",
                     ),
-                    oa_rows,
-                    waivers,
-                    None,  # banking is settled by the model and the judge, not as an upper bound
+                    cuf_pct=cuf_sv,
                 )
+                # banking is settled by the model and the judge, not as an upper bound (None)
+                wf = landed_cost.evaluate(src, ctx, base, oa_rows, waivers, None)
                 energy[(mo, nm)] = wf.total.value
+                if src.price_kind == "iex":
+                    up = landed_cost.evaluate(
+                        src,
+                        ctx,
+                        dataclasses.replace(
+                            base, price=derive(pr.value + 1, Unit.INR_PER_KWH, [pr], label=pr.label)
+                        ),
+                        oa_rows,
+                        waivers,
+                        None,
+                    )
+                    slope = up.total.value - wf.total.value
+                    affine[(mo, nm)] = (slope, wf.total.value - slope * pr.value)
                 meta.totals.append(wf.total)
                 meta.gaps += wf.gaps
                 delivered = delivered or wf.delivered
@@ -532,11 +550,25 @@ def assemble(
         keep = delivered.value if delivered else Decimal(1)
         if oa_shape is None:
             oa_shape = _resample([v * keep * Decimal("0.25") for v in raw], step)
+        if src.price_kind == "iex":
+            iex_rates: list[Decimal] = []
+            for t, b in enumerate(blocks):
+                row = mcp_block.get(b.month.month, {})
+                qs = [row[q + 1] for q in range(qday[t], qday[t] + step) if q + 1 in row]
+                ab = affine.get((b.month.month, b.slot))
+                if qs and ab:
+                    iex_rates.append(ab[0] * (sum(qs, ZERO) / len(qs)) + ab[1])
+                else:  # no clearing price for this block in the file: the slot's mean
+                    iex_rates.append(energy.get((b.month.month, b.slot), ZERO))
+            energy_d[cid] = iex_rates
+            block_rates = [_f(x) for x in iex_rates]
+        else:
+            block_rates = per_block(cid, energy)
         problem_cands.append(
             om.Candidate(
                 cid,
                 shape=oa_shape,
-                energy_inr_per_kwh=per_block(cid, energy),
+                energy_inr_per_kwh=block_rates,
                 min_kw=_f(cs.min_mw * 1000),
                 max_kw=_f(mx),
                 category="exchange" if src.price_kind == "iex" else CATEGORY[ownership],
@@ -770,6 +802,7 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
             mode="json"
         )
 
+    grid_total = sum(om.exact_of(p).load_kwh, ZERO)
     sizes = []
     for m in a.cands:
         if m.spec.kind == "btm_bess":
@@ -790,9 +823,15 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
                 }
             )
             continue
-        cap = Decimal(str(sol.cap_kw[m.cid]))
         series = sol.gen[m.cid] if m.spec.kind == "rooftop_pv" else sol.delivered[m.cid]
         delivered = sum((Decimal(f"{x:.3f}") for x in series), ZERO)
+        exchange = m.spec.kind.startswith("iex_")
+        # an exchange purchase has no plant: its size is the most it schedules in any block
+        cap = (
+            Decimal(f"{max(series, default=0.0) / p.hours:.3f}")
+            if exchange
+            else Decimal(str(sol.cap_kw[m.cid]))
+        )
         setoff = sum(rs.result.setoff_kwh.get(m.cid, []), ZERO) if m.spec.kind != "rooftop_pv" else delivered
         ins = [*m.inputs, *m.totals, *grid_inputs]
         row: dict[str, Any] = {
@@ -814,6 +853,26 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
             "ownership": m.ownership,
             "gaps": m.gaps,
         }
+        if exchange:
+            bought = after_lines.get(f"energy:{m.cid}", ZERO)
+            blocks_on = sum(1 for x in series if x > 0)
+            row["exchange"] = {
+                "segment": m.spec.kind.removeprefix("iex_"),
+                "blocks_bought": blocks_on,
+                "hours_bought": str(_q(Decimal(blocks_on) * Decimal(repr(p.hours)), "0.01")),
+                "avg_landed": sv(
+                    bought / delivered if delivered > 0 else ZERO,
+                    Unit.INR_PER_KWH,
+                    "Average landed cost of exchange energy",
+                    ins,
+                ),
+                "share_of_load": sv(
+                    delivered / grid_total * 100 if grid_total > 0 else ZERO,
+                    Unit.PERCENT,
+                    "Share of the year's consumption",
+                    ins,
+                ),
+            }
         if m.spec.kind != "rooftop_pv":
             for key, label, src in (
                 ("banked_kwh", "Banked (after the charge in kind)", rs.result.deposit_kwh),
@@ -822,6 +881,7 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
                 row[key] = sv(sum(src.get(m.cid, []), ZERO), Unit.KWH, label, ins)
         sizes.append(row)
     lapsed = sum((x["kwh"] for x in rs.result.lapsed), ZERO)
+    monthly = _monthly_mix(a, sol, rs, sv, grid_inputs)
     grid_before = sum((Decimal(f"{x:.3f}") for x in p.load_kwh), ZERO)
     grid_after = sum(rs.result.grid_kwh, ZERO)
     gf = a.grid_factor
@@ -870,7 +930,51 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
         },
         "sensitivities": [],
         "notes": a.notes,
+        "monthly": monthly,
     }
+
+
+def _monthly_mix(
+    a: Assembled, sol: Solution, rs: Resettled, sv: Any, grid_inputs: list[SourcedValue]
+) -> list[dict[str, Any]]:
+    """Where each month's consumption came from, as the judge settled it: each source's energy set
+    off (behind the meter: generated and used; a battery: discharged), withdrawn from the bank, and
+    drawn from the DISCOM; with the energy banked and bought on the exchange."""
+    p = a.problem
+    x = om.exact_of(p)
+    months = sorted({b.month for b in p.blocks})
+    idx: dict[date, list[int]] = defaultdict(list)
+    for t, b in enumerate(p.blocks):
+        idx[b.month].append(t)
+    res = rs.result
+    out = []
+    for mo in months:
+        ts = idx[mo]
+        row: dict[str, Any] = {
+            "month": mo.isoformat(),
+            "load_kwh": sv(sum((x.load_kwh[t] for t in ts), ZERO), Unit.KWH, "Consumption", [a.profile_ref]),
+            "grid_kwh": sv(
+                sum((res.grid_kwh[t] for t in ts), ZERO), Unit.KWH, "From the DISCOM", grid_inputs
+            ),
+            "withdrawn_kwh": sv(
+                sum((res.withdrawn_kwh[t] for t in ts), ZERO), Unit.KWH, "From the bank", grid_inputs
+            ),
+            "sources": {},
+        }
+        for m in a.cands:
+            ins = [*m.inputs, a.profile_ref]
+            if m.spec.kind == "btm_bess":
+                v = sum((Decimal(f"{sol.discharge[m.cid][t]:.3f}") for t in ts), ZERO)
+                label = "Discharged"
+            elif m.spec.kind == "rooftop_pv":
+                v = sum((Decimal(f"{sol.gen[m.cid][t]:.3f}") for t in ts), ZERO)
+                label = "Generated and used"
+            else:
+                v = sum((res.setoff_kwh.get(m.cid, [ZERO] * p.n)[t] for t in ts), ZERO)
+                label = "Set off against consumption"
+            row["sources"][m.cid] = sv(v, Unit.KWH, label, ins)
+        out.append(row)
+    return out
 
 
 def sensitivities(spec: ScenarioSpec, summary: dict[str, Any], a: Assembled) -> list[dict[str, Any]]:

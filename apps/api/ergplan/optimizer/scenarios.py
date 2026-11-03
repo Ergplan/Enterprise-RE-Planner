@@ -21,6 +21,10 @@ SIZEABLE = (
     "btm_bess",
     "iex_dam",
     "iex_rtm",
+    "iex_gdam",
+    "iex_gtam",
+    "iex_tam",
+    "iex_hpdam",
 )
 
 

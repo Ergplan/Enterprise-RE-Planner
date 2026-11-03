@@ -155,6 +155,8 @@ bill → `intake.bills.ingest()` → `intake.site_intake.build()` → `engine.ta
 | POST | `/connections/{id}/audit/chat` | One message to the audit assistant (OpenAI, prompt `audit_v1`); its tools record lines and close differences through `report.audit` |
 | GET | `/rule-proposals?status=` | Proposed rule changes (analyst) |
 | POST | `/rule-proposals/{id}/accept`, `/reject` | Accept: a new draft of the rule's rulebook with the field changed, cited to the regulation page the analyst gives (the quote must be on it and print the figure); reject with a note (analyst) |
+| GET | `/connections/{id}/mix/options` | The sources a client may choose for their mix, grouped, with default tariffs and arrangements; exchange segments only when their prices are uploaded |
+| POST | `/connections/{id}/mix` | Size the client's chosen sources at least cost over a 15-minute (or hourly) year: one scenario per name ("Your mix"), a run queued (202) |
 
 ## Web (apps/web)
 
@@ -192,6 +194,8 @@ Stage 8: `docker/compose.prod.yaml` over `docker/compose.yaml` on the VM (only C
 RJ, HR and TN are registered jurisdictions with no approved rules ("not yet sourced"; see `docs/known-gaps.md`).
 
 ## What changed
+
+- **Stage 8 (3 Nov 2026), the client's own mix**: router `mix` (`/connections/{id}/mix/options`, `/connections/{id}/mix`); exchange purchases priced per 15-minute block of the day (`platform.runs._iex_prices` returns block means; the landed cost per slot is affine in the clearing price); `optimizer.model` keeps exchange purchases behind the rule's set-off order (`exchange_after_order`, `set_off_order`); run summary `sizes[].exchange` (segment, hours bought, average landed cost, share of consumption) and `monthly` (each month's consumption by source, bank and DISCOM); `SIZEABLE` takes every IEX segment; web `components/optimise/MixBuilder.tsx` and the year-at-a-glance chart on step 5, exchange rows on the shared plan.
 
 - **Stage 8 (2 Nov 2026), the audit of a plan**: `engine.landed_cost.Step` (every link of the waterfall with its rate, rule and pointer; `Waterfall.steps`), stored per run in the summary (`sizes[].chain`, `delivered_share`, `ownership`; `settlement.load_kwh`, `rule_id`, `rule_ref`); `report/chain.py` (the chain from a run's stored summary, nothing recomputed; a run from before falls back to its waterfall lines without rates), `report/audit.py` (workings, grounding, comparison, closing by kind), `report/audit_chat.py` with prompt `audit_v1`; router `audit`; tables `workings`, `working_lines`, `audit_messages`, `rule_proposals` (migration 0012); `CandidateSpec.stated_in` (the client's working cited on a stated price or capacity); web `/plan/audit?c=` (`components/audit/AuditScreen.tsx`, `lib/audit.ts`) linked from the plan, and `/proposals` for analysts.
 
