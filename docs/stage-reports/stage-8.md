@@ -237,3 +237,34 @@ States with approved tariffs: **7 of the 10** the plan names (UP, MH, KA, TS, PB
 **Model cost:** reviewer four gpt-5.1 rounds, about USD 0.25. No app model call in the tests (the audit assistant is mocked); one live audit chat on the server (below).
 
 **On the server (ac1fe82, migration 0012), the DVVNL plan from five real bills:** the three scenarios run again so their runs store the chain. The recommended plan (rooftop, captive open-access solar, battery) shows, for the open-access solar: price ₹3.10/kWh → STU transmission ₹0.3075 → wheeling ₹0.9318 → STU losses 3.18% (₹0.1425) → wheeling losses 8% (₹0.3897) → CSS ₹0.38 and its 100% captive exemption → ₹4.8715/kWh at the meter, each link with its UPERC page; energy at the meter 10.13 lakh kWh, 89.07% delivered, 6.19 lakh set off, 3.63 lakh banked; for the site 3.43 lakh kWh withdrawn, 0.20 lakh lapsed, 8.82 lakh drawn from the DISCOM; ₹2.27 crore before, ₹1.77 crore with the plan, saving ₹0.50 crore; grid energy avoided at ₹7.35 per kWh displaced. Additional surcharge and electricity duty show as not yet sourced. A sample working (PPA ₹3.15, CSS ₹1.25, duty ₹0.10, saving ₹55 lakh) uploaded and read by the audit assistant in one turn: four lines recorded, the API computed each difference (+₹0.05 on the price, +₹0.87 on the CSS rate, ₹5.03 lakh on the saving) and kept the duty as "not in the plan"; the assistant offered the right closing for each kind.
+
+
+## Addendum, 3 Nov 2026 — the client's own mix
+
+**Asked:** a user goes through the whole transition journey, chooses several sources (solar, wind, hybrid, the exchange), and the optimizer finds the least-cost one-year 15-minute dispatch, showing the size of each source and the energy bought on the exchange. The consumer only buys on the exchange.
+
+**Built:**
+- Step 5 opens with "Build your own mix". The client ticks any of: open-access solar, wind or hybrid (intra-state or ISTS, with arrangement and tariff); group captive; rooftop solar and a battery at the site; any IEX segment whose clearing prices are uploaded. Each source can have a largest size.
+- `POST /connections/{id}/mix` sizes the choice over a 15-minute year (or an hourly preview), one scenario per name.
+- Exchange energy is priced per 15-minute block of the day, not per ToD slot. The landed cost is affine in the clearing price; a test checks this for both states' rules, for exchange and PPA sources.
+- Exchange purchases follow the rule's set-off order. Without this the first real mix failed re-settlement: the solver bought cheap exchange energy and banked captive generation for the peak slot, against the rule. A model test covers it.
+- The result shows:
+  - each plant's size and its energy at the meter;
+  - for each exchange segment: energy bought, hours, peak, average landed cost, share of consumption;
+  - "Your year, month by month", with each month's consumption split by source, bank and DISCOM as the judge settled it.
+- Exchange power outside the green segments is counted at the grid's emission factor.
+- The shared plan shows exchange rows too.
+
+**Tests:** options; per-block exchange pricing (collinear within a slot); a solar, wind and DAM mix sized and re-settled with the month-by-month balance; emissions; the API's refusals; the set-off-order model test; the affinity of the landed cost. Five sources at 15 minutes on the 5 MW MSEDCL test site solve and re-settle in 42 s.
+
+**Reviewer** (gpt-5.1, four rounds on 9c42961..working tree):
+- Fixed:
+  - the exchange peak is computed in Decimal;
+  - a tautological assertion is replaced with a collinearity check;
+  - the "priced exactly" claim is now backed by the affinity test;
+  - the exchange energy counted at the grid factor is exposed as `emissions.exchange_grid_kwh`.
+- Not defects:
+  - Solver floats are read into Decimal once, to the watt-hour (`Decimal(f"{x:.3f}")`, the pattern of `optimizer.resettle.dec` since Stage 6).
+  - `exact_of(p).load_kwh` is already Decimal.
+  - The web formats numbers for display only.
+  - `exchange_grid_kwh` is written into `run_results.summary`, its stated owner.

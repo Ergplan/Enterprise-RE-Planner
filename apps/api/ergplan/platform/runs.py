@@ -913,6 +913,9 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
         "irr_pct": sv(rate, Unit.PERCENT, "IRR", all_inputs) if rate is not None else None,
         "emissions": {
             "factor": gf.model_dump(mode="json"),
+            "exchange_grid_kwh": sv(
+                exchange_grey, Unit.KWH, "Exchange energy outside the green segments", all_inputs
+            ),
             "before_t": sv(
                 grid_before * gf.value / 1000, Unit.TCO2, "Grid emissions today", [a.profile_ref, gf]
             ),

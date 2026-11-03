@@ -106,8 +106,18 @@ def test_exchange_energy_is_priced_block_by_block(site: dict[str, str]) -> None:
         by_q.setdefault(t % 96, set()).add(round(cand.energy_inr_per_kwh[t], 6))
     night, day, evening = by_q[8].pop(), by_q[48].pop(), by_q[80].pop()  # 02:00, 12:00, 20:00
     assert night < day < evening
-    # the landed cost rises with the clearing price by the same slope in every block of a slot
-    assert evening - day == pytest.approx((9.2 - 3.6) * (evening - day) / (9.2 - 3.6))
+    # within one ToD slot the landed cost is one line in the clearing price: collinear points
+    by_slot: dict[str, dict[float, float]] = {}
+    for t in june[:96]:
+        by_slot.setdefault(blocks[t].slot, {})[float(mcp((t % 96) + 1)) / 1000] = cand.energy_inr_per_kwh[t]
+    lines = [pts for pts in by_slot.values() if len(pts) >= 2]
+    assert lines, by_slot
+    for pts in lines:
+        (p0, e0), (p1, e1), *rest = sorted(pts.items())
+        slope = (e1 - e0) / (p1 - p0)
+        assert slope >= 1  # losses, where the state has them, gross the price up
+        for p2, e2 in rest:
+            assert e2 == pytest.approx(e0 + slope * (p2 - p0), abs=1e-6)
     assert cand.dispatchable and cand.category == "exchange"
 
 
@@ -151,6 +161,7 @@ def test_a_mix_of_solar_wind_and_the_exchange_is_sized_at_least_cost(site: dict[
     grid = Decimal(sm["settlement"]["grid_kwh"]["value"])
     after = Decimal(sm["emissions"]["after_t"]["value"])
     assert abs(after - (grid + bought) * factor / 1000) <= Decimal("0.01")
+    assert Decimal(sm["emissions"]["exchange_grid_kwh"]["value"]) == bought
     # asking again with other sources replaces the scenario's spec, not the run
     again = dict(body, sources=body["sources"][:1])
     r2 = client.post(f"/connections/{site['conn']}/mix", json=again, headers=CL).json()

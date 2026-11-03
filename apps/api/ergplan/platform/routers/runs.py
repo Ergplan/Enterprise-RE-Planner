@@ -101,6 +101,7 @@ class EmissionsOut(BaseModel):
     factor: SourcedValue = _f("scenarios.spec", ["client_stated", "assumption"])
     before_t: SourcedValue = _f()
     after_t: SourcedValue = _f()
+    exchange_grid_kwh: SourcedValue | None = _o()  # exchange energy counted at the grid factor
 
 
 class SettlementOut(BaseModel):
