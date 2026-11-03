@@ -828,7 +828,7 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
         exchange = m.spec.kind.startswith("iex_")
         # an exchange purchase has no plant: its size is the most it schedules in any block
         cap = (
-            Decimal(f"{max(series, default=0.0) / p.hours:.3f}")
+            max((Decimal(f"{x:.3f}") for x in series), default=ZERO) / Decimal(repr(p.hours))
             if exchange
             else Decimal(str(sol.cap_kw[m.cid]))
         )
@@ -884,6 +884,16 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
     monthly = _monthly_mix(a, sol, rs, sv, grid_inputs)
     grid_before = sum((Decimal(f"{x:.3f}") for x in p.load_kwh), ZERO)
     grid_after = sum(rs.result.grid_kwh, ZERO)
+    # energy bought on the exchange outside its green segments is grid-mix power: it carries the
+    # grid's emission factor like the DISCOM's supply
+    exchange_grey = sum(
+        (
+            sum((Decimal(f"{x:.3f}") for x in sol.delivered.get(m.cid, [])), ZERO)
+            for m in a.cands
+            if m.spec.kind.startswith("iex_") and m.spec.kind not in ("iex_gdam", "iex_gtam")
+        ),
+        ZERO,
+    )
     gf = a.grid_factor
     binding = []
     for name in sol.binding:
@@ -907,7 +917,10 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
                 grid_before * gf.value / 1000, Unit.TCO2, "Grid emissions today", [a.profile_ref, gf]
             ),
             "after_t": sv(
-                grid_after * gf.value / 1000, Unit.TCO2, "Grid emissions with the plan", [*all_inputs, gf]
+                (grid_after + exchange_grey) * gf.value / 1000,
+                Unit.TCO2,
+                "Grid emissions with the plan",
+                [*all_inputs, gf],
             ),
         },
         "settlement": {

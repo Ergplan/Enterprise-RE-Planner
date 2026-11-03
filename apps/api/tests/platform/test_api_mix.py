@@ -146,6 +146,11 @@ def test_a_mix_of_solar_wind_and_the_exchange_is_sized_at_least_cost(site: dict[
         total += sum((Decimal(v["value"]) for v in row["sources"].values()), Decimal(0))
         assert abs(total - Decimal(row["load_kwh"]["value"])) <= Decimal("0.05"), row["month"]
     assert Decimal(sm["annual"]["saving"]["value"]) > 0
+    # DAM power is grid-mix power: it keeps the grid's emission factor
+    factor = Decimal(sm["emissions"]["factor"]["value"])
+    grid = Decimal(sm["settlement"]["grid_kwh"]["value"])
+    after = Decimal(sm["emissions"]["after_t"]["value"])
+    assert abs(after - (grid + bought) * factor / 1000) <= Decimal("0.01")
     # asking again with other sources replaces the scenario's spec, not the run
     again = dict(body, sources=body["sources"][:1])
     r2 = client.post(f"/connections/{site['conn']}/mix", json=again, headers=CL).json()

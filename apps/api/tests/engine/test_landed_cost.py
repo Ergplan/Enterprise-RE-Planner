@@ -352,3 +352,23 @@ def test_the_chain_steps_add_up_to_the_landed_cost(row: dict[str, str], committe
     for st in wf.steps:
         if st.kind in ("charge", "drawal", "loss", "capacity", "exemption", "banking"):
             assert st.rule_id and st.pointer and st.rate is not None, st.label
+
+
+@pytest.mark.parametrize("discom", ["msedcl", "npcl"])
+@pytest.mark.parametrize("source", ["iex_dam", "iex_rtm", "oa_solar_intra"])
+def test_the_landed_cost_is_affine_in_the_price(discom: str, source: str, committed: None) -> None:
+    """The optimizer prices exchange energy block by block from two evaluations per slot (at the
+    slot's mean clearing price and a rupee above): exact only if the landed cost is affine in the
+    price, which this checks at four prices."""
+    oa, _ = _rows(discom)
+    spec = lc.SOURCE_BY_ID[source]
+    ctx = _ctx(discom, 33)
+
+    def at(p: str) -> Decimal:
+        sc = lc.Scenario(price=sv(p, Unit.INR_PER_KWH), ownership="third_party")
+        return lc.evaluate(spec, ctx, sc, oa).total.value
+
+    a, b = at("3"), at("4")
+    slope = b - a
+    for p in ("0.5", "6.25", "12"):
+        assert abs(at(p) - (a + slope * (Decimal(p) - 3))) < Decimal("0.000001"), p
