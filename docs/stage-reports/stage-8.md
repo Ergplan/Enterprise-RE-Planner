@@ -268,3 +268,11 @@ States with approved tariffs: **7 of the 10** the plan names (UP, MH, KA, TS, PB
   - `exact_of(p).load_kwh` is already Decimal.
   - The web formats numbers for display only.
   - `exchange_grid_kwh` is written into `run_results.summary`, its stated owner.
+
+**Real data:**
+- **First server run.** On the server the DVVNL client's mix (captive solar, wind and hybrid, DAM and RTM, at 15 minutes) first failed re-settlement by 2.4 kWh. Locally, a UP mix of the three renewable sources alone failed by 401 kWh, because the solver and the judge carried banked energy over in different buckets when the ceiling bound.
+- **Fixes:**
+  - one keep order for the bank;
+  - set-off weighted by the rule's order;
+  - a fair time floor for each month's dispatch.
+- **Result.** Both UP mixes settle within 0.02 kWh. A new slow end-to-end (`tests/e2e/test_mix_journey.py`) runs them at 15 minutes.

@@ -30,7 +30,9 @@ class Settings(BaseSettings):
     ergplan_smtp_url: str = ""  # smtp[s]://user:password@host:port; empty: links go to the log
     ergplan_mail_from: str = "ergPLAN <no-reply@joulewise.in>"
     ergplan_resettle_tolerance_kwh: Decimal = Decimal("1")
-    ergplan_optimizer_time_limit_s: float = 110.0
+    # the solve's budget (sizing takes half; each month's 15-minute dispatch at least 30 s): runs
+    # are solved on the worker, and a mix of several sources needs minutes, not seconds
+    ergplan_optimizer_time_limit_s: float = 300.0
     ergplan_optimizer_mip_gap: float = 0.001
     ergplan_worker_concurrency: int = 1  # runs solved at once by `python -m ergplan.platform.worker`
 

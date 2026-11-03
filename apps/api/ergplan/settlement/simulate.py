@@ -165,14 +165,33 @@ class Bank:
     def balance(self) -> dict[str, Decimal]:
         return {k: sum((lot.kwh for lot in v), ZERO) for k, v in self.buckets.items() if v}
 
+    def keep_order(self, buckets: Sequence[str]) -> list[str]:
+        """The order in which buckets keep their energy when a carry-over ceiling binds: the bucket
+        drawable in the most slots first (its energy serves the most blocks), then by name. The
+        regulations cap the carried total without saying which energy lapses; this order is the
+        consumer's best and the optimizer applies the same (optimizer.model)."""
+
+        def reach(k: str) -> int:
+            names: set[str] = set()
+            for w in self.windows:
+                deps = w.get("deposited_in_slots")
+                if deps is None or k in deps:
+                    names.update(w.get("allowed_slots") or [])
+            return len(names)
+
+        return sorted(buckets, key=lambda k: (-reach(k), k))
+
     def lapse(self, keep: Decimal) -> dict[str, Decimal]:
-        """Keep at most `keep` kWh (oldest first, FIFO); return what lapses per bucket."""
+        """Keep at most `keep` kWh: buckets in `keep_order`, each bucket's oldest lots first (FIFO);
+        return what lapses per bucket."""
         lapsed: dict[str, Decimal] = {}
+        order = {k: i for i, k in enumerate(self.keep_order(list(self.buckets)))}
         lots = sorted(
-            ((lot.period, k, lot) for k, v in self.buckets.items() for lot in v), key=lambda x: x[0]
+            ((order[k], lot.period, k, lot) for k, v in self.buckets.items() for lot in v),
+            key=lambda x: (x[0], x[1]),
         )
         room = keep
-        for _, k, lot in lots:
+        for _, _, k, lot in lots:
             stay = min(lot.kwh, max(room, ZERO))
             room -= stay
             gone = lot.kwh - stay

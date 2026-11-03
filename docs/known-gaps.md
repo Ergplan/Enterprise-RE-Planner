@@ -32,6 +32,7 @@ What is not yet right, and the stage that fixes it.
 | Battery degradation, auxiliary consumption and a depth-of-discharge limit are not in the dispatch | Stage 7 |
 | IEX purchases are priced per month and 15-minute block of the day (the mean clearing price over the month's days in the file), not day by day; a year of daily prices is averaged into twelve representative days | When day-to-day price swings matter for a client |
 | The client's mix is one scenario per name ("Your mix"); a second mix needs another name (the API takes one; the page offers one) | When clients ask to compare mixes side by side |
+| A mix of several sources at 15 minutes takes three to four minutes to size and settle (the hourly sizing LP over 8,760 hours is most of it); the hourly preview takes about a minute | When clients need faster answers (warm starts, a coarser sizing pass) |
 | Land area does not bound any candidate (no on-site ground-mount source yet) | When one is added |
 | Generation for settlement comes from normative CUF curves unless a 15-minute injection is supplied | Developer profiles |
 | The audit shows one time-of-day slot's landed cost per source (the first; "slots differ" is shown when they do); a working's per-slot figures are set against that slot only | When a client's working is per slot |

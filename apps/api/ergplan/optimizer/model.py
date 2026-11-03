@@ -579,7 +579,9 @@ def _settlement(
     m.inv = pyo.Var([(bk, s) for bk in net.buckets for s in range(net.steps)], within=pyo.NonNegativeReals)
     periods = sorted(set(net.period_of_step))
     m.lapse = pyo.Var([(bk, q) for bk in net.buckets for q in periods], within=pyo.NonNegativeReals)
-    m.carry_z = pyo.Var(periods, within=pyo.Binary)
+    # which of two carry-over ceilings applies: a binary per period, needed only when the
+    # settlement pass applies the higher of two (sizing takes the lower, linear)
+    m.carry_z = pyo.Var(periods if mode == "settle" else [], within=pyo.Binary)
     by_step_dep: dict[tuple[str, int], list[Any]] = defaultdict(list)
     by_step_w: dict[tuple[str, int], list[Any]] = defaultdict(list)
     for k, g in bankable:
@@ -633,15 +635,29 @@ def _settlement(
 
     if mode == "settle":
         obj: Any = 0
-        obj -= 1000.0 * sum(m.so[k, g] for k in ks for g in G if has_supply[k][g])
+        # direct set-off first, and among sources in the rule's order (a source earlier in the order
+        # is set off before a later one when the dispatch, read to the watt-hour, leaves a sliver over)
+        n_cat = len(prio)
+        obj -= sum(
+            (1000.0 + 100.0 * (n_cat - prio.get(cat.get(k, ""), n_cat))) * m.so[k, g]
+            for k in ks
+            for g in G
+            if has_supply[k][g]
+        )
         n_groups = max(1, len(net.groups))
         for bk, g in draw_idx:
             rank = net.drawable[g].index(bk)
             obj -= (10.0 * (1 - g / n_groups) + 1e-6 * (len(net.drawable[g]) - rank)) * m.w[bk, g]
         obj += 100.0 * sum(m.unb[k, g] for k in ks for g in G if has_supply[k][g] and (k, g) in dep_set)
-        # keep as much as the ceiling allows at each period end (earlier lapse weighs more)
+        # keep as much as the ceiling allows at each period end (earlier lapse weighs more); when it
+        # binds, the bucket that keeps first is the judge's (Bank.keep_order)
         n_q = len(periods)
-        obj += sum((1.0 + n_q - i) * m.lapse[bk, q] for i, q in enumerate(periods) for bk in net.buckets)
+        keep = Bank(p.rule).keep_order(net.buckets)
+        obj += sum(
+            (1.0 + n_q - i + 0.01 * (len(keep) - keep.index(bk))) * m.lapse[bk, q]
+            for i, q in enumerate(periods)
+            for bk in net.buckets
+        )
         return obj
 
     cost: Any = 0

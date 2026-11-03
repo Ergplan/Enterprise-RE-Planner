@@ -108,7 +108,8 @@ def solve(p: Problem, time_limit_s: float = 120.0, mip_gap: float = 0.001) -> So
         for idx in months_of(p):
             cp = chunk(p, idx, start, fixed)
             mc = build(cp)
-            _run(mc, max(5.0, (time_limit_s * 0.8 - (time.perf_counter() - t0)) / 6), mip_gap)
+            # sizes fixed, a month is (nearly) an LP: a fair floor so a slower month still solves
+            _run(mc, max(30.0, (time_limit_s * 0.8 - (time.perf_counter() - t0)) / 6), mip_gap)
             part = read(mc, cp)
             parts.append(part)
             start = Start(
