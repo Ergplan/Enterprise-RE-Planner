@@ -52,6 +52,8 @@ a.eg-btn { text-decoration: none; }
   border: 1.5px dashed var(--line-strong); }
 .ep-drop--over { border-color: var(--accent); }
 .ep-bills { display: grid; gap: var(--space-4); }
+.ep-bill__brief { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; margin: 0; }
+.ep-bill--folded .eg-card__head { margin-bottom: 0; }
 .ep-bill .ep-table td:first-child { color: var(--ink-muted); }
 .ep-attn td { background: var(--warning-soft); }
 .ep-note { font-size: 13px; margin: var(--space-3) 0 0; }

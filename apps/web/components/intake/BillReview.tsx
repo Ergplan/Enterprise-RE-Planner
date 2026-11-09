@@ -13,10 +13,11 @@ const STATUS: Record<string, string> = {
 
 // One bill as billx read it. Values billx could not verify wait for a one-click confirmation (or a
 // correction); each confirmation is recorded with who made it (bill_confirmations).
-export function BillReview({ bill, onChange }: { bill: BillOut; onChange: (b: BillOut) => void }) {
+export function BillReview({ bill, onChange, compact = false }: { bill: BillOut; onChange: (b: BillOut) => void; compact?: boolean }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [edits, setEdits] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
+  const [open, setOpen] = useState(false);
 
   async function confirm(path: string, value: string | null) {
     setBusy(path);
@@ -32,8 +33,13 @@ export function BillReview({ bill, onChange }: { bill: BillOut; onChange: (b: Bi
 
   const shown = bill.fields.filter((f) => f.required || f.value !== null);
   const pending = bill.outstanding.length;
+  // compact: an accepted bill is one line (month, units, demand, amount) until its values are asked for
+  const folded = compact && bill.accepted && !open;
+  const key = (path: string) => bill.fields.find((f) => f.path === path);
+  const brief = [key("energy.kwh") ?? key("energy.kvah") ?? key("energy.billed_units"), key("demand.max_kva"), key("demand.contract_kva"), key("totals.current_charges")]
+    .filter((f): f is NonNullable<typeof f> => !!f && f.value !== null);
   return (
-    <article className="eg-card ep-bill">
+    <article className={`eg-card ep-bill${folded ? " ep-bill--folded" : ""}`}>
       <div className="eg-card__head">
         <div>
           <h3 className="eg-card__title">{bill.bill_month ? monthLabel(bill.bill_month) : bill.filename}</h3>
@@ -53,7 +59,13 @@ export function BillReview({ bill, onChange }: { bill: BillOut; onChange: (b: Bi
           </a>
         </div>
       </div>
-      <table className="ep-table">
+      {compact && bill.accepted && (
+        <p className="ep-small ep-bill__brief">
+          {brief.map((f) => <span key={f.path}>{fieldLabel(f.path, bill.tod_slots)} <b>{f.value}</b>{f.unit ? ` ${f.unit}` : ""}</span>)}
+          <button type="button" className="ep-link" onClick={() => setOpen(!open)}>{open ? "Hide the values" : "Every value, with its page"}</button>
+        </p>
+      )}
+      {!folded && <table className="ep-table">
         <tbody>
           {shown.map((f) => (
             <tr key={f.path} className={f.needs_confirmation ? "ep-attn" : undefined}>
@@ -86,7 +98,7 @@ export function BillReview({ bill, onChange }: { bill: BillOut; onChange: (b: Bi
             </tr>
           ))}
         </tbody>
-      </table>
+      </table>}
       {bill.tod_slots.length > 0 && bill.tod_slots.every((s) => !s || !/\d{1,2}([:.]\d\d)?\s*(to|-|–)\s*\d{1,2}/i.test(s)) && (
         <p className="eg-muted ep-note">
           This bill names its time-of-day slots ({bill.tod_slots.join(", ")}) without their hours, so the month&apos;s total is used

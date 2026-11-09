@@ -125,7 +125,7 @@ export function ConnectionSection({ d, set, discoms, bills, onBills, planInputs 
       </section>
       {reads.length > 0 && <div className="ep-bills">{reads.map((r) => <ReadingCard key={r.id} initial={r} onDone={readDone} />)}</div>}
       {pending.length > 0 && <Note kind="warn">{pending.length} bill{pending.length > 1 ? "s need" : " needs"} a quick check below: confirm or correct the highlighted values, then the bill can be used.</Note>}
-      {bills.length > 0 && <div className="ep-bills">{bills.map((b) => <BillReview key={b.id} bill={b} onChange={(nb) => onBills([nb])} />)}</div>}
+      {bills.length > 0 && <div className="ep-bills">{bills.map((b) => <BillReview key={b.id} bill={b} compact onChange={(nb) => onBills([nb])} />)}</div>}
       {rec && (
         <Note kind="ok">
           Recognised from your bill: <b>{rec.discom_name ?? rec.discom?.toUpperCase()}</b>{rec.state_name ? `, ${rec.state_name}` : ""}
