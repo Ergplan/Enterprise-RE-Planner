@@ -152,6 +152,17 @@ def test_a_typed_site_is_saved_costed_and_listed() -> None:
     assert lc["assumptions"]["discount_pct"]["source_refs"][0]["kind"] == "assumption"
     y1 = lc["years"][0]
     assert Decimal(y1["bau"]) == Decimal(out["summary"]["annual"]["before"]["value"])
+    # year one of the plan is the settled year's lines: the grid's and the contracted energy as settled,
+    # the owned plant's annualised line replaced by its capital at year 0 and its O&M
+    an = client.get(f"/runs/{run.json()['run_id']}", headers=AN).json()["analyst"]
+    la = {k: Decimal(v) for k, v in an["lines_after"].items()}
+    assert Decimal(y1["grid"]) == sum(v for k, v in la.items() if ":" not in k).quantize(Decimal("0.01"))
+    assert Decimal(y1["contracted"]) == sum(v for k, v in la.items() if k.startswith("energy:")).quantize(
+        Decimal("0.01")
+    )
+    fixed = sum(v for k, v in la.items() if k.startswith("fixed:"))
+    assert Decimal(out["summary"]["annual"]["after"]["value"]) == sum(la.values(), Decimal(0))
+    assert (fixed > 0) == (Decimal(lc["capex"]["value"]) > 0)
     assert Decimal(lc["npv"]["value"]) != 0 and lc["npv"]["source_refs"]
     if Decimal(lc["capex"]["value"]) > 0:
         assert Decimal(y1["om"]) > 0 and lc["irr_pct"] is not None

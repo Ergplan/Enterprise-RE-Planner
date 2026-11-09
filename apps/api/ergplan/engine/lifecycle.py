@@ -100,8 +100,16 @@ def project(
     cumulative = -capex0
     pv_bau = ZERO
     pv_plan = capex0
+    savings: list[Decimal] = []  # full precision; the Year rows are quantized for display only
+    cashes: list[Decimal] = []
+    discounts: list[Decimal] = []
     notes: list[str] = []
     replaced: set[str] = set()
+    if any(a.degradation_pct.value > 0 and a.displaced_inr > 0 for a in assets):
+        notes.append(
+            "the output lost to degradation is bought back from the grid at the year's average energy "
+            "rate (assumption)"
+        )
     for y in range(1, n + 1):
         te, pe, oe = (
             fin.tariff_escalation_pct.value,
@@ -133,6 +141,9 @@ def project(
         disc = ONE / (ONE + r) ** y
         pv_bau += bau * disc
         pv_plan += (grid + contracted + om + capex_y) * disc
+        savings.append(saving)
+        cashes.append(cash)
+        discounts.append(disc)
         years.append(
             Year(
                 year=y,
@@ -148,7 +159,8 @@ def project(
                 pv_cash=_q(cash * disc),
             )
         )
-    nominal = sum((yr.saving for yr in years), ZERO) - capex0 - sum((yr.capex for yr in years), ZERO)
+    # every total from the full-precision series; quantized once, here, for the report
+    nominal = cumulative  # Σ cash − capex0: the last cumulative
     return Lifecycle(
         inputs=fin,
         years=years,
@@ -158,9 +170,9 @@ def project(
         npv=_q(pv_bau - pv_plan),
         nominal_saving=_q(nominal),
         # payback on the operating saving (replacements are in the IRR and NPV, not the payback)
-        simple_payback_years=_payback(capex0, [yr.saving for yr in years]),
-        discounted_payback_years=_payback(capex0, [yr.saving * yr.discount for yr in years]),
-        irr_pct=_irr([-capex0, *[yr.cash for yr in years]]) if capex0 > 0 else None,
+        simple_payback_years=_payback(capex0, savings),
+        discounted_payback_years=_payback(capex0, [sv * d for sv, d in zip(savings, discounts, strict=True)]),
+        irr_pct=_irr([-capex0, *cashes]) if capex0 > 0 else None,
         notes=notes,
     )
 
