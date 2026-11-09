@@ -10,7 +10,11 @@ DB="postgresql+psycopg://ergplan:ergplan@localhost:5432/ergplan_e2e"
 export DATABASE_URL="$DB"
 pids=()
 killtree() { local c; for c in $(pgrep -P "$1" 2>/dev/null); do killtree "$c"; done; kill "$1" 2>/dev/null || true; }
-cleanup() { for p in "${pids[@]}"; do killtree "$p"; done; }
+cleanup() {
+  for p in "${pids[@]}"; do killtree "$p"; done
+  # Next rewrites these two for the dist dir it ran with; the committed ones point at .next
+  git -C "$ROOT" checkout -q -- apps/web/next-env.d.ts apps/web/tsconfig.json 2>/dev/null || true
+}
 trap cleanup EXIT
 (cd "$API" && .venv/bin/alembic upgrade head >/dev/null)
 "$API/.venv/bin/python" - <<'PY'

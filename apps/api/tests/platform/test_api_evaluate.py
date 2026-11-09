@@ -162,7 +162,40 @@ def test_a_typed_site_is_saved_costed_and_listed() -> None:
     rows = list(csv.reader(io.StringIO(f.text)))
     assert rows[0][:2] == ["time", "slot"] and len(rows) == 8761
     assert rows[1][0].startswith(out["summary"]["year_start"][:4]) if "year_start" in out["summary"] else True
+    # invariant 2 for the new client endpoints: a draft with an absurd energy charge changes nothing
+    discoms_before = client.get("/intake/discoms", headers=CL).json()
+    _absurd_draft("npcl")
+    assert client.get(f"/connections/{conn}/today", headers=CL).json() == t
+    assert client.get("/intake/discoms", headers=CL).json() == discoms_before
     _truncate()
+
+
+def _absurd_draft(discom: str) -> None:
+    import copy
+
+    from sqlalchemy import select
+
+    from ergplan.db.base import session_scope
+    from ergplan.db.models import Rule, RulebookVersion
+    from ergplan.rulebook import service
+
+    with session_scope(actor="analyst@joulewise.in", role="analyst") as s:
+        v = s.scalars(
+            select(RulebookVersion).where(
+                RulebookVersion.family == "tariff_schedule",
+                RulebookVersion.jurisdiction_id == discom,
+                RulebookVersion.status == "approved",
+            )
+        ).first()
+        assert v is not None
+        draft = service.duplicate(s, v.id, actor="analyst@joulewise.in")
+        rows = []
+        for r in s.scalars(select(Rule).where(Rule.rulebook_version_id == draft.id).order_by(Rule.position)):
+            body = copy.deepcopy(r.body)
+            if "energy_charge" in body:
+                body["energy_charge"]["base"] = "999.99"
+            rows.append({"scope": r.scope, "body": body, "source_ref": r.source_ref, "label": r.label})
+        service.revise(s, draft.id, rows)
 
 
 @pytest.mark.parametrize("path", ["/connections/missing/today", "/runs/missing/dispatch.csv"])

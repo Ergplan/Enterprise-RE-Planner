@@ -294,3 +294,7 @@ States with approved tariffs: **7 of the 10** the plan names (UP, MH, KA, TS, PB
 **Skipped:** re-optimising later years (the 25-year view escalates the settled year); a return on the owned plant alone; peak-ratio scaling of hourly demand charges — all in `docs/known-gaps.md`.
 
 **Deviations:** the six-step rail of Stages 2–7 is replaced by the two pages above; the old pages remain as the deeper checks the report links to (decision of 9 Nov 2026).
+
+**Reviewer** (gpt-5.1, diff aaa17e1..working tree, 17 findings):
+- Fixed: `next-env.d.ts` and `tsconfig.json` had been rewritten by Next for the e2e and build dist dirs; both point at `.next` again and `e2e-journey.sh` restores them after a run. Added the invariant-2 check (an absurd draft tariff changes nothing) for `/intake/discoms` and `/connections/{id}/today`.
+- Not defects: finding (b) is the reviewer confirming every new endpoint has a test; the rest are "unprovable from the diff" (invariants enforced by the suite's existing import-graph, replay and audit tests, which the watcher runs green) or by-design notes.
