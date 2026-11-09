@@ -137,6 +137,9 @@ export function Results({ connectionId, scenarioId }: { connectionId: string; sc
           <section className="eg-card ep-panel"><p className="ep-error">This scenario did not settle: {run.error ?? run.status.replace("_", " ")}. Change the inputs and try again, or ask jouleWise.</p></section>
         )}
 
+        {run && run.status === "done" && !run.summary && (
+          <section className="eg-card ep-panel"><p className="eg-muted">This run settled but its result is not readable here; ask jouleWise to look at run {run.id.slice(0, 8)}.</p></section>
+        )}
         {run?.summary && run.status === "done" && (
           <>
             <section id="summary" className="eg-card ep-panel ep-report">

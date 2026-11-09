@@ -292,8 +292,8 @@ def today(
     card = cost_router.connection_avoided_cost(connection_id, None, as_of)
     energy_lines = [x for x in card.annual if x.label == avoided_cost.ENERGY_YEAR]
     demand_lines = [x for x in card.annual if x.label == avoided_cost.DEMAND_YEAR]
-    energy = sum((Decimal(x.value) for x in energy_lines), Decimal(0))
-    demand = sum((Decimal(x.value) for x in demand_lines), Decimal(0))
+    energy = sum((x.value for x in energy_lines), Decimal(0))  # SourcedValue.value is a Decimal
+    demand = sum((x.value for x in demand_lines), Decimal(0))
     profile: SourcedValue | None = None
     with session_scope() as s:
         lp = s.scalars(
