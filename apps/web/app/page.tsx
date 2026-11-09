@@ -41,6 +41,7 @@ export default async function Home() {
           </div>
         </div>
         {rows.length > 0 && (
+          <div className="ep-scroll">
           <table className="ep-table ep-evals">
             <thead><tr><th>Site</th><th>DISCOM</th><th>Contract demand</th><th>Inputs</th><th>Latest result</th><th></th></tr></thead>
             <tbody>
@@ -67,6 +68,7 @@ export default async function Home() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </section>
     </>

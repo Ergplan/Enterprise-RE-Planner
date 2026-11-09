@@ -442,8 +442,10 @@ a.eg-btn { text-decoration: none; }
 .ep-hero__steps { list-style: none; margin: 0; padding: 0; counter-reset: s; display: grid; gap: 6px; }
 .ep-hero__steps li { counter-increment: s; display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: baseline; }
 .ep-hero__steps li::before { content: counter(s); width: 24px; height: 24px; border-radius: 999px; border: 1px solid var(--line-strong, currentColor); display: inline-grid; place-items: center; font-size: 12px; }
-.ep-hero__steps span { display: block; font-size: .82rem; opacity: .7; }
+.ep-hero__steps span { display: block; grid-column: 2; font-size: .82rem; opacity: .7; margin-top: -4px; }
+.ep-evals { width: 100%; }
 .ep-evals td { vertical-align: top; }
+.ep-evals .ep-actions { white-space: nowrap; text-align: right; }
 @media (max-width: 860px) { .ep-hero { grid-template-columns: 1fr; } }
 
 /* ---- results ---- */
