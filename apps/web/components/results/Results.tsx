@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { RefChips } from "@/components/cost/RefChips";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { WhatIf } from "@/components/plan/WhatIf";
 import type { Chain } from "@/lib/audit";
@@ -198,7 +199,7 @@ export function Results({ connectionId, scenarioId }: { connectionId: string; sc
                   <h3 className="eg-overline" style={{ marginTop: 12 }}>Assumptions you can correct</h3>
                   <ul className="ep-list ep-small">
                     {plan.assumptions.map((a, i) => (
-                      <li key={i}>{a.label ? <><b>{a.label}</b>: {fmtUnit(a.value, a.unit)} — </> : null}{a.note}</li>
+                      <li key={i}>{a.label ? <><b>{a.label}</b>: {fmtUnit(a.value, a.unit)} — </> : null}{a.note} <RefChips refs={[a.ref]} max={0} /></li>
                     ))}
                   </ul>
                 </>

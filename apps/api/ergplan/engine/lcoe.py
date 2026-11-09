@@ -137,3 +137,22 @@ def default_finance() -> dict[str, SourcedValue]:
             "4", Unit.PERCENT, "O&M cost growth per year (inflation)", "O&M escalation"
         ),
     }
+
+
+def irr(cash: list[Decimal], lo: Decimal = Decimal("-0.99"), hi: Decimal = Decimal(10)) -> Decimal | None:
+    """Internal rate of return of yearly cash flows (year 0 first), by bisection to 0.01%."""
+
+    def npv(r: Decimal) -> Decimal:
+        return sum((c / (1 + r) ** i for i, c in enumerate(cash)), Decimal(0))
+
+    if not cash or npv(lo) * npv(hi) > 0:
+        return None
+    for _ in range(200):
+        mid = (lo + hi) / 2
+        if npv(lo) * npv(mid) <= 0:
+            hi = mid
+        else:
+            lo = mid
+        if hi - lo < Decimal("0.00001"):
+            break
+    return ((lo + hi) / 2 * 100).quantize(Decimal("0.01"))

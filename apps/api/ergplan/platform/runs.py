@@ -41,7 +41,7 @@ from ..intake import generation, profile_synthesis
 from ..optimizer import model as om
 from ..optimizer.highs_solve import Solution, SolveFailed, solve
 from ..optimizer.resettle import INR, Resettled, resettle, status_quo
-from ..optimizer.scenarios import CandidateSpec, ScenarioSpec, irr, payback_years, reprice
+from ..optimizer.scenarios import CandidateSpec, ScenarioSpec, payback_years, reprice
 from ..rulebook.models import RuleView
 from ..rulebook.repository import Reader
 from ..rulebook.scope import matches
@@ -806,7 +806,7 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
     # says; the lifecycle view projects the same cash flow year by year.
     ppa = any(m.crf is None and Decimal(str(sol.cap_kw.get(m.cid, 0.0))) > 0 for m in a.cands)
     pay = payback_years(capex, cash) if capex > 0 else None
-    rate = irr([-capex] + [cash] * life) if capex > 0 else None
+    rate = lcoe.irr([-capex] + [cash] * life) if capex > 0 else None
     if ppa and capex > 0:
         sized = {
             m.cid: sol.bess_kwh.get(m.cid, 0.0) if m.spec.kind == "btm_bess" else sol.cap_kw.get(m.cid, 0.0)

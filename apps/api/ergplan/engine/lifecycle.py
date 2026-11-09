@@ -15,6 +15,7 @@ from decimal import Decimal
 
 from ..core.sourced import SourcedValue, derive
 from ..core.units import Unit
+from . import lcoe
 
 ZERO = Decimal(0)
 ONE = Decimal(1)
@@ -196,9 +197,7 @@ def _payback(capex: Decimal, cash: list[Decimal]) -> Decimal | None:
 
 
 def _irr(cash: list[Decimal]) -> Decimal | None:
-    from ..optimizer.scenarios import irr  # the bisection the plan already uses
-
-    return irr(cash)
+    return lcoe.irr(cash)
 
 
 def to_json(lc: Lifecycle, inputs: list[SourcedValue]) -> dict[str, object]:
