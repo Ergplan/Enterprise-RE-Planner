@@ -88,12 +88,6 @@ class ScenarioSpec(BaseModel):
     sensitivities: list[Sensitivity] = Field(default_factory=list, max_length=6)
 
 
-def payback_years(capex: Decimal, yearly_cash: Decimal) -> Decimal | None:
-    if capex <= 0 or yearly_cash <= 0:
-        return None
-    return (capex / yearly_cash).quantize(Decimal("0.01"))
-
-
 def reprice(lines: dict[str, Decimal], line: str, pct: Decimal) -> Decimal:
     """The year's total cost with one cost line scaled by pct (energy quantities held)."""
     return sum(lines.values(), Decimal(0)) + lines.get(line, Decimal(0)) * pct / 100

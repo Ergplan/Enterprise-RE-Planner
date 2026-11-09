@@ -41,7 +41,7 @@ from ..intake import generation, profile_synthesis
 from ..optimizer import model as om
 from ..optimizer.highs_solve import Solution, SolveFailed, solve
 from ..optimizer.resettle import INR, Resettled, resettle, status_quo
-from ..optimizer.scenarios import CandidateSpec, ScenarioSpec, payback_years, reprice
+from ..optimizer.scenarios import CandidateSpec, ScenarioSpec, reprice
 from ..rulebook.models import RuleView
 from ..rulebook.repository import Reader
 from ..rulebook.scope import matches
@@ -786,8 +786,6 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
     after = sum(after_lines.values(), ZERO)
     saving = before - after
     capex = ZERO
-    annualised = ZERO
-    life = 25
     for m in a.cands:
         if m.crf is None:
             continue
@@ -796,17 +794,11 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
             if m.spec.kind == "btm_bess"
             else Decimal(str(sol.cap_kw.get(m.cid, 0.0)))
         )
-        size = _q(size)
-        capex += size * m.capex_inr
-        annualised += size * m.capex_inr * m.crf.value
-        life = min(life, m.life_years)
-    cash = saving + annualised  # yearly cash saving: the annualised capital is paid up front instead
-    # Payback and IRR are the plan's as a whole: the capital of the owned plant against the whole
-    # plan's cash saving. With a PPA in the mix part of that saving needs no capital, which the note
-    # says; the lifecycle view projects the same cash flow year by year.
+        capex += _q(size) * m.capex_inr
+    # Payback and IRR are the plan's as a whole, from the lifecycle (one computation, engine.lifecycle):
+    # the capital of the owned plant against the whole plan's cash flow year by year. With a PPA in
+    # the mix part of that saving needs no capital, which the note says.
     ppa = any(m.crf is None and Decimal(str(sol.cap_kw.get(m.cid, 0.0))) > 0 for m in a.cands)
-    pay = payback_years(capex, cash) if capex > 0 else None
-    rate = lcoe.irr([-capex] + [cash] * life) if capex > 0 else None
     if ppa and capex > 0:
         sized = {
             m.cid: sol.bess_kwh.get(m.cid, 0.0) if m.spec.kind == "btm_bess" else sol.cap_kw.get(m.cid, 0.0)
@@ -933,12 +925,9 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
         "lines_before": {k: str(v) for k, v in before_lines.items()},
         "lines_after": {k: str(v) for k, v in after_lines.items()},
         "lifecycle": lifecycle_json,
-        # the headline payback and IRR are the lifecycle's (escalation, degradation and replacements
-        # in); the flat year-one figures stand in only when there is no lifecycle
-        "payback_years": lifecycle_json.get("simple_payback_years")
-        or (sv(pay, Unit.YEARS, "Simple payback", all_inputs) if pay is not None else None),
-        "irr_pct": lifecycle_json.get("irr_pct")
-        or (sv(rate, Unit.PERCENT, "IRR", all_inputs) if rate is not None else None),
+        # the headline payback and IRR are the lifecycle's (escalation, degradation and replacements in)
+        "payback_years": lifecycle_json.get("simple_payback_years"),
+        "irr_pct": lifecycle_json.get("irr_pct"),
         "emissions": {
             "factor": gf.model_dump(mode="json"),
             "exchange_grid_kwh": sv(
