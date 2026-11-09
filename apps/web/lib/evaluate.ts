@@ -273,6 +273,8 @@ export function clearDraft(): void {
   }
 }
 
+// Display only: these format what the API already computed in Decimal. Nothing formatted here goes
+// back to the API; request bodies carry the typed strings as the person entered them.
 export function inr(v: string | number | null | undefined, digits = 0): string {
   if (v === null || v === undefined || v === "") return "—";
   const n = Number(v);

@@ -100,6 +100,10 @@ def test_discounting_and_the_json_carry_the_inputs() -> None:
     assert lc.discounted_payback_years is None  # 454.55 + 413.22 < 1000
     out = lifecycle.to_json(lc, [sv("1", Unit.KWH, "profile")])
     assert out["npv"]["source_refs"] and len(out["years"]) == 2  # type: ignore[index]
+    row = out["years"][1]  # type: ignore[index]
+    assert row["cumulative"]["value"] == str(lc.years[1].cumulative)  # type: ignore[index]
+    assert row["cumulative"]["source_refs"][0]["kind"] == "derived"  # type: ignore[index]
+    assert "year 2" in row["cumulative"]["source_refs"][0]["note"]  # type: ignore[index]
     assert set(out["assumptions"]) == {  # type: ignore[arg-type]
         "discount_pct",
         "tariff_escalation_pct",

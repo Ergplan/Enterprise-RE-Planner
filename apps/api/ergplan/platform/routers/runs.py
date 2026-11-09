@@ -60,16 +60,20 @@ class ExchangeOut(BaseModel):
 
 
 class LifecycleYearOut(BaseModel):
+    """One year of the projection: every figure a SourcedValue whose `derived` ref names the year;
+    the totals carry the full citations."""
+
     year: int
-    bau: str
-    grid: str
-    contracted: str
-    om: str
-    capex: str
-    saving: str
-    cash: str
-    cumulative: str
-    pv_cash: str
+    bau: SourcedValue = _f()
+    grid: SourcedValue = _f()
+    contracted: SourcedValue = _f()
+    om: SourcedValue = _f()
+    capex: SourcedValue = _f()
+    saving: SourcedValue = _f()
+    cash: SourcedValue = _f()
+    cumulative: SourcedValue = _f()
+    pv_cash: SourcedValue = _f()
+    discount: str
 
 
 class LifecycleOut(BaseModel):

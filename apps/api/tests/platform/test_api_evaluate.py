@@ -154,8 +154,14 @@ def test_a_typed_site_is_saved_costed_and_listed() -> None:
     assert lc["assumptions"]["tariff_escalation_pct"]["value"] == "4"
     assert lc["assumptions"]["tariff_escalation_pct"]["source_refs"][0]["kind"] == "client_stated"
     assert lc["assumptions"]["discount_pct"]["source_refs"][0]["kind"] == "assumption"
-    y1 = lc["years"][0]
+    y1 = {k: (v["value"] if isinstance(v, dict) else v) for k, v in lc["years"][0].items()}
     assert Decimal(y1["bau"]) == Decimal(out["summary"]["annual"]["before"]["value"])
+    # invariant 1 on the rows: every figure a SourcedValue whose ref names the year
+    assert all(
+        v["source_refs"][0]["kind"] == "derived" and "year 1" in v["source_refs"][0]["note"]
+        for k, v in lc["years"][0].items()
+        if isinstance(v, dict)
+    )
     # year one of the plan is the settled year's lines: the grid's and the contracted energy as settled,
     # the owned plant's annualised line replaced by its capital at year 0 and its O&M
     an = client.get(f"/runs/{run.json()['run_id']}", headers=AN).json()["analyst"]

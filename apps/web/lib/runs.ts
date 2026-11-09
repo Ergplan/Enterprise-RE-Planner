@@ -36,7 +36,10 @@ export type RunOut = {
   identical_to_original: boolean | null;
 };
 export type CandidateSpec = { kind: string; ownership?: string; price_inr_per_kwh?: string; max_mw?: string; min_mw?: string; commissioned?: string };
-export type LifecycleYear = { year: number; bau: string; grid: string; contracted: string; om: string; capex: string; saving: string; cash: string; cumulative: string; pv_cash: string };
+export type LifecycleYear = {
+  year: number; bau: SourcedValue; grid: SourcedValue; contracted: SourcedValue; om: SourcedValue; capex: SourcedValue;
+  saving: SourcedValue; cash: SourcedValue; cumulative: SourcedValue; pv_cash: SourcedValue; discount: string;
+};
 export type LifecycleOut = {
   analysis_years: SourcedValue; assumptions: Record<string, SourcedValue>; capex: SourcedValue | null; pv_bau: SourcedValue | null; pv_plan: SourcedValue | null;
   npv: SourcedValue | null; nominal_saving: SourcedValue | null; simple_payback_years: SourcedValue | null; discounted_payback_years: SourcedValue | null;

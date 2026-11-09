@@ -185,13 +185,13 @@ export function Lifecycle({ lc, years, expanded = false }: { lc: LifecycleOut; y
   const [all, setAll] = useState(expanded);
   const rows = all ? lc.years : lc.years.slice(0, 6);
   const capex0 = Number(lc.capex?.value ?? 0);
-  const cum = [-capex0, ...lc.years.map((y) => Number(y.cumulative))]; // year 0 is the capital
+  const cum = [-capex0, ...lc.years.map((y) => Number(y.cumulative.value))]; // year 0 is the capital
   const hi = Math.max(...cum, 1), lo = Math.min(...cum, 0);
   const W = 720, H = 200, pad = 70, top = 14, bottom = 18;
   const x = (i: number) => pad + (i / Math.max(1, cum.length - 1)) * (W - pad - 10);
   const y = (v: number) => top + ((hi - v) / (hi - lo)) * (H - top - bottom);
   const pts = cum.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
-  const breakeven = lc.years.findIndex((yr) => Number(yr.cumulative) >= 0);
+  const breakeven = lc.years.findIndex((yr) => Number(yr.cumulative.value) >= 0);
   return (
     <>
       <div className="ep-kpis ep-kpis--small">
@@ -227,7 +227,7 @@ export function Lifecycle({ lc, years, expanded = false }: { lc: LifecycleOut; y
           <tbody>
             {Number(lc.capex?.value ?? 0) > 0 && <tr><td>0</td><td colSpan={4}></td><td className="num">{inr(lc.capex?.value)}</td><td></td><td className="num">−{inr(lc.capex?.value)}</td></tr>}
             {rows.map((yr) => (
-              <tr key={yr.year}><td>{yr.year}</td><td className="num">{inr(yr.bau)}</td><td className="num">{inr(yr.grid)}</td><td className="num">{inr(yr.contracted)}</td><td className="num">{inr(yr.om)}</td><td className="num">{Number(yr.capex) ? inr(yr.capex) : ""}</td><td className="num">{inr(yr.saving)}</td><td className="num">{inr(yr.cumulative)}</td></tr>
+              <tr key={yr.year}><td>{yr.year}</td><td className="num">{inr(yr.bau.value)}</td><td className="num">{inr(yr.grid.value)}</td><td className="num">{inr(yr.contracted.value)}</td><td className="num">{inr(yr.om.value)}</td><td className="num">{Number(yr.capex.value) ? inr(yr.capex.value) : ""}</td><td className="num">{inr(yr.saving.value)}</td><td className="num">{inr(yr.cumulative.value)}</td></tr>
             ))}
           </tbody>
         </table>

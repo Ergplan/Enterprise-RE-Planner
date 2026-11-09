@@ -13,7 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from decimal import Decimal
 
-from ..core.sourced import SourcedValue, derive
+from ..core.sourced import RefKind, SourcedValue, SourceRef, derive
 from ..core.units import Unit
 from . import lcoe
 
@@ -200,6 +200,33 @@ def _irr(cash: list[Decimal]) -> Decimal | None:
     return lcoe.irr(cash)
 
 
+def _year_json(y: Year) -> dict[str, object]:
+    """One year's row. Every figure is a SourcedValue (invariant 1) with one `derived` ref that names
+    the year; the inputs it rests on are cited in full on the lifecycle's totals."""
+    ref = SourceRef(
+        kind=RefKind.DERIVED,
+        note=f"year {y.year} of the lifecycle projection: the settled year's lines escalated, "
+        "the capital and O&M of the owned plant, discounted as the assumptions on the totals say",
+    )
+
+    def sv(v: Decimal, label: str) -> dict[str, object]:
+        return SourcedValue(value=v, unit=Unit.INR, source_refs=(ref,), label=label).model_dump(mode="json")
+
+    return {
+        "year": y.year,
+        "bau": sv(y.bau, "Grid bill today"),
+        "grid": sv(y.grid, "Grid with the plan"),
+        "contracted": sv(y.contracted, "Contracted power"),
+        "om": sv(y.om, "O&M"),
+        "capex": sv(y.capex, "Capital"),
+        "saving": sv(y.saving, "Saving"),
+        "cash": sv(y.cash, "Cash flow"),
+        "cumulative": sv(y.cumulative, "Cumulative cash flow"),
+        "pv_cash": sv(y.pv_cash, "Present value of the cash flow"),
+        "discount": str(y.discount),
+    }
+
+
 def to_json(lc: Lifecycle, inputs: list[SourcedValue]) -> dict[str, object]:
     """The lifecycle for the run summary: totals as SourcedValues carrying every input, the years as
     plain decimals (strings), the assumptions by name."""
@@ -234,20 +261,6 @@ def to_json(lc: Lifecycle, inputs: list[SourcedValue]) -> dict[str, object]:
         "simple_payback_years": sv(lc.simple_payback_years, Unit.YEARS, "Simple payback"),
         "discounted_payback_years": sv(lc.discounted_payback_years, Unit.YEARS, "Discounted payback"),
         "irr_pct": sv(lc.irr_pct, Unit.PERCENT, "IRR on the capital"),
-        "years": [
-            {
-                "year": y.year,
-                "bau": str(y.bau),
-                "grid": str(y.grid),
-                "contracted": str(y.contracted),
-                "om": str(y.om),
-                "capex": str(y.capex),
-                "saving": str(y.saving),
-                "cash": str(y.cash),
-                "cumulative": str(y.cumulative),
-                "pv_cash": str(y.pv_cash),
-            }
-            for y in lc.years
-        ],
+        "years": [_year_json(y) for y in lc.years],
         "notes": lc.notes,
     }
