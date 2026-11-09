@@ -4,6 +4,10 @@ What is not yet right, and the stage that fixes it.
 
 | Gap | Fixed in |
 | --- | --- |
+| The 25-year view escalates the settled year; it does not re-optimise later years (the tariff order's ToD structure, the open-access charges and the regulations are held at the evaluation date's rules). A re-optimisation per year, or per regulatory period, would be a later stage | Later |
+| At hourly resolution the billing demand is the month's hourly peak; DISCOMs integrate demand over 15 minutes, so demand charges today and with the plan are understated by the month's peak ratio (about 12 % on the NPCL example), and the Evaluate page's "today" (on the 15-minute profile) is a little higher than the report's. The run says so; 15 minutes is one click in the settings | Later (peak-ratio scaling of hourly demand) |
+| Payback and IRR are the plan's as a whole; the return on the owned plant alone (rooftop, battery) would need a second optimisation without the open-access purchase | Later |
+| The supply voltage is not printed on some bills (NPCL); the Evaluate page asks for it rather than assuming the category's usual voltage, so a bills-only evaluation still needs one typed field | By design |
 | The independent reviewer is a tool script that imports `openai` directly (outside `ergplan/providers`); it is not app code and logs no `model_calls` row | By design |
 | Seeded rulebooks are approved by `build-agent@ergplan`; a jouleWise analyst should review each in `/rulebooks` and re-approve under their own name (duplicate → approve) | Before client use |
 | HV-2 **rural** schedule (7.5% rebate on the 11 kV urban base rate, no ToD) is not representable: `tariff_schedule` has no "rebate on base" field | Stage 3 |

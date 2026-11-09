@@ -24,7 +24,7 @@ PY
 "$API/.venv/bin/uvicorn" --app-dir "$ROOT/tools/dev" billx_stub:app --port 8091 >"$LOG/billx.log" 2>&1 & pids+=($!)
 (cd "$API" && BILLX_URL=http://localhost:8091 BILLX_TOKEN=stub ERGPLAN_WEB_INTERNAL_URL=http://localhost:3010 \
   ERGPLAN_PUBLIC_URL=http://localhost:3010 .venv/bin/uvicorn ergplan.platform.app:app --port 8010 >"$LOG/api.log" 2>&1) & pids+=($!)
-(cd "$API" && .venv/bin/python -m ergplan.platform.worker >"$LOG/worker.log" 2>&1) & pids+=($!)
+(cd "$API" && BILLX_URL=http://localhost:8091 BILLX_TOKEN=stub .venv/bin/python -m ergplan.platform.worker >"$LOG/worker.log" 2>&1) & pids+=($!)
 (cd "$ROOT/apps/web" && API_URL=http://localhost:8010 NEXT_DIST_DIR=.next-e2e npx next dev -p 3010 >"$LOG/web.log" 2>&1) & pids+=($!)
 for url in http://localhost:8091/v1/health http://localhost:8010/health http://localhost:3010/; do
   for _ in $(seq 1 90); do curl -sf -o /dev/null "$url" && break; sleep 2; done

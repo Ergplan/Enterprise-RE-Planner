@@ -276,3 +276,21 @@ States with approved tariffs: **7 of the 10** the plan names (UP, MH, KA, TS, PB
   - set-off weighted by the rule's order;
   - a fair time floor for each month's dispatch.
 - **Result.** Both UP mixes settle within 0.02 kWh. A new slow end-to-end (`tests/e2e/test_mix_journey.py`) runs them at 15 minutes.
+
+## Addendum, 9 Nov 2026 — the application redone around the consumer's journey; 25 years, hourly; the comprehensive report
+
+**Asked:** the application was not usable in its form; follow the flow of NREL's REopt (one page of inputs in the order a consumer gives them — the factory, the DISCOM from the bills, today's bill and open access, then the technologies: solar, wind, the exchange and a battery, behind the meter and through open access — sized by the optimizer, asking wherever something is needed; the UI could be redone completely); keep working and test the application fully; "solver should be 25 years hourly"; "report should be comprehensive".
+
+**Built:**
+- `/evaluate`: one inputs page, six numbered sections (your factory; DISCOM and connection with the bill drop; consumption from the bills, the year's units or month by month; today's bill and open access; what to evaluate, every source with its key inputs first and an Advanced fold; analysis settings), every field with a "?" that says what it means and where it is used, a rail that shows each section's state and what is still needed, "Get results", and the assistant beside the form (a drawer under 1500 px) that fills it from what the person says and asks for what is missing. The unsent draft stays in the browser; a saved evaluation reopens with everything.
+- `/results`: the report in full — summary, the recommended system with landed costs, the cost comparison line by line (from the chain, each line cited), the 25-year view (NPV, lifecycle cost today and with the plan, payback, IRR, the cumulative cash flow, the year table), the dispatch explorer, month by month, settlement and emissions, what binds, inputs and assumptions with their values, share, audit and CSV downloads. `/` lists the person's evaluations.
+- "25 years hourly": the optimizer sizes and dispatches one hourly year (the default is now 60 minutes; 15 minutes stays a choice) and `engine/lifecycle.py` projects it 25 years (tariff, PPA and O&M escalation, discounting, degradation, replacement at end of life); the assumptions are cited and editable in the settings section.
+- The shared page `/p/{token}` and its PDF carry the same sections (cost comparison, 25-year view, busiest week, month by month, settlement), server-fetched for the recommended scenario; the PDF went from 3 pages to 8 on the NPCL example.
+- API: router `evaluate` (`/intake/discoms`, `/intake/typed`, `/connections`, `/connections/{id}/today` with sourced figures, `/runs/{id}/dispatch.csv`), `GET /mix/options`, `FinanceSpec` on the mix, `PlanInputs.category_code`, assumptions with their values on the plan, headline payback and IRR from the lifecycle.
+- Found by the browser tests and fixed: a bill's printed category ("HV-2(L & H POWER)") reached the connection unmapped and the run found no schedule; the worker in `e2e-journey.sh` had no billx address, so bill reads failed in the background; the lifecycle chart clipped its axis labels; the technology cards' fields overflowed their columns.
+
+**Tests:** `tests/engine/test_lifecycle.py` (escalation, degradation, replacement, payback and IRR), `tests/platform/test_api_evaluate.py` (DISCOM list, typed intake, today with invariant-1 refs, evaluations, lifecycle on an hourly run, the dispatch file, refusals), `tests/e2e/test_stage8_evaluate.py` (Playwright: the typed journey to the full report, the share page and PDF with every section; the bills journey on two real NPCL bills — both pass through `tools/dev/e2e-journey.sh`). Screenshots at desktop and phone width were reviewed by hand.
+
+**Skipped:** re-optimising later years (the 25-year view escalates the settled year); a return on the owned plant alone; peak-ratio scaling of hourly demand charges — all in `docs/known-gaps.md`.
+
+**Deviations:** the six-step rail of Stages 2–7 is replaced by the two pages above; the old pages remain as the deeper checks the report links to (decision of 9 Nov 2026).
