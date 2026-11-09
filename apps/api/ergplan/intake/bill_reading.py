@@ -19,6 +19,7 @@ from ..core.sourced import RefKind, SourcedValue, SourceRef, derive
 from ..core.units import Unit
 from ..db.models import Bill
 from . import bills as bill_store
+from . import defaults
 from .recognise import Recognition, discom_of, recognise
 
 LABELS: dict[str, str] = {
@@ -419,7 +420,9 @@ class PlanInputs(BaseModel):
     bill_id: str
     bill_month: str | None
     discom: str | None
-    tariff_category: str | None
+    tariff_category: str | None  # as printed on the bill
+    category_code: str | None = None  # the order's category the printed text maps to (None: unknown)
+    category_note: str | None = None  # how it was read
     accepted: bool
     energy_unit: str
     facts: list[PlanValue]
@@ -564,11 +567,18 @@ def plan_inputs(session: Session, bill: Bill) -> PlanInputs:
     month = by_path.get("period.bill_month")
     category = by_path.get("tariff.category") or by_path.get("connection.tariff_category")
     recognition = recognise(session, bill)
+    mapped = (
+        defaults.category_from_printed(recognition.state or "", str(category.value))
+        if category is not None and category.value
+        else None
+    )
     return PlanInputs(
         bill_id=bill.id,
         bill_month=month.value if month else None,
         discom=r.discom,
         tariff_category=category.value if category else None,
+        category_code=mapped.value if mapped is not None else None,
+        category_note=mapped.ref.note if mapped is not None else None,
         accepted=bill.accepted,
         energy_unit=unit_name,
         facts=facts,

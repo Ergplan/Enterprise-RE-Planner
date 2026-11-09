@@ -8,7 +8,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from datetime import date
 from decimal import Decimal
-from typing import Any, Literal
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -34,12 +34,19 @@ class Text(_A):
     value: str = Field(min_length=1, max_length=120)
 
 
+STATES = tuple(sorted(set(defaults.DISCOM_STATE.values())))
+
+
 class StateArg(_A):
-    value: Literal["UP", "MH"]
+    value: str = Field(description=f"state code, one of: {', '.join(STATES)}")
 
 
 class Discom(_A):
-    value: str = Field(description="DISCOM id: npcl, pvvnl, mvvnl, dvvnl, puvvnl, kesco, msedcl")
+    value: str = Field(
+        description="DISCOM id, one of: "
+        + ", ".join(sorted(defaults.DISCOM_STATE))
+        + " (or its printed name)"
+    )
 
 
 class Num(_A):
@@ -103,8 +110,18 @@ def _set(field: str, cast: Callable[[Any], Any] = lambda v: v) -> Callable[[dict
     return run
 
 
+def _state(state: dict[str, Any], a: StateArg) -> str:
+    code = a.value.strip().upper()
+    if code not in STATES:
+        raise ToolError(f"the state must be one of {', '.join(STATES)}")
+    state["state"] = _fact(code)
+    return f"State set to {code}."
+
+
 def _discom(state: dict[str, Any], a: Discom) -> str:
     d = a.value.strip().lower()
+    if defaults.state_of(d) is None:
+        d = defaults.discom_from_name(a.value) or d
     st = defaults.state_of(d)
     if st is None:
         raise ToolError(f"I don't know the DISCOM {a.value}")
@@ -228,7 +245,7 @@ class Tool:
 TOOLS: list[Tool] = [
     Tool("set_client_name", "The client company's name", Text, _set("client_name"), "intake"),
     Tool("set_site_name", "The site's name or town", Text, _set("site_name"), "intake"),
-    Tool("set_state", "The state: UP or MH", StateArg, _set("state"), "intake"),
+    Tool("set_state", "The state the site is in (code)", StateArg, _state, "intake"),
     Tool("set_discom", "The distribution company", Discom, _discom, "intake"),
     Tool(
         "set_category",

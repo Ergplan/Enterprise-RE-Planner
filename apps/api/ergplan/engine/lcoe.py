@@ -112,3 +112,28 @@ def lcos(s: StorageCost) -> SourcedValue:
         [s.capex_inr_per_kwh, s.om_pct_of_capex, s.cycles_per_year, s.depth_pct, f],
         label="LCOS",
     )
+
+
+def default_finance() -> dict[str, SourcedValue]:
+    """The lifecycle view's assumptions when the client states none (engine.lifecycle)."""
+    return {
+        "analysis_years": assumed(
+            "25", Unit.COUNT, "analysis period, the life of a solar plant", "Analysis period"
+        ),
+        "discount_pct": assumed("10", Unit.PERCENT, "pre-tax cost of capital", "Discount rate"),
+        "tariff_escalation_pct": assumed(
+            "3",
+            Unit.PERCENT,
+            "DISCOM tariff growth per year (the last decade's average)",
+            "Tariff escalation",
+        ),
+        "ppa_escalation_pct": assumed(
+            "0",
+            Unit.PERCENT,
+            "open-access and exchange prices held flat (a PPA is usually fixed)",
+            "PPA escalation",
+        ),
+        "om_escalation_pct": assumed(
+            "4", Unit.PERCENT, "O&M cost growth per year (inflation)", "O&M escalation"
+        ),
+    }

@@ -15,7 +15,7 @@ from sqlalchemy import select
 from ...db.base import session_scope
 from ...db.models import Connection, PriceVintage, Run, Scenario
 from ...engine.landed_cost import SOURCE_BY_ID
-from ...optimizer.scenarios import SIZEABLE, CandidateSpec, ScenarioSpec
+from ...optimizer.scenarios import SIZEABLE, CandidateSpec, FinanceSpec, ScenarioSpec
 from .. import runs as svc
 from ..auth import Caller, caller, owned_connection
 from .landed import DEFAULT_PRICE
@@ -50,8 +50,9 @@ class MixIn(BaseModel):
 
     name: str = Field(default=MIX_NAME, min_length=1, max_length=80)
     sources: list[CandidateSpec] = Field(min_length=1, max_length=8)
-    resolution_min: Literal[15, 60] = 15
+    resolution_min: Literal[15, 60] = 60
     as_of: date | None = None
+    finance: FinanceSpec | None = None
 
     @model_validator(mode="after")
     def one_each_on_site(self) -> MixIn:
@@ -80,12 +81,22 @@ def _segments_loaded() -> set[str]:
         }
 
 
+@router.get("/mix/options", response_model=list[SourceOption])
+def mix_options_any() -> list[SourceOption]:
+    """The sources any client may choose (the Evaluate page, before a connection exists)."""
+    return _options()
+
+
 @router.get("/connections/{connection_id}/mix/options", response_model=list[SourceOption])
 def mix_options(connection_id: str, who: Annotated[Caller, Depends(caller)]) -> list[SourceOption]:
     with session_scope(actor=who.actor) as s:
         owned_connection(s, who, connection_id)
         if s.get(Connection, connection_id) is None:
             raise HTTPException(404, "connection not found")
+    return _options()
+
+
+def _options() -> list[SourceOption]:
     loaded = _segments_loaded()
     out = []
     for kind in SIZEABLE:
@@ -131,6 +142,7 @@ def size_mix(
         candidates=body.sources,
         as_of=body.as_of or date.today(),
         resolution_min=body.resolution_min,
+        finance=body.finance,
     )
     with session_scope(actor=who.actor, role=who.role) as s:
         owned_connection(s, who, connection_id)

@@ -17,6 +17,7 @@ from .routers import (
     audit,
     cost,
     documents,
+    evaluate,
     intake,
     landed,
     mix,
@@ -83,6 +84,7 @@ def create_app() -> FastAPI:
     app.include_router(voice.router)
     app.include_router(audit.router)
     app.include_router(mix.router)
+    app.include_router(evaluate.router)
     return app
 
 

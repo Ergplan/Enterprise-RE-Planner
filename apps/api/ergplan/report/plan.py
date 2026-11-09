@@ -28,15 +28,20 @@ class PlanNotFound(LookupError):
     pass
 
 
-def _walk_refs(x: Any, out: list[dict[str, Any]]) -> None:
+def _walk_refs(x: Any, out: list[dict[str, Any]], holders: list[dict[str, Any]] | None = None) -> None:
+    """Every source_ref under `x`; with `holders`, also every SourcedValue that rests on a single
+    assumption (its label, value and unit are the assumption's own)."""
     if isinstance(x, dict):
         if "source_refs" in x and isinstance(x["source_refs"], list):
-            out.extend(r for r in x["source_refs"] if isinstance(r, dict))
+            refs = [r for r in x["source_refs"] if isinstance(r, dict)]
+            out.extend(refs)
+            if holders is not None and len(refs) == 1 and refs[0].get("kind") == "assumption":
+                holders.append(x)
         for v in x.values():
-            _walk_refs(v, out)
+            _walk_refs(v, out, holders)
     elif isinstance(x, list):
         for v in x:
-            _walk_refs(v, out)
+            _walk_refs(v, out, holders)
 
 
 def _latest_done(s: Session, scenario_id: str) -> tuple[Run, RunResult] | None:
@@ -107,7 +112,8 @@ def build(s: Session, connection_id: str, analyst: bool = False) -> dict[str, An
         scenarios.append(item)
     best = max(scenarios, key=lambda x: Decimal(x["summary"]["annual"]["saving"]["value"]), default=None)
     refs: list[dict[str, Any]] = []
-    _walk_refs([x["summary"] for x in scenarios], refs)
+    holders: list[dict[str, Any]] = []
+    _walk_refs([x["summary"] for x in scenarios], refs, holders)
     doc_pages: dict[str, set[int]] = {}
     assumptions: dict[str, dict[str, Any]] = {}
     for r in refs:
@@ -117,6 +123,12 @@ def build(s: Session, connection_id: str, analyst: bool = False) -> dict[str, An
                 doc_pages[r["document_id"]].add(int(r["page"]))
         if r.get("kind") == "assumption" and r.get("note"):
             assumptions.setdefault(r["note"], r)
+    # the value each assumption stands for, where one SourcedValue is that assumption alone
+    stated: dict[str, dict[str, Any]] = {}
+    for h in holders:
+        note = h["source_refs"][0].get("note")
+        if note and note not in stated and h.get("label") and h.get("value") is not None:
+            stated[note] = {"label": h["label"], "value": h["value"], "unit": h.get("unit")}
     rows = {d.id: d for d in s.scalars(select(SourceDocument).where(SourceDocument.id.in_(list(doc_pages))))}
     documents = [
         {
@@ -163,6 +175,6 @@ def build(s: Session, connection_id: str, analyst: bool = False) -> dict[str, An
         "recommended": best["scenario_id"] if best else None,
         "pending_runs": pending,
         "documents": sorted(documents, key=lambda d: d["title"]),
-        "assumptions": [{"note": k, "ref": v} for k, v in assumptions.items()],
+        "assumptions": [{"note": k, "ref": v, **stated.get(k, {})} for k, v in assumptions.items()],
         "editable": editable,
     }

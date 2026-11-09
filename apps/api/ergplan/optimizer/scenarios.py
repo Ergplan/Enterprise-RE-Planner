@@ -60,12 +60,28 @@ class Sensitivity(BaseModel):
     )
 
 
+class FinanceSpec(BaseModel):
+    """The analysis period and escalations the lifecycle view projects the settled year with. Left
+    blank, each is an assumption the plan shows as such (engine.lifecycle, lcoe.default_finance)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    analysis_years: int | None = Field(default=None, ge=1, le=40)
+    discount_pct: Decimal | None = Field(default=None, ge=0, le=30)
+    tariff_escalation_pct: Decimal | None = Field(default=None, ge=-5, le=15)
+    ppa_escalation_pct: Decimal | None = Field(default=None, ge=-5, le=15)
+    om_escalation_pct: Decimal | None = Field(default=None, ge=-5, le=15)
+
+
 class ScenarioSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     candidates: list[CandidateSpec] = Field(min_length=1, max_length=8)
     as_of: date | None = None
-    resolution_min: Literal[15, 60] = 15
+    # hourly by default: a year of 8,760 blocks sizes in about a minute; 15 minutes (35,040 blocks)
+    # is the precise setting and takes several
+    resolution_min: Literal[15, 60] = 60
+    finance: FinanceSpec | None = None
     contract_demand: ContractDemandSpec | None = None  # None: keep today's contract demand
     lapse_price_inr_per_kwh: Decimal | None = Field(default=None, ge=0)
     grid_factor_t_per_mwh: Decimal | None = Field(default=None, gt=0)
@@ -102,7 +118,7 @@ def reprice(lines: dict[str, Decimal], line: str, pct: Decimal) -> Decimal:
     return sum(lines.values(), Decimal(0)) + lines.get(line, Decimal(0)) * pct / 100
 
 
-def standard(as_of: date, resolution_min: int = 15) -> list[tuple[str, ScenarioSpec]]:
+def standard(as_of: date, resolution_min: int = 60) -> list[tuple[str, ScenarioSpec]]:
     """The three scenarios a client gets without an analyst: captive solar; third-party hybrid with a
     battery; rooftop, captive solar and a battery."""
     base: dict[str, object] = {"as_of": as_of, "resolution_min": resolution_min}

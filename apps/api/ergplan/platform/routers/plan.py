@@ -117,7 +117,7 @@ def build_plan(
     connection_id: str,
     who: Annotated[Caller, Depends(caller)],
     as_of: Annotated[date | None, Query()] = None,
-    resolution_min: Annotated[int, Query(ge=15, le=60, multiple_of=15)] = 15,
+    resolution_min: Annotated[int, Query(ge=15, le=60, multiple_of=15)] = 60,
     wait: Annotated[bool, Query()] = False,
 ) -> BuildOut:
     """Size the three standard scenarios for a connection (no analyst needed). Scenarios that already

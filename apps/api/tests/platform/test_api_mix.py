@@ -83,6 +83,9 @@ def test_the_sources_a_client_may_choose(site: dict[str, str]) -> None:
     assert by["oa_hybrid_intra"]["default_price_inr_per_kwh"] == "3.50"
     assert by["btm_bess"]["group"] == "At your site"
     assert client.get("/connections/missing/mix/options", headers=CL).status_code == 404
+    assert (
+        client.get("/mix/options", headers=CL).json() == r.json()
+    )  # the same list before a connection exists
 
 
 def test_exchange_energy_is_priced_block_by_block(site: dict[str, str]) -> None:

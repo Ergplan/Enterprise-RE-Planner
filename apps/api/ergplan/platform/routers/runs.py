@@ -59,6 +59,38 @@ class ExchangeOut(BaseModel):
     share_of_load: SourcedValue = _f()
 
 
+class LifecycleYearOut(BaseModel):
+    year: int
+    bau: str
+    grid: str
+    contracted: str
+    om: str
+    capex: str
+    saving: str
+    cash: str
+    cumulative: str
+    pv_cash: str
+
+
+class LifecycleOut(BaseModel):
+    """The settled year projected over the analysis period (engine.lifecycle)."""
+
+    analysis_years: SourcedValue = _f()
+    assumptions: dict[str, SourcedValue] = Field(
+        json_schema_extra={"owner": "run_results.summary", "ref_kinds": ["assumption", "client_stated"]}
+    )
+    capex: SourcedValue | None = _o()
+    pv_bau: SourcedValue | None = _o()
+    pv_plan: SourcedValue | None = _o()
+    npv: SourcedValue | None = _o()
+    nominal_saving: SourcedValue | None = _o()
+    simple_payback_years: SourcedValue | None = _o()
+    discounted_payback_years: SourcedValue | None = _o()
+    irr_pct: SourcedValue | None = _o()
+    years: list[LifecycleYearOut]
+    notes: list[str]
+
+
 class MonthMixOut(BaseModel):
     month: date
     load_kwh: SourcedValue = _f()
@@ -143,6 +175,7 @@ class SummaryOut(BaseModel):
     sensitivities: list[SensitivityOut]
     notes: list[str]
     monthly: list[MonthMixOut] = Field(default_factory=list)
+    lifecycle: LifecycleOut | None = None
 
 
 class RunOut(BaseModel):

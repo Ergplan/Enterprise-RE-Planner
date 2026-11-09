@@ -34,7 +34,7 @@ from ..db.models import (
     Scenario,
     Site,
 )
-from ..engine import avoided_cost, landed_cost, lcoe, tariff_eval
+from ..engine import avoided_cost, landed_cost, lcoe, lifecycle, tariff_eval
 from ..engine import scope as escope
 from ..engine.tariff_eval import slot_adjustment_pct, slot_of
 from ..intake import generation, profile_synthesis
@@ -82,6 +82,10 @@ class CandMeta:
     capex_inr: Decimal = ZERO  # per kW (rooftop) or per kWh (battery)
     crf: SourcedValue | None = None
     life_years: int = 25
+    # for the lifecycle view: the plant's O&M, life and degradation as the cost model states them
+    om_pct: SourcedValue | None = None
+    life_sv: SourcedValue | None = None
+    degradation: SourcedValue | None = None
     inputs: list[SourcedValue] = field(default_factory=list)
     rule: RuleView | None = None
     gaps: list[str] = field(default_factory=list)
@@ -103,6 +107,7 @@ class Assembled:
     as_of: date
     cd: SourcedValue | None
     grid_factor: SourcedValue
+    spec: ScenarioSpec | None = None
 
 
 def _f(x: Decimal | float) -> float:
@@ -222,6 +227,12 @@ def assemble(
         slot_meta[mf] = []
     hours = spec.resolution_min / 60
     step = spec.resolution_min // 15
+    if step > 1:
+        notes.append(
+            "hourly blocks: billing demand is each month's hourly peak, below the 15-minute peak a "
+            "DISCOM meters, so demand charges today and with the plan are both a little understated; "
+            "choose 15 minutes in the analysis settings for billing-grade demand"
+        )
     blocks: list[om.BlockMeta] = []
     load: list[float] = []
     rate: list[float] = []
@@ -377,11 +388,13 @@ def assemble(
                 f,
                 int(st.life_years.value),
             )
+            meta.om_pct, meta.life_sv = st.om_pct_of_capex, st.life_years
             fixed_kwh[cid] = yearly
             meta.inputs = [st.capex_inr_per_kwh, st.om_pct_of_capex, st.round_trip_pct, f]
             if not cs.max_mw:
                 notes.append(
-                    f"{cid}: at most half the contract demand in kW (assumption; set a limit to change it)"
+                    f"{meta.label}: at most half the contract demand in kW (assumption; set a limit "
+                    "to change it)"
                 )
             cands.append(meta)
             continue
@@ -430,6 +443,7 @@ def assemble(
                 )
             )
             meta.capex_inr, meta.crf, meta.life_years = g.capex_inr_per_kw.value, f, int(g.life_years.value)
+            meta.om_pct, meta.life_sv, meta.degradation = g.om_pct_of_capex, g.life_years, g.degradation_pct
             meta.cuf = g.cuf_pct
             fixed_kw[cid] = yearly
             energy_d[cid] = [ZERO] * n
@@ -703,6 +717,7 @@ def assemble(
         as_of=as_of,
         cd=cd_sv,
         grid_factor=gf,
+        spec=spec,
     )
 
 
@@ -786,15 +801,22 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
         annualised += size * m.capex_inr * m.crf.value
         life = min(life, m.life_years)
     cash = saving + annualised  # yearly cash saving: the annualised capital is paid up front instead
-    # Payback and IRR only when every source sized is owned plant: with a PPA in the mix the saving is
-    # mostly the PPA's, which needs no capital, and a ratio on the owned part alone would mislead.
+    # Payback and IRR are the plan's as a whole: the capital of the owned plant against the whole
+    # plan's cash saving. With a PPA in the mix part of that saving needs no capital, which the note
+    # says; the lifecycle view projects the same cash flow year by year.
     ppa = any(m.crf is None and Decimal(str(sol.cap_kw.get(m.cid, 0.0))) > 0 for m in a.cands)
-    pay = None if ppa else payback_years(capex, cash)
-    rate = irr([-capex] + [cash] * life) if capex > 0 and not ppa else None
+    pay = payback_years(capex, cash) if capex > 0 else None
+    rate = irr([-capex] + [cash] * life) if capex > 0 else None
     if ppa and capex > 0:
+        sized = {
+            m.cid: sol.bess_kwh.get(m.cid, 0.0) if m.spec.kind == "btm_bess" else sol.cap_kw.get(m.cid, 0.0)
+            for m in a.cands
+        }
+        owned = ", ".join(m.label for m in a.cands if m.crf is not None and sized[m.cid] > 0)
         a.notes.append(
-            "payback and IRR are shown only when all the plant is owned; here an open-access purchase "
-            "brings most of the saving without capital"
+            f"payback and IRR are the plan's as a whole: the capital of the owned plant ({owned}) "
+            "against the whole plan's saving, part of which the open-access purchase brings without "
+            "capital; read them as the plan's return, not the owned plant's alone"
         )
 
     def sv(v: Decimal, unit: Unit, label: str, inputs: list[SourcedValue]) -> dict[str, Any]:
@@ -803,6 +825,7 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
         )
 
     grid_total = sum(om.exact_of(p).load_kwh, ZERO)
+    lifecycle_json = _lifecycle(a, sol, before_lines, after_lines, grid_total, all_inputs)
     sizes = []
     for m in a.cands:
         if m.spec.kind == "btm_bess":
@@ -909,8 +932,13 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
         },
         "lines_before": {k: str(v) for k, v in before_lines.items()},
         "lines_after": {k: str(v) for k, v in after_lines.items()},
-        "payback_years": sv(pay, Unit.YEARS, "Simple payback", all_inputs) if pay is not None else None,
-        "irr_pct": sv(rate, Unit.PERCENT, "IRR", all_inputs) if rate is not None else None,
+        "lifecycle": lifecycle_json,
+        # the headline payback and IRR are the lifecycle's (escalation, degradation and replacements
+        # in); the flat year-one figures stand in only when there is no lifecycle
+        "payback_years": lifecycle_json.get("simple_payback_years")
+        or (sv(pay, Unit.YEARS, "Simple payback", all_inputs) if pay is not None else None),
+        "irr_pct": lifecycle_json.get("irr_pct")
+        or (sv(rate, Unit.PERCENT, "IRR", all_inputs) if rate is not None else None),
         "emissions": {
             "factor": gf.model_dump(mode="json"),
             "exchange_grid_kwh": sv(
@@ -948,6 +976,66 @@ def summarise(a: Assembled, sol: Solution, rs: Resettled) -> dict[str, Any]:
         "notes": a.notes,
         "monthly": monthly,
     }
+
+
+def _lifecycle(
+    a: Assembled,
+    sol: Solution,
+    before_lines: dict[str, Decimal],
+    after_lines: dict[str, Decimal],
+    load_kwh: Decimal,
+    inputs: list[SourcedValue],
+) -> dict[str, Any]:
+    """The settled year projected over the analysis period (engine.lifecycle): owned plant paid at
+    year 0 and replaced at the end of its life, degrading; tariffs and O&M escalating; every year
+    discounted. The finance inputs are the scenario's, else the stated assumptions."""
+    fin_spec = a.spec.finance if a.spec is not None else None
+    d = lcoe.default_finance()
+
+    def pick(name: str, unit: Unit, label: str) -> SourcedValue:
+        v = getattr(fin_spec, name, None) if fin_spec is not None else None
+        if v is None:
+            return d[name]
+        return _sv(Decimal(v), unit, SourceRef(kind=RefKind.CLIENT_STATED, note=label), label)
+
+    fin = lifecycle.Inputs(
+        analysis_years=pick("analysis_years", Unit.COUNT, "Analysis period"),
+        discount_pct=pick("discount_pct", Unit.PERCENT, "Discount rate"),
+        tariff_escalation_pct=pick("tariff_escalation_pct", Unit.PERCENT, "Tariff escalation"),
+        ppa_escalation_pct=pick("ppa_escalation_pct", Unit.PERCENT, "PPA escalation"),
+        om_escalation_pct=pick("om_escalation_pct", Unit.PERCENT, "O&M escalation"),
+    )
+    avg_grid = (before_lines.get("grid_energy", ZERO) / load_kwh) if load_kwh > 0 else ZERO
+    none = _sv(
+        ZERO, Unit.PERCENT, SourceRef(kind=RefKind.ASSUMPTION, note="no degradation modelled"), "Degradation"
+    )
+    assets: list[lifecycle.Asset] = []
+    for m in a.cands:
+        if m.crf is None or m.om_pct is None or m.life_sv is None:
+            continue
+        if m.spec.kind == "btm_bess":
+            size = _q(Decimal(str(sol.bess_kwh.get(m.cid, 0.0))))
+            displaced = ZERO
+        else:
+            size = _q(Decimal(str(sol.cap_kw.get(m.cid, 0.0))))
+            gen = sum((Decimal(f"{x:.3f}") for x in sol.gen.get(m.cid, [])), ZERO)
+            displaced = gen * avg_grid
+        if size <= 0:
+            continue
+        capex = derive(size * m.capex_inr, Unit.INR, [*m.inputs], label=f"{m.label}: capital cost")
+        assets.append(
+            lifecycle.Asset(
+                cid=m.cid,
+                label=m.label,
+                capex=capex,
+                om_pct=m.om_pct,
+                life_years=m.life_sv,
+                degradation_pct=m.degradation or none,
+                displaced_inr=_q(displaced, "0.01"),
+            )
+        )
+    lc = lifecycle.project(before_lines, after_lines, assets, fin)
+    return lifecycle.to_json(lc, inputs)
 
 
 def _monthly_mix(
