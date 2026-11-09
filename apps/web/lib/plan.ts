@@ -6,7 +6,7 @@ export type PlanOut = {
   token: string | null; connection_id: string; client: string; site: string; state: string; discom: string; category: string | null; voltage_kv: string | null;
   profile: string | null; scenarios: ScenarioPlan[]; recommended: string | null; pending_runs: number;
   documents: { id: string; title: string; regulator: string | null; url_public: string | null; url: string; pages: number[] }[];
-  assumptions: { note: string; ref: Ref }[];
+  assumptions: { note: string; ref: Ref; label?: string; value?: string; unit?: string }[];
   editable: { tool: string; source: string | null; label: string; value: SourcedValue }[];
   analyst_view: boolean;
 };

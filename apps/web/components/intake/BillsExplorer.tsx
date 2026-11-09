@@ -117,7 +117,7 @@ export function BillsExplorer() {
           </section>
         );
       })}
-      {accounts && accounts.length === 0 && <p className="ep-empty">No bills yet. <Link href="/plan/intake">Drop a bill</Link> to start.</p>}
+      {accounts && accounts.length === 0 && <p className="ep-empty">No bills yet. <Link href="/evaluate">Start an evaluation</Link> and drop a bill.</p>}
       {error && <p className="ep-error">{error}</p>}
     </>
   );

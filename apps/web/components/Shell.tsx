@@ -5,19 +5,17 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { ErgOSMount } from "./ErgOSMount";
 
-// The client journey (plan section 1). Steps light up as their stage ships.
-const JOURNEY: { n: number; label: string; href: string; live: boolean }[] = [
-  { n: 1, label: "Drop a bill", href: "/plan/intake", live: true },
-  { n: 2, label: "Today's cost", href: "/plan/today", live: true },
-  { n: 3, label: "Landed costs", href: "/plan/landed", live: true },
-  { n: 4, label: "Describe the site", href: "/plan/site", live: true },
-  { n: 5, label: "Optimise", href: "/plan/optimise", live: true },
-  { n: 6, label: "Your plan", href: "/plan/report", live: true },
+// The journey: inputs, results, the plan to share and audit. Detail pages (today's bill rebuilt,
+// landed costs per slot) are reached from the results.
+const JOURNEY: { n: number; label: string; href: string }[] = [
+  { n: 1, label: "Inputs", href: "/evaluate" },
+  { n: 2, label: "Results", href: "/results" },
+  { n: 3, label: "Share and audit", href: "/plan/report" },
 ];
 
 const ANALYST: { label: string; href: string; icon: string }[] = [
   { label: "Rulebooks", href: "/rulebooks", icon: "layers" },
-  { label: "Proposed changes", href: "/proposals", icon: "list" },
+  { label: "Proposed changes", href: "/proposals", icon: "check" },
   { label: "Documents", href: "/documents", icon: "file" },
   { label: "Market prices", href: "/prices", icon: "trend" },
   { label: "Settlement", href: "/settlement", icon: "battery" },
@@ -89,10 +87,13 @@ export function Shell({ children }: { children: ReactNode }) {
           </Link>
         </div>
         <nav className="eg-nav">
-          <div className="eg-overline eg-nav__group">Plan</div>
+          <Link className="eg-nav__item" href="/" aria-current={path === "/" ? "page" : undefined}>
+            <span data-icon="home" data-size="19"></span>
+            Evaluations
+          </Link>
+          <div className="eg-overline eg-nav__group">This evaluation</div>
           {JOURNEY.map((s) => (
-            <Link key={s.n} className="eg-nav__item ep-step" href={site && s.n > 1 ? `${s.href}?c=${site}` : s.href} aria-current={current(s.href)}
-              aria-disabled={s.live ? undefined : "true"} tabIndex={s.live ? undefined : -1}>
+            <Link key={s.n} className="eg-nav__item ep-step" href={site ? `${s.href}?c=${site}` : s.href} aria-current={current(s.href) ?? (s.href === "/plan/report" && path.startsWith("/plan/") ? "page" : undefined)}>
               <span className="ep-step__n">{s.n}</span>
               {s.label}
             </Link>

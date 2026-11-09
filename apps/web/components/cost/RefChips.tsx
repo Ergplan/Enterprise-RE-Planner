@@ -4,7 +4,7 @@ const LABEL: Record<string, string> = { bill: "bill", client_stated: "you said",
 
 // Citations for a number: a regulation or order page opens the stored PDF at that page (invariant 1);
 // a bill value opens the client's bill; statements and assumptions are plain chips.
-export function RefChips({ refs, max = 4 }: { refs: Ref[]; max?: number }) {
+export function RefChips({ refs, max = 4, kinds = 2 }: { refs: Ref[]; max?: number; kinds?: number }) {
   const docs = refs.filter((r) => (r.kind === "order" || r.kind === "regulation") && r.document_id && r.page);
   const bills = refs.filter((r) => r.kind === "bill");
   const others = refs.filter((r) => !docs.includes(r) && !bills.includes(r));
@@ -22,7 +22,7 @@ export function RefChips({ refs, max = 4 }: { refs: Ref[]; max?: number }) {
         <a key={`b${id}`} className="eg-chip ep-ref" href={`/api/bills/${id}/file`} target="_blank" rel="noreferrer"
           title={bills.map((b) => b.field_path).filter(Boolean).slice(0, 6).join(", ")}>bill</a>
       ))}
-      {others.slice(0, 2).map((r, i) => (
+      {others.slice(0, kinds).map((r, i) => (
         <span key={`o${i}`} className={`eg-chip ${r.kind === "assumption" ? "eg-chip--warning" : ""}`} title={r.note ?? undefined}>
           {LABEL[r.kind] ?? r.kind}
         </span>

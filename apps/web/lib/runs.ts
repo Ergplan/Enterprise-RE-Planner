@@ -23,6 +23,10 @@ export type SummaryOut = {
   sensitivities: { label: string; saving: SourcedValue }[];
   notes: string[];
   monthly?: MonthMix[];
+  lifecycle?: LifecycleOut | null;
+  lines_before?: Record<string, string>;
+  lines_after?: Record<string, string>;
+  settlement_rule?: string | null;
 };
 export type RunOut = {
   id: string; scenario_id: string; status: "queued" | "running" | "done" | "failed" | "failed_resettle"; resolution_min: number;
@@ -31,7 +35,13 @@ export type RunOut = {
   summary: SummaryOut | null; analyst: { resettle: { agrees: boolean; max_diff_kwh: string; tolerance_kwh: string; solver_objective_inr: string; resettled_cost_inr: string } } | null;
   identical_to_original: boolean | null;
 };
-export type CandidateSpec = { kind: string; ownership?: string; price_inr_per_kwh?: string; max_mw?: string; min_mw?: string };
+export type CandidateSpec = { kind: string; ownership?: string; price_inr_per_kwh?: string; max_mw?: string; min_mw?: string; commissioned?: string };
+export type LifecycleYear = { year: number; bau: string; grid: string; contracted: string; om: string; capex: string; saving: string; cash: string; cumulative: string; pv_cash: string };
+export type LifecycleOut = {
+  analysis_years: SourcedValue; assumptions: Record<string, SourcedValue>; capex: SourcedValue | null; pv_bau: SourcedValue | null; pv_plan: SourcedValue | null;
+  npv: SourcedValue | null; nominal_saving: SourcedValue | null; simple_payback_years: SourcedValue | null; discounted_payback_years: SourcedValue | null;
+  irr_pct: SourcedValue | null; years: LifecycleYear[]; notes: string[];
+};
 export type ScenarioSpec = { candidates: CandidateSpec[]; as_of?: string | null; resolution_min: 15 | 60; sensitivities?: { kind: string; candidate?: string; pct: string[] }[] };
 export type ScenarioOut = { id: string; site_id: string; connection_id: string; name: string; spec: ScenarioSpec; created_at: string; latest_run: RunOut | null };
 export type DispatchOut = { run_id: string; start: string; minutes: number; times: string[]; slots: string[]; series: Record<string, SourcedValue[]> };

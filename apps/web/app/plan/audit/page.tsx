@@ -21,7 +21,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
       <section className="eg-card ep-panel">
         <h1 className="eg-h1">Audit the plan</h1>
         <p className="eg-muted">The audit opens once your plan is settled.</p>
-        <Link className="eg-btn eg-btn--primary" href={c ? `/plan/report?c=${c}` : "/plan/intake"}>Your plan</Link>
+        <Link className="eg-btn eg-btn--primary" href={c ? `/results?c=${c}` : "/evaluate"}>Your plan</Link>
       </section>
     );
   }

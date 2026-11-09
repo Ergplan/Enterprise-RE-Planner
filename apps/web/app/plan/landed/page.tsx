@@ -14,7 +14,7 @@ export default async function LandedPage({ searchParams }: { searchParams: Promi
       <section className="eg-card ep-panel">
         <h1 className="eg-h1">Landed costs</h1>
         <p className="eg-muted">Start with your bill; this step opens once a site exists.</p>
-        <Link className="eg-btn eg-btn--primary" href="/plan/intake">Drop a bill</Link>
+        <Link className="eg-btn eg-btn--primary" href="/evaluate">New evaluation</Link>
       </section>
     );
   }
@@ -27,7 +27,7 @@ export default async function LandedPage({ searchParams }: { searchParams: Promi
   return (
     <>
       <div>
-        <div className="eg-overline">Step 3 of 6</div>
+        <div className="eg-overline">Detail</div>
         <h1 className="eg-h1">Landed costs</h1>
         <p className="eg-muted ep-lede">
           What each source costs at your meter ({conn.discom_id.toUpperCase()}, {conn.tariff_category}, {Number(conn.voltage_kv)} kV), under the rules in force on {d.as_of}, for {months[d.month - 1]}.
@@ -39,7 +39,7 @@ export default async function LandedPage({ searchParams }: { searchParams: Promi
               <Link key={m} href={`/plan/landed?c=${c}&month=${m}${analyst ? "&view=analyst" : ""}`} className="ep-seglink" aria-current={d.month === m ? "true" : undefined}>{months[m - 1]}</Link>
             ))}
           </div>
-          <Link className="eg-btn eg-btn--primary eg-btn--sm" href={`/plan/optimise?c=${c}`}>Size the plan</Link>
+          <Link className="eg-btn eg-btn--primary eg-btn--sm" href={`/results?c=${c}`}>Results</Link>
           <Link className="eg-btn eg-btn--ghost eg-btn--sm" href={`/plan/landed?c=${c}${month ? `&month=${month}` : ""}${analyst ? "" : "&view=analyst"}`}>
             {analyst ? "Client view" : "jouleWise view"}
           </Link>

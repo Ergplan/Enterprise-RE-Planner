@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 function nextPath(): string {
-  const n = new URLSearchParams(window.location.search).get("next") ?? "/plan/intake";
-  return n.startsWith("/") ? n : "/plan/intake";
+  const n = new URLSearchParams(window.location.search).get("next") ?? "/";
+  return n.startsWith("/") ? n : "/";
 }
 
 function remember(me: { email: string; role: string }) {

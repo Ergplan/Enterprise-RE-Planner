@@ -14,7 +14,7 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
       <section className="eg-card ep-panel">
         <h1 className="eg-h1">Today&apos;s cost</h1>
         <p className="eg-muted">Start with your bill; this step opens once a site exists.</p>
-        <Link className="eg-btn eg-btn--primary" href="/plan/intake">Drop a bill</Link>
+        <Link className="eg-btn eg-btn--primary" href="/evaluate">New evaluation</Link>
       </section>
     );
   }
@@ -27,7 +27,7 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
   return (
     <>
       <div>
-        <div className="eg-overline">Step 2 of 6</div>
+        <div className="eg-overline">Detail</div>
         <h1 className="eg-h1">Today&apos;s cost</h1>
         <p className="eg-muted ep-lede">
           {conn.client.name} · {conn.discom_id.toUpperCase()} · {conn.tariff_category} · {Number(conn.voltage_kv)} kV. We rebuild each bill from the
@@ -35,7 +35,7 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
         </p>
         <div className="ep-row" style={{ marginTop: "var(--space-3)" }}>
           <Link className="eg-btn eg-btn--primary eg-btn--sm" href={`/plan/landed?c=${c}`}>Landed costs of every source</Link>
-          <Link className="eg-btn eg-btn--ghost eg-btn--sm" href={`/plan/site?c=${c}`}>Your site and load profile</Link>
+          <Link className="eg-btn eg-btn--ghost eg-btn--sm" href={`/evaluate?c=${c}`}>Your inputs</Link>
         </div>
       </div>
       {(replays ?? []).length === 0 && <p className="eg-muted">No accepted bills on this connection yet.</p>}

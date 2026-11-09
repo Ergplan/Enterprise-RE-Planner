@@ -3,8 +3,11 @@ import { RefChips } from "@/components/cost/RefChips";
 import { AnalystView } from "@/components/plan/AnalystView";
 import { Explain } from "@/components/plan/Explain";
 import { WhatIf } from "@/components/plan/WhatIf";
+import { CostTable, DispatchChart, Lifecycle, Settlement, YearMix } from "@/components/results/parts";
 import { VoicePanel } from "@/components/voice/VoicePanel";
 import { apiOrNull } from "@/lib/api";
+import type { Chain } from "@/lib/audit";
+import type { DispatchOut } from "@/lib/runs";
 import { uniqueRefs } from "@/lib/cost";
 import type { Ref, SourcedValue } from "@/lib/intake";
 import { Citations, type PlanOut } from "@/lib/plan";
@@ -42,6 +45,15 @@ export default async function LivePlan({ params, searchParams }: { params: Promi
   };
   const rec = d.scenarios.find((s) => s.scenario_id === d.recommended) ?? null;
   const s = rec?.summary;
+  // the recommended scenario's chain (cost lines with their pages) and its busiest week of dispatch
+  const [chain, dispatch] = rec
+    ? await Promise.all([
+        apiOrNull<Chain>(`/connections/${d.connection_id}/chain?scenario_id=${rec.scenario_id}`),
+        apiOrNull<DispatchOut>(`/runs/${rec.run_id}/dispatch?days=7`),
+      ])
+    : [null, null];
+  const years = s?.lifecycle ? Number(s.lifecycle.analysis_years?.value ?? 25) : 25;
+  const labels = Object.fromEntries((s?.sizes ?? []).map((z) => [z.id, z.label]));
   return (
     <div className={`ep-public__inner${printing ? " ep-print" : ""}`}>
       {printing && <script dangerouslySetInnerHTML={{ __html: "document.documentElement.dataset.theme='light'" }} />}
@@ -95,6 +107,42 @@ export default async function LivePlan({ params, searchParams }: { params: Promi
                 ))}
               </tbody>
             </table>
+          </section>
+
+          <section className="eg-card ep-panel ep-report">
+            <h2 className="eg-card__title">Cost comparison, year one</h2>
+            <p className="eg-card__sub">Today&apos;s bill lines against the plan&apos;s, re-settled under the state&apos;s rules.</p>
+            <CostTable s={s} chain={chain} print={printing} />
+            {printing && <p className="ep-small eg-muted">Each line rests on the pages cited for the totals above {C([s.annual.before, s.annual.after], 4)}.</p>}
+          </section>
+
+          {s.lifecycle && (
+            <section className="eg-card ep-panel ep-report">
+              <h2 className="eg-card__title">{years}-year view</h2>
+              <p className="eg-card__sub">The settled year projected forward: the DISCOM&apos;s tariff escalating, contracted power at its own rate, owned plant paid up front and replaced when its life ends, output degrading, every year brought to today&apos;s money.</p>
+              <Lifecycle lc={s.lifecycle} years={years} expanded={printing} />
+            </section>
+          )}
+
+          {dispatch && (
+            <section className="eg-card ep-panel ep-report">
+              <h2 className="eg-card__title">Dispatch, busiest week</h2>
+              <p className="eg-card__sub">How the load is met block by block from {new Date(dispatch.start).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}: each source under the load line, then the bank, then the DISCOM.</p>
+              <DispatchChart d={dispatch} labels={labels} kinds={Object.fromEntries((s.sizes ?? []).map((z) => [z.id, z.kind]))} />
+            </section>
+          )}
+
+          {(s.monthly ?? []).length > 0 && (
+            <section className="eg-card ep-panel ep-report">
+              <h2 className="eg-card__title">Your year, month by month</h2>
+              <p className="eg-card__sub">Where each month&apos;s consumption comes from once the year is settled.</p>
+              <YearMix months={s.monthly ?? []} sizes={s.sizes} />
+            </section>
+          )}
+
+          <section className="eg-card ep-panel ep-report">
+            <h2 className="eg-card__title">Settlement and emissions</h2>
+            <Settlement s={s} chain={chain} />
           </section>
 
           <section className="eg-card ep-panel">

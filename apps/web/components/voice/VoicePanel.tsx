@@ -9,13 +9,20 @@ type ToolOut = { state: Record<string, unknown>; say: string; ok: boolean };
 // Voice and text with the same tools. Voice: an ephemeral OpenAI Realtime secret from the API, WebRTC
 // from the browser, tool calls relayed to /api/voice/tool. Text: /api/chat runs the tools server-side.
 // The voice only takes inputs and reads results back; every number it says came from a tool.
-export function VoicePanel({ mode, token, onState, intro }: { mode: Mode; token?: string; onState?: (s: Record<string, unknown>) => void; intro: string }) {
+export function VoicePanel({ mode, token, onState, intro, initialState, compact }: {
+  mode: Mode; token?: string; onState?: (s: Record<string, unknown>) => void; intro: string;
+  initialState?: Record<string, unknown>; compact?: boolean;
+}) {
   const [lines, setLines] = useState<Line[]>([]);
   const [live, setLive] = useState(false);
   const [busy, setBusy] = useState(false);
   const [text, setText] = useState("");
   const [error, setError] = useState("");
-  const state = useRef<Record<string, unknown>>({});
+  const state = useRef<Record<string, unknown>>(initialState ?? {});
+  // the form is the truth: whatever the page has typed since is what the tools work on
+  useEffect(() => {
+    if (initialState) state.current = initialState;
+  }, [initialState]);
   const pc = useRef<RTCPeerConnection | null>(null);
   const history = useRef<{ role: string; content: string }[]>([]);
 
@@ -115,12 +122,12 @@ export function VoicePanel({ mode, token, onState, intro }: { mode: Mode; token?
   }
 
   return (
-    <div className="ep-voice">
+    <div className={`ep-voice${compact ? " ep-voice--compact" : ""}`}>
       <div className="ep-row">
         {live ? (
-          <button className="eg-btn eg-btn--ghost" onClick={stopVoice}><span data-icon="mic" data-size="16"></span>End the call</button>
+          <button className="eg-btn eg-btn--ghost eg-btn--sm" onClick={stopVoice}><span data-icon="mic" data-size="16"></span>End the call</button>
         ) : (
-          <button className="eg-btn eg-btn--primary" disabled={busy} onClick={startVoice}><span data-icon="mic" data-size="16"></span>{busy ? "Connecting…" : "Talk"}</button>
+          <button className={`eg-btn eg-btn--sm${compact ? " eg-btn--ghost" : " eg-btn--primary"}`} disabled={busy} onClick={startVoice}><span data-icon="mic" data-size="16"></span>{busy ? "Connecting…" : "Talk"}</button>
         )}
         <span className="eg-muted ep-small">{live ? "Listening. The voice sets values and reads back results; it never works out a number itself." : intro}</span>
       </div>

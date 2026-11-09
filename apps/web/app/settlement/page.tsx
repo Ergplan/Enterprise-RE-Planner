@@ -17,7 +17,7 @@ export default async function SettlementPage({ searchParams }: { searchParams: P
           Settles open-access sources against the site&apos;s 15-minute load under the approved banking and set-off rules. Set your analyst email on any rulebook page first.
         </p>
       </div>
-      {conn ? <SettlementExplorer connectionId={conn.id} /> : <p className="eg-muted">Open a site first: <Link href="/plan/intake">drop a bill</Link>, then use the link from its landed-cost page.</p>}
+      {conn ? <SettlementExplorer connectionId={conn.id} /> : <p className="eg-muted">Open a site first: <Link href="/evaluate">start an evaluation</Link>, then use the link from its landed-cost page.</p>}
     </>
   );
 }

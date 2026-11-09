@@ -92,6 +92,8 @@ export type PlanInputs = {
   bill_month: string | null;
   discom: string | null;
   tariff_category: string | null;
+  category_code: string | null;
+  category_note: string | null;
   accepted: boolean;
   energy_unit: string;
   facts: PlanValue[];

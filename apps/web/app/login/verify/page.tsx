@@ -8,7 +8,7 @@ export default function VerifyPage() {
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
     const token = q.get("token") ?? "";
-    const next = q.get("next") ?? "/plan/intake";
+    const next = q.get("next") ?? "/";
     fetch("/api/auth/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }) })
       .then(async (r) => {
         if (!r.ok) throw new Error();
@@ -19,7 +19,7 @@ export default function VerifyPage() {
         } catch {
           /* storage may be unavailable */
         }
-        const dest = next.startsWith("/") ? next : "/plan/intake";
+        const dest = next.startsWith("/") ? next : "/";
         // first sign-in by link: choose a password, then go on
         window.location.replace(me.has_password ? dest : `/account?next=${encodeURIComponent(dest)}`);
       })

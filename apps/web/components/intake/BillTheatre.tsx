@@ -369,7 +369,7 @@ export function BillTheatre({ initial }: { initial: BillReading }) {
       )}
       {error && <p className="ep-error">{error}</p>}
       <div className="ep-row">
-        <Link className="eg-btn eg-btn--ghost" href="/plan/intake">Back to bills</Link>
+        <Link className="eg-btn eg-btn--ghost" href="/bills">Back to bills</Link>
         <Link className="eg-btn eg-btn--primary" href={`/plan/intake/bill/${r.bill_id}/inputs`}>
           See what planning takes from this bill<span data-icon="arrow-right" data-size="16"></span>
         </Link>
