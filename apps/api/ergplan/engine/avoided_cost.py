@@ -32,6 +32,9 @@ from .tariff_eval import (
 )
 
 HUNDRED = Decimal(100)
+# The year's two totals in `annual`, by name: what the Evaluate page's "today" reads
+ENERGY_YEAR = "Energy at avoided rates (year)"
+DEMAND_YEAR = "Demand charges (year)"
 
 
 @dataclass(frozen=True)
@@ -218,14 +221,14 @@ def build(
                     derive(inr(amount), Unit.INR, inputs, label=f"Demand charge · {first:%b %Y}")
                 )
         i += n
-    annual.append(derive(inr(energy_cost), Unit.INR, energy_inputs, label="Energy at avoided rates (year)"))
+    annual.append(derive(inr(energy_cost), Unit.INR, energy_inputs, label=ENERGY_YEAR))
     if demand_lines:
         annual.append(
             derive(
                 inr(sum((d.value for d in demand_lines), Decimal(0))),
                 Unit.INR,
                 demand_lines,
-                label="Demand charges (year)",
+                label=DEMAND_YEAR,
             )
         )
         annual.extend(demand_lines)

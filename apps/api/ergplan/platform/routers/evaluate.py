@@ -20,12 +20,13 @@ from ...core.sourced import RefKind, SourcedValue, SourceRef, derive
 from ...core.units import Unit
 from ...db.base import session_scope
 from ...db.models import Bill, Client, Connection, Jurisdiction, LoadProfile, Run, RunResult, Scenario, Site
+from ...engine import avoided_cost
 from ...intake import defaults, site_intake, typed
 from ...rulebook import repository
 from ...rulebook.models import RuleView
 from ...rulebook.service import UnknownJurisdiction, jurisdiction_chain
 from .. import runs as svc
-from ..auth import Caller, caller, may_reach, production
+from ..auth import Caller, caller, may_reach
 
 router = APIRouter(tags=["evaluate"])
 
@@ -148,7 +149,8 @@ def list_connections(who: Annotated[Caller, Depends(caller)]) -> list[Evaluation
         ).all()
         out = []
         for conn, site, client in rows:
-            if production() and not may_reach(s, who, "connection_id", conn.id):
+            # a client sees their own evaluations (in development too, where the headers are trusted)
+            if who.role != "analyst" and not may_reach(s, who, "connection_id", conn.id):
                 continue
             prof = s.scalars(
                 select(LoadProfile)
@@ -288,8 +290,8 @@ def today(
     from . import cost as cost_router
 
     card = cost_router.connection_avoided_cost(connection_id, None, as_of)
-    energy_lines = [x for x in card.annual if str(x.label or "").startswith("Energy at avoided")]
-    demand_lines = [x for x in card.annual if str(x.label or "").startswith("Demand charges")]
+    energy_lines = [x for x in card.annual if x.label == avoided_cost.ENERGY_YEAR]
+    demand_lines = [x for x in card.annual if x.label == avoided_cost.DEMAND_YEAR]
     energy = sum((Decimal(x.value) for x in energy_lines), Decimal(0))
     demand = sum((Decimal(x.value) for x in demand_lines), Decimal(0))
     profile: SourcedValue | None = None

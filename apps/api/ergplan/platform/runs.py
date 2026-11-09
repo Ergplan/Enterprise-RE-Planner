@@ -1006,6 +1006,10 @@ def _lifecycle(
         om_escalation_pct=pick("om_escalation_pct", Unit.PERCENT, "O&M escalation"),
     )
     avg_grid = (before_lines.get("grid_energy", ZERO) / load_kwh) if load_kwh > 0 else ZERO
+    if avg_grid <= 0:
+        a.notes.append(
+            "no grid energy line to price the output lost to degradation, so the lifecycle ignores it"
+        )
     none = _sv(
         ZERO, Unit.PERCENT, SourceRef(kind=RefKind.ASSUMPTION, note="no degradation modelled"), "Degradation"
     )

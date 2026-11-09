@@ -99,7 +99,7 @@ def project(
     years: list[Year] = []
     cumulative = -capex0
     pv_bau = ZERO
-    pv_plan = capex0
+    pv_plan = capex0  # paid at year 0, discount factor 1; replacements are discounted in their year
     savings: list[Decimal] = []  # full precision; the Year rows are quantized for display only
     cashes: list[Decimal] = []
     discounts: list[Decimal] = []

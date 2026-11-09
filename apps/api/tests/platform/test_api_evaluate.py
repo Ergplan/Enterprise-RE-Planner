@@ -128,6 +128,10 @@ def test_a_typed_site_is_saved_costed_and_listed() -> None:
     [row] = [x for x in mine.json() if x["connection_id"] == conn]
     assert row["client"] == "Acme Forgings" and row["discom"] == "npcl" and row["bills"] == 0
     assert row["profile_provenance"] == "synthesised" and row["latest_run"] is None
+    # another client does not see it; an analyst does
+    other = {"X-Ergplan-Actor": "someone@else.in", "X-Ergplan-Role": "client"}
+    assert conn not in {x["connection_id"] for x in client.get("/connections", headers=other).json()}
+    assert conn in {x["connection_id"] for x in client.get("/connections", headers=AN).json()}
     # the lifecycle view and the dispatch file, on an hourly run of a small mix
     run = client.post(
         f"/connections/{conn}/mix",
@@ -168,6 +172,15 @@ def test_a_typed_site_is_saved_costed_and_listed() -> None:
         assert Decimal(y1["om"]) > 0 and lc["irr_pct"] is not None
     listed = next(x for x in client.get("/connections", headers=CL).json() if x["connection_id"] == conn)
     assert listed["latest_run"]["status"] == "done" and listed["latest_run"]["scenario"] == "Your mix"
+    assert Decimal(listed["latest_run"]["saving"]["value"]) == Decimal(
+        out["summary"]["annual"]["saving"]["value"]
+    )
+    # the shared plan carries the same report: the lifecycle and the months of the recommended run
+    token = client.post(f"/connections/{conn}/share", headers=CL).json()["token"]
+    shared = client.get(f"/p/{token}").json()
+    [sc] = shared["scenarios"]
+    assert sc["summary"]["lifecycle"]["years"][-1]["year"] == 20 and len(sc["summary"]["monthly"]) == 12
+    assert sc["summary"]["lifecycle"]["npv"] == lc["npv"]
     f = client.get(f"/runs/{run.json()['run_id']}/dispatch.csv", headers=CL)
     assert f.status_code == 200 and f.headers["content-type"].startswith("text/csv")
     rows = list(csv.reader(io.StringIO(f.text)))
